@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { type LocalPlanProject, getProjectFiscalYears } from '../../domain/types.ts';
 import { getDocument } from '../../domain/documents.ts';
+import { WORK_CATEGORY_LABELS, type WorkCategoryKey } from '../../domain/workCategories.ts';
 import { toArabic, formatCurrency } from '../../domain/thaiNumerals.ts';
 import { getVillageLabel } from '../../domain/villages.ts';
 import { generateOfficialCitation } from '../../domain/citation.ts';
@@ -125,6 +126,9 @@ export function ProjectDetailModal({
             <div className="flex flex-wrap items-center gap-2">
               <span className="px-2.5 py-0.5 rounded-md text-xs font-bold bg-sky-600 text-white">
                 {lineage?.statusLabel || cleanDocTitle}
+              </span>
+              <span className="px-2.5 py-0.5 rounded-md text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700">
+                {WORK_CATEGORY_LABELS[project.workCategory as WorkCategoryKey] || project.workCategory}
               </span>
               <span className="px-2.5 py-0.5 rounded-md text-xs font-semibold bg-sky-100 dark:bg-sky-950 text-sky-800 dark:text-sky-300">
                 ลำดับที่ {displaySeq}

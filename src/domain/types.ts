@@ -68,7 +68,7 @@ export interface LocalPlanProject {
   expectedResult: string;
   agency: string;
   villages: number[];
-  workCategory: 'road' | 'water' | 'electric' | 'drainage' | 'building' | 'agriculture' | 'social' | 'other';
+  workCategory: import('./workCategories.ts').WorkCategoryKey | string;
   pdfPage: number;
   printedPage: number | string;
   updatedAt: string;

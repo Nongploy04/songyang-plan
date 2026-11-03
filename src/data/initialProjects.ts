@@ -25,7 +25,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       1
     ],
-    "workCategory": "road",
+    "workCategory": "road_gravel",
     "pdfPage": 67,
     "printedPage": 62,
     "updatedAt": "2026-11-03",
@@ -103,7 +103,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       1
     ],
-    "workCategory": "road",
+    "workCategory": "road_concrete",
     "pdfPage": 67,
     "printedPage": 62,
     "updatedAt": "2026-11-03",
@@ -181,7 +181,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       1
     ],
-    "workCategory": "road",
+    "workCategory": "road_concrete",
     "pdfPage": 67,
     "printedPage": 62,
     "updatedAt": "2026-11-03",
@@ -259,7 +259,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       1
     ],
-    "workCategory": "road",
+    "workCategory": "road_concrete",
     "pdfPage": 68,
     "printedPage": 63,
     "updatedAt": "2026-11-03",
@@ -337,7 +337,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       1
     ],
-    "workCategory": "road",
+    "workCategory": "road_gravel",
     "pdfPage": 68,
     "printedPage": 63,
     "updatedAt": "2026-11-03",
@@ -415,7 +415,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       1
     ],
-    "workCategory": "road",
+    "workCategory": "road_gravel",
     "pdfPage": 68,
     "printedPage": 63,
     "updatedAt": "2026-11-03",
@@ -493,7 +493,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       1
     ],
-    "workCategory": "road",
+    "workCategory": "road_gravel",
     "pdfPage": 69,
     "printedPage": 64,
     "updatedAt": "2026-11-03",
@@ -571,7 +571,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       1
     ],
-    "workCategory": "road",
+    "workCategory": "road_gravel",
     "pdfPage": 69,
     "printedPage": 64,
     "updatedAt": "2026-11-03",
@@ -650,7 +650,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       1,
       6
     ],
-    "workCategory": "road",
+    "workCategory": "road_concrete",
     "pdfPage": 69,
     "printedPage": 64,
     "updatedAt": "2026-11-03",
@@ -728,7 +728,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       1
     ],
-    "workCategory": "road",
+    "workCategory": "road_gravel",
     "pdfPage": 70,
     "printedPage": 65,
     "updatedAt": "2026-11-03",
@@ -806,7 +806,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       2
     ],
-    "workCategory": "road",
+    "workCategory": "road_concrete",
     "pdfPage": 71,
     "printedPage": 66,
     "updatedAt": "2026-11-03",
@@ -884,7 +884,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       2
     ],
-    "workCategory": "road",
+    "workCategory": "road_concrete",
     "pdfPage": 71,
     "printedPage": 66,
     "updatedAt": "2026-11-03",
@@ -962,7 +962,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       2
     ],
-    "workCategory": "road",
+    "workCategory": "road_gravel",
     "pdfPage": 72,
     "printedPage": 67,
     "updatedAt": "2026-11-03",
@@ -1040,7 +1040,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       2
     ],
-    "workCategory": "road",
+    "workCategory": "drainage_bridge",
     "pdfPage": 72,
     "printedPage": 67,
     "updatedAt": "2026-11-03",
@@ -1118,7 +1118,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       2
     ],
-    "workCategory": "drainage",
+    "workCategory": "drainage_bridge",
     "pdfPage": 72,
     "printedPage": 67,
     "updatedAt": "2026-11-03",
@@ -1196,7 +1196,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       2
     ],
-    "workCategory": "road",
+    "workCategory": "road_concrete",
     "pdfPage": 73,
     "printedPage": 68,
     "updatedAt": "2026-11-03",
@@ -1274,7 +1274,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       2
     ],
-    "workCategory": "road",
+    "workCategory": "road_concrete",
     "pdfPage": 73,
     "printedPage": 68,
     "updatedAt": "2026-11-03",
@@ -1352,7 +1352,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       2
     ],
-    "workCategory": "road",
+    "workCategory": "road_concrete",
     "pdfPage": 73,
     "printedPage": 68,
     "updatedAt": "2026-11-03",
@@ -1430,7 +1430,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       2
     ],
-    "workCategory": "road",
+    "workCategory": "road_concrete",
     "pdfPage": 74,
     "printedPage": 69,
     "updatedAt": "2026-11-03",
@@ -1508,7 +1508,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       2
     ],
-    "workCategory": "road",
+    "workCategory": "road_concrete",
     "pdfPage": 74,
     "printedPage": 69,
     "updatedAt": "2026-11-03",
@@ -1586,7 +1586,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       2
     ],
-    "workCategory": "road",
+    "workCategory": "road_gravel",
     "pdfPage": 74,
     "printedPage": 69,
     "updatedAt": "2026-11-03",
@@ -1664,7 +1664,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       2
     ],
-    "workCategory": "road",
+    "workCategory": "road_concrete",
     "pdfPage": 75,
     "printedPage": 70,
     "updatedAt": "2026-11-03",
@@ -1742,7 +1742,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       2
     ],
-    "workCategory": "road",
+    "workCategory": "road_concrete",
     "pdfPage": 75,
     "printedPage": 70,
     "updatedAt": "2026-11-03",
@@ -1820,7 +1820,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       2
     ],
-    "workCategory": "road",
+    "workCategory": "road_concrete",
     "pdfPage": 76,
     "printedPage": 71,
     "updatedAt": "2026-11-03",
@@ -1898,7 +1898,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       2
     ],
-    "workCategory": "road",
+    "workCategory": "road_concrete",
     "pdfPage": 76,
     "printedPage": 71,
     "updatedAt": "2026-11-03",
@@ -1976,7 +1976,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       2
     ],
-    "workCategory": "road",
+    "workCategory": "road_gravel",
     "pdfPage": 77,
     "printedPage": 72,
     "updatedAt": "2026-11-03",
@@ -2054,7 +2054,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       2
     ],
-    "workCategory": "road",
+    "workCategory": "road_gravel",
     "pdfPage": 77,
     "printedPage": 72,
     "updatedAt": "2026-11-03",
@@ -2132,7 +2132,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       2
     ],
-    "workCategory": "road",
+    "workCategory": "road_gravel",
     "pdfPage": 78,
     "printedPage": 73,
     "updatedAt": "2026-11-03",
@@ -2210,7 +2210,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       2
     ],
-    "workCategory": "road",
+    "workCategory": "road_gravel",
     "pdfPage": 78,
     "printedPage": 73,
     "updatedAt": "2026-11-03",
@@ -2288,7 +2288,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       2
     ],
-    "workCategory": "road",
+    "workCategory": "road_concrete",
     "pdfPage": 79,
     "printedPage": 74,
     "updatedAt": "2026-11-03",
@@ -2366,7 +2366,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       2
     ],
-    "workCategory": "road",
+    "workCategory": "road_gravel",
     "pdfPage": 79,
     "printedPage": 74,
     "updatedAt": "2026-11-03",
@@ -2444,7 +2444,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       2
     ],
-    "workCategory": "road",
+    "workCategory": "road_gravel",
     "pdfPage": 80,
     "printedPage": 75,
     "updatedAt": "2026-11-03",
@@ -2522,7 +2522,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       2
     ],
-    "workCategory": "road",
+    "workCategory": "road_concrete",
     "pdfPage": 80,
     "printedPage": 75,
     "updatedAt": "2026-11-03",
@@ -2600,7 +2600,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       2
     ],
-    "workCategory": "road",
+    "workCategory": "road_gravel",
     "pdfPage": 81,
     "printedPage": 76,
     "updatedAt": "2026-11-03",
@@ -2678,7 +2678,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       3
     ],
-    "workCategory": "road",
+    "workCategory": "road_concrete",
     "pdfPage": 81,
     "printedPage": 76,
     "updatedAt": "2026-11-03",
@@ -2757,7 +2757,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       3,
       8
     ],
-    "workCategory": "road",
+    "workCategory": "road_concrete",
     "pdfPage": 82,
     "printedPage": 77,
     "updatedAt": "2026-11-03",
@@ -2835,7 +2835,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       3
     ],
-    "workCategory": "other",
+    "workCategory": "water",
     "pdfPage": 82,
     "printedPage": 77,
     "updatedAt": "2026-11-03",
@@ -2913,7 +2913,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       3
     ],
-    "workCategory": "road",
+    "workCategory": "road_gravel",
     "pdfPage": 83,
     "printedPage": 78,
     "updatedAt": "2026-11-03",
@@ -2991,7 +2991,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       3
     ],
-    "workCategory": "road",
+    "workCategory": "road_gravel",
     "pdfPage": 83,
     "printedPage": 78,
     "updatedAt": "2026-11-03",
@@ -3069,7 +3069,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       3
     ],
-    "workCategory": "road",
+    "workCategory": "road_concrete",
     "pdfPage": 84,
     "printedPage": 79,
     "updatedAt": "2026-11-03",
@@ -3147,7 +3147,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       3
     ],
-    "workCategory": "road",
+    "workCategory": "road_gravel",
     "pdfPage": 85,
     "printedPage": 80,
     "updatedAt": "2026-11-03",
@@ -3225,7 +3225,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       3
     ],
-    "workCategory": "road",
+    "workCategory": "road_gravel",
     "pdfPage": 85,
     "printedPage": 80,
     "updatedAt": "2026-11-03",
@@ -3303,7 +3303,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       3
     ],
-    "workCategory": "road",
+    "workCategory": "road_gravel",
     "pdfPage": 85,
     "printedPage": 80,
     "updatedAt": "2026-11-03",
@@ -3381,7 +3381,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       3
     ],
-    "workCategory": "road",
+    "workCategory": "road_gravel",
     "pdfPage": 86,
     "printedPage": 81,
     "updatedAt": "2026-11-03",
@@ -3459,7 +3459,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       3
     ],
-    "workCategory": "road",
+    "workCategory": "road_concrete",
     "pdfPage": 86,
     "printedPage": 81,
     "updatedAt": "2026-11-03",
@@ -3537,7 +3537,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       3
     ],
-    "workCategory": "road",
+    "workCategory": "road_concrete",
     "pdfPage": 87,
     "printedPage": 82,
     "updatedAt": "2026-11-03",
@@ -3615,7 +3615,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       3
     ],
-    "workCategory": "road",
+    "workCategory": "road_gravel",
     "pdfPage": 87,
     "printedPage": 82,
     "updatedAt": "2026-11-03",
@@ -3693,7 +3693,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       3
     ],
-    "workCategory": "road",
+    "workCategory": "road_gravel",
     "pdfPage": 88,
     "printedPage": 83,
     "updatedAt": "2026-11-03",
@@ -3771,7 +3771,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       3
     ],
-    "workCategory": "road",
+    "workCategory": "road_gravel",
     "pdfPage": 89,
     "printedPage": 84,
     "updatedAt": "2026-11-03",
@@ -3849,7 +3849,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       3
     ],
-    "workCategory": "road",
+    "workCategory": "road_gravel",
     "pdfPage": 89,
     "printedPage": 84,
     "updatedAt": "2026-11-03",
@@ -3927,7 +3927,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       3
     ],
-    "workCategory": "road",
+    "workCategory": "road_gravel",
     "pdfPage": 90,
     "printedPage": 85,
     "updatedAt": "2026-11-03",
@@ -4083,7 +4083,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       4
     ],
-    "workCategory": "road",
+    "workCategory": "road_gravel",
     "pdfPage": 90,
     "printedPage": 85,
     "updatedAt": "2026-11-03",
@@ -4161,7 +4161,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       4
     ],
-    "workCategory": "road",
+    "workCategory": "road_gravel",
     "pdfPage": 91,
     "printedPage": 86,
     "updatedAt": "2026-11-03",
@@ -4239,7 +4239,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       4
     ],
-    "workCategory": "road",
+    "workCategory": "road_concrete",
     "pdfPage": 91,
     "printedPage": 86,
     "updatedAt": "2026-11-03",
@@ -4317,7 +4317,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       4
     ],
-    "workCategory": "road",
+    "workCategory": "drainage_bridge",
     "pdfPage": 92,
     "printedPage": 87,
     "updatedAt": "2026-11-03",
@@ -4395,7 +4395,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       4
     ],
-    "workCategory": "road",
+    "workCategory": "road_concrete",
     "pdfPage": 92,
     "printedPage": 87,
     "updatedAt": "2026-11-03",
@@ -4473,7 +4473,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       4
     ],
-    "workCategory": "road",
+    "workCategory": "road_gravel",
     "pdfPage": 93,
     "printedPage": 88,
     "updatedAt": "2026-11-03",
@@ -4551,7 +4551,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       4
     ],
-    "workCategory": "road",
+    "workCategory": "road_gravel",
     "pdfPage": 93,
     "printedPage": 88,
     "updatedAt": "2026-11-03",
@@ -4785,7 +4785,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       5
     ],
-    "workCategory": "road",
+    "workCategory": "road_concrete",
     "pdfPage": 94,
     "printedPage": 89,
     "updatedAt": "2026-11-03",
@@ -4863,7 +4863,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       5
     ],
-    "workCategory": "road",
+    "workCategory": "road_gravel",
     "pdfPage": 94,
     "printedPage": 89,
     "updatedAt": "2026-11-03",
@@ -4941,7 +4941,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       5
     ],
-    "workCategory": "other",
+    "workCategory": "building",
     "pdfPage": 94,
     "printedPage": 89,
     "updatedAt": "2026-11-03",
@@ -5019,7 +5019,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       5
     ],
-    "workCategory": "road",
+    "workCategory": "drainage_bridge",
     "pdfPage": 95,
     "printedPage": 90,
     "updatedAt": "2026-11-03",
@@ -5097,7 +5097,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       5
     ],
-    "workCategory": "road",
+    "workCategory": "road_concrete",
     "pdfPage": 95,
     "printedPage": 90,
     "updatedAt": "2026-11-03",
@@ -5253,7 +5253,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       5
     ],
-    "workCategory": "road",
+    "workCategory": "road_gravel",
     "pdfPage": 96,
     "printedPage": 91,
     "updatedAt": "2026-11-03",
@@ -5331,7 +5331,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       5
     ],
-    "workCategory": "road",
+    "workCategory": "road_gravel",
     "pdfPage": 96,
     "printedPage": 91,
     "updatedAt": "2026-11-03",
@@ -5409,7 +5409,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       5
     ],
-    "workCategory": "other",
+    "workCategory": "electric",
     "pdfPage": 97,
     "printedPage": 92,
     "updatedAt": "2026-11-03",
@@ -5487,7 +5487,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       5
     ],
-    "workCategory": "other",
+    "workCategory": "water",
     "pdfPage": 97,
     "printedPage": 92,
     "updatedAt": "2026-11-03",
@@ -5643,7 +5643,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       6
     ],
-    "workCategory": "road",
+    "workCategory": "drainage_bridge",
     "pdfPage": 98,
     "printedPage": 93,
     "updatedAt": "2026-11-03",
@@ -5721,7 +5721,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       6
     ],
-    "workCategory": "road",
+    "workCategory": "road_concrete",
     "pdfPage": 98,
     "printedPage": 93,
     "updatedAt": "2026-11-03",
@@ -5799,7 +5799,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       6
     ],
-    "workCategory": "road",
+    "workCategory": "road_gravel",
     "pdfPage": 99,
     "printedPage": 94,
     "updatedAt": "2026-11-03",
@@ -5877,7 +5877,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       6
     ],
-    "workCategory": "road",
+    "workCategory": "road_concrete",
     "pdfPage": 99,
     "printedPage": 94,
     "updatedAt": "2026-11-03",
@@ -5955,7 +5955,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       6
     ],
-    "workCategory": "road",
+    "workCategory": "road_concrete",
     "pdfPage": 100,
     "printedPage": 95,
     "updatedAt": "2026-11-03",
@@ -6033,7 +6033,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       6
     ],
-    "workCategory": "road",
+    "workCategory": "road_concrete",
     "pdfPage": 100,
     "printedPage": 95,
     "updatedAt": "2026-11-03",
@@ -6111,7 +6111,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       6
     ],
-    "workCategory": "road",
+    "workCategory": "road_concrete",
     "pdfPage": 101,
     "printedPage": 96,
     "updatedAt": "2026-11-03",
@@ -6189,7 +6189,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       6
     ],
-    "workCategory": "road",
+    "workCategory": "road_gravel",
     "pdfPage": 101,
     "printedPage": 96,
     "updatedAt": "2026-11-03",
@@ -6267,7 +6267,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       6
     ],
-    "workCategory": "road",
+    "workCategory": "road_gravel",
     "pdfPage": 102,
     "printedPage": 97,
     "updatedAt": "2026-11-03",
@@ -6345,7 +6345,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       6
     ],
-    "workCategory": "road",
+    "workCategory": "road_concrete",
     "pdfPage": 102,
     "printedPage": 97,
     "updatedAt": "2026-11-03",
@@ -6424,7 +6424,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       2,
       6
     ],
-    "workCategory": "road",
+    "workCategory": "road_concrete",
     "pdfPage": 102,
     "printedPage": 97,
     "updatedAt": "2026-11-03",
@@ -6502,7 +6502,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       6
     ],
-    "workCategory": "road",
+    "workCategory": "road_gravel",
     "pdfPage": 103,
     "printedPage": 98,
     "updatedAt": "2026-11-03",
@@ -6580,7 +6580,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       6
     ],
-    "workCategory": "road",
+    "workCategory": "road_gravel",
     "pdfPage": 103,
     "printedPage": 98,
     "updatedAt": "2026-11-03",
@@ -6658,7 +6658,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       6
     ],
-    "workCategory": "road",
+    "workCategory": "road_concrete",
     "pdfPage": 103,
     "printedPage": 98,
     "updatedAt": "2026-11-03",
@@ -6736,7 +6736,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       6
     ],
-    "workCategory": "road",
+    "workCategory": "road_gravel",
     "pdfPage": 104,
     "printedPage": 99,
     "updatedAt": "2026-11-03",
@@ -6815,7 +6815,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       1,
       6
     ],
-    "workCategory": "road",
+    "workCategory": "road_gravel",
     "pdfPage": 104,
     "printedPage": 99,
     "updatedAt": "2026-11-03",
@@ -6893,7 +6893,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       6
     ],
-    "workCategory": "road",
+    "workCategory": "road_gravel",
     "pdfPage": 105,
     "printedPage": 100,
     "updatedAt": "2026-11-03",
@@ -6971,7 +6971,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       7
     ],
-    "workCategory": "road",
+    "workCategory": "road_concrete",
     "pdfPage": 106,
     "printedPage": 101,
     "updatedAt": "2026-11-03",
@@ -7049,7 +7049,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       7
     ],
-    "workCategory": "road",
+    "workCategory": "road_concrete",
     "pdfPage": 106,
     "printedPage": 101,
     "updatedAt": "2026-11-03",
@@ -7127,7 +7127,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       7
     ],
-    "workCategory": "road",
+    "workCategory": "road_concrete",
     "pdfPage": 107,
     "printedPage": 102,
     "updatedAt": "2026-11-03",
@@ -7205,7 +7205,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       7
     ],
-    "workCategory": "road",
+    "workCategory": "road_concrete",
     "pdfPage": 107,
     "printedPage": 102,
     "updatedAt": "2026-11-03",
@@ -7283,7 +7283,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       7
     ],
-    "workCategory": "road",
+    "workCategory": "road_gravel",
     "pdfPage": 108,
     "printedPage": 103,
     "updatedAt": "2026-11-03",
@@ -7361,7 +7361,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       7
     ],
-    "workCategory": "road",
+    "workCategory": "road_concrete",
     "pdfPage": 108,
     "printedPage": 103,
     "updatedAt": "2026-11-03",
@@ -7439,7 +7439,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       7
     ],
-    "workCategory": "road",
+    "workCategory": "road_concrete",
     "pdfPage": 109,
     "printedPage": 104,
     "updatedAt": "2026-11-03",
@@ -7517,7 +7517,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       7
     ],
-    "workCategory": "road",
+    "workCategory": "road_concrete",
     "pdfPage": 109,
     "printedPage": 104,
     "updatedAt": "2026-11-03",
@@ -7595,7 +7595,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       7
     ],
-    "workCategory": "road",
+    "workCategory": "drainage_bridge",
     "pdfPage": 110,
     "printedPage": 105,
     "updatedAt": "2026-11-03",
@@ -7673,7 +7673,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       7
     ],
-    "workCategory": "road",
+    "workCategory": "drainage_bridge",
     "pdfPage": 110,
     "printedPage": 105,
     "updatedAt": "2026-11-03",
@@ -7751,7 +7751,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       7
     ],
-    "workCategory": "road",
+    "workCategory": "road_concrete",
     "pdfPage": 111,
     "printedPage": 106,
     "updatedAt": "2026-11-03",
@@ -7829,7 +7829,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       7
     ],
-    "workCategory": "road",
+    "workCategory": "road_gravel",
     "pdfPage": 111,
     "printedPage": 106,
     "updatedAt": "2026-11-03",
@@ -7907,7 +7907,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       7
     ],
-    "workCategory": "road",
+    "workCategory": "road_gravel",
     "pdfPage": 111,
     "printedPage": 106,
     "updatedAt": "2026-11-03",
@@ -7985,7 +7985,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       7
     ],
-    "workCategory": "road",
+    "workCategory": "road_concrete",
     "pdfPage": 112,
     "printedPage": 107,
     "updatedAt": "2026-11-03",
@@ -8063,7 +8063,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       7
     ],
-    "workCategory": "road",
+    "workCategory": "road_gravel",
     "pdfPage": 112,
     "printedPage": 107,
     "updatedAt": "2026-11-03",
@@ -8141,7 +8141,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       8
     ],
-    "workCategory": "road",
+    "workCategory": "road_gravel",
     "pdfPage": 112,
     "printedPage": 107,
     "updatedAt": "2026-11-03",
@@ -8219,7 +8219,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       8
     ],
-    "workCategory": "road",
+    "workCategory": "road_gravel",
     "pdfPage": 113,
     "printedPage": 108,
     "updatedAt": "2026-11-03",
@@ -8297,7 +8297,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       8
     ],
-    "workCategory": "road",
+    "workCategory": "road_concrete",
     "pdfPage": 113,
     "printedPage": 108,
     "updatedAt": "2026-11-03",
@@ -8375,7 +8375,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       8
     ],
-    "workCategory": "road",
+    "workCategory": "road_concrete",
     "pdfPage": 114,
     "printedPage": 109,
     "updatedAt": "2026-11-03",
@@ -8453,7 +8453,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       8
     ],
-    "workCategory": "road",
+    "workCategory": "road_concrete",
     "pdfPage": 114,
     "printedPage": 109,
     "updatedAt": "2026-11-03",
@@ -8531,7 +8531,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       8
     ],
-    "workCategory": "road",
+    "workCategory": "road_concrete",
     "pdfPage": 115,
     "printedPage": 110,
     "updatedAt": "2026-11-03",
@@ -8609,7 +8609,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       8
     ],
-    "workCategory": "road",
+    "workCategory": "road_gravel",
     "pdfPage": 115,
     "printedPage": 110,
     "updatedAt": "2026-11-03",
@@ -8687,7 +8687,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       8
     ],
-    "workCategory": "road",
+    "workCategory": "road_gravel",
     "pdfPage": 115,
     "printedPage": 110,
     "updatedAt": "2026-11-03",
@@ -8765,7 +8765,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       8
     ],
-    "workCategory": "road",
+    "workCategory": "drainage_bridge",
     "pdfPage": 116,
     "printedPage": 111,
     "updatedAt": "2026-11-03",
@@ -8843,7 +8843,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       8
     ],
-    "workCategory": "road",
+    "workCategory": "road_gravel",
     "pdfPage": 116,
     "printedPage": 111,
     "updatedAt": "2026-11-03",
@@ -8921,7 +8921,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       8
     ],
-    "workCategory": "road",
+    "workCategory": "road_gravel",
     "pdfPage": 116,
     "printedPage": 111,
     "updatedAt": "2026-11-03",
@@ -9311,7 +9311,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       1
     ],
-    "workCategory": "water",
+    "workCategory": "agriculture",
     "pdfPage": 118,
     "printedPage": 113,
     "updatedAt": "2026-11-03",
@@ -9389,7 +9389,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       1
     ],
-    "workCategory": "other",
+    "workCategory": "water",
     "pdfPage": 118,
     "printedPage": 113,
     "updatedAt": "2026-11-03",
@@ -9467,7 +9467,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       2
     ],
-    "workCategory": "electric",
+    "workCategory": "water",
     "pdfPage": 119,
     "printedPage": 114,
     "updatedAt": "2026-11-03",
@@ -9545,7 +9545,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       2
     ],
-    "workCategory": "other",
+    "workCategory": "water",
     "pdfPage": 120,
     "printedPage": 115,
     "updatedAt": "2026-11-03",
@@ -9623,7 +9623,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       3
     ],
-    "workCategory": "water",
+    "workCategory": "agriculture",
     "pdfPage": 120,
     "printedPage": 115,
     "updatedAt": "2026-11-03",
@@ -9857,7 +9857,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       3
     ],
-    "workCategory": "other",
+    "workCategory": "water",
     "pdfPage": 122,
     "printedPage": 117,
     "updatedAt": "2026-11-03",
@@ -9935,7 +9935,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       4
     ],
-    "workCategory": "water",
+    "workCategory": "agriculture",
     "pdfPage": 122,
     "printedPage": 117,
     "updatedAt": "2026-11-03",
@@ -10013,7 +10013,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       4
     ],
-    "workCategory": "electric",
+    "workCategory": "water",
     "pdfPage": 123,
     "printedPage": 118,
     "updatedAt": "2026-11-03",
@@ -10169,7 +10169,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       5
     ],
-    "workCategory": "water",
+    "workCategory": "agriculture",
     "pdfPage": 124,
     "printedPage": 119,
     "updatedAt": "2026-11-03",
@@ -10325,7 +10325,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       5
     ],
-    "workCategory": "other",
+    "workCategory": "water",
     "pdfPage": 124,
     "printedPage": 119,
     "updatedAt": "2026-11-03",
@@ -10403,7 +10403,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       5
     ],
-    "workCategory": "electric",
+    "workCategory": "water",
     "pdfPage": 125,
     "printedPage": 120,
     "updatedAt": "2026-11-03",
@@ -10559,7 +10559,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       6
     ],
-    "workCategory": "water",
+    "workCategory": "agriculture",
     "pdfPage": 127,
     "printedPage": 122,
     "updatedAt": "2026-11-03",
@@ -10715,7 +10715,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       6
     ],
-    "workCategory": "other",
+    "workCategory": "water",
     "pdfPage": 127,
     "printedPage": 122,
     "updatedAt": "2026-11-03",
@@ -10793,7 +10793,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       6
     ],
-    "workCategory": "electric",
+    "workCategory": "water",
     "pdfPage": 128,
     "printedPage": 123,
     "updatedAt": "2026-11-03",
@@ -11184,7 +11184,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       7
     ],
-    "workCategory": "electric",
+    "workCategory": "water",
     "pdfPage": 131,
     "printedPage": 126,
     "updatedAt": "2026-11-03",
@@ -11340,7 +11340,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       8
     ],
-    "workCategory": "water",
+    "workCategory": "agriculture",
     "pdfPage": 132,
     "printedPage": 127,
     "updatedAt": "2026-11-03",
@@ -11496,7 +11496,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       8
     ],
-    "workCategory": "other",
+    "workCategory": "water",
     "pdfPage": 132,
     "printedPage": 127,
     "updatedAt": "2026-11-03",
@@ -11808,7 +11808,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       1
     ],
-    "workCategory": "road",
+    "workCategory": "electric",
     "pdfPage": 134,
     "printedPage": 129,
     "updatedAt": "2026-11-03",
@@ -12433,7 +12433,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       3
     ],
-    "workCategory": "road",
+    "workCategory": "electric",
     "pdfPage": 137,
     "printedPage": 132,
     "updatedAt": "2026-11-03",
@@ -12901,7 +12901,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       4
     ],
-    "workCategory": "water",
+    "workCategory": "electric",
     "pdfPage": 139,
     "printedPage": 134,
     "updatedAt": "2026-11-03",
@@ -13135,7 +13135,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       4
     ],
-    "workCategory": "road",
+    "workCategory": "electric",
     "pdfPage": 140,
     "printedPage": 135,
     "updatedAt": "2026-11-03",
@@ -13682,7 +13682,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       6
     ],
-    "workCategory": "road",
+    "workCategory": "electric",
     "pdfPage": 143,
     "printedPage": 138,
     "updatedAt": "2026-11-03",
@@ -14229,7 +14229,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       2
     ],
-    "workCategory": "road",
+    "workCategory": "electric",
     "pdfPage": 145,
     "printedPage": 140,
     "updatedAt": "2026-11-03",
@@ -14307,7 +14307,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       3
     ],
-    "workCategory": "road",
+    "workCategory": "electric",
     "pdfPage": 146,
     "printedPage": 141,
     "updatedAt": "2026-11-03",
@@ -14463,7 +14463,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       4
     ],
-    "workCategory": "road",
+    "workCategory": "electric",
     "pdfPage": 147,
     "printedPage": 142,
     "updatedAt": "2026-11-03",
@@ -14619,7 +14619,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       5
     ],
-    "workCategory": "road",
+    "workCategory": "electric",
     "pdfPage": 148,
     "printedPage": 143,
     "updatedAt": "2026-11-03",
@@ -15009,7 +15009,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       1
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 150,
     "printedPage": 145,
     "updatedAt": "2026-11-03",
@@ -15087,7 +15087,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       1
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 150,
     "printedPage": 145,
     "updatedAt": "2026-11-03",
@@ -15165,7 +15165,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       1
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 151,
     "printedPage": 146,
     "updatedAt": "2026-11-03",
@@ -15243,7 +15243,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       1
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 151,
     "printedPage": 146,
     "updatedAt": "2026-11-03",
@@ -15321,7 +15321,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       1
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 152,
     "printedPage": 147,
     "updatedAt": "2026-11-03",
@@ -15399,7 +15399,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       1
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 152,
     "printedPage": 147,
     "updatedAt": "2026-11-03",
@@ -15477,7 +15477,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       1
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 153,
     "printedPage": 148,
     "updatedAt": "2026-11-03",
@@ -15555,7 +15555,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       1
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 153,
     "printedPage": 148,
     "updatedAt": "2026-11-03",
@@ -15634,7 +15634,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       1,
       8
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 154,
     "printedPage": 149,
     "updatedAt": "2026-11-03",
@@ -15713,7 +15713,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       1,
       8
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 154,
     "printedPage": 149,
     "updatedAt": "2026-11-03",
@@ -15792,7 +15792,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       1,
       8
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 155,
     "printedPage": 150,
     "updatedAt": "2026-11-03",
@@ -15870,7 +15870,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       1
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 155,
     "printedPage": 150,
     "updatedAt": "2026-11-03",
@@ -15948,7 +15948,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       1
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 155,
     "printedPage": 150,
     "updatedAt": "2026-11-03",
@@ -16027,7 +16027,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       1,
       8
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 156,
     "printedPage": 151,
     "updatedAt": "2026-11-03",
@@ -16105,7 +16105,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       1
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 156,
     "printedPage": 151,
     "updatedAt": "2026-11-03",
@@ -16183,7 +16183,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       1
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 157,
     "printedPage": 152,
     "updatedAt": "2026-11-03",
@@ -16261,7 +16261,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       1
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 157,
     "printedPage": 152,
     "updatedAt": "2026-11-03",
@@ -16339,7 +16339,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       1
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 157,
     "printedPage": 152,
     "updatedAt": "2026-11-03",
@@ -16417,7 +16417,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       1
     ],
-    "workCategory": "road",
+    "workCategory": "road_concrete",
     "pdfPage": 158,
     "printedPage": 153,
     "updatedAt": "2026-11-03",
@@ -16495,7 +16495,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       1
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 158,
     "printedPage": 153,
     "updatedAt": "2026-11-03",
@@ -16574,7 +16574,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       2,
       6
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 159,
     "printedPage": 154,
     "updatedAt": "2026-11-03",
@@ -16653,7 +16653,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       2,
       6
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 160,
     "printedPage": 155,
     "updatedAt": "2026-11-03",
@@ -16732,7 +16732,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       2,
       6
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 160,
     "printedPage": 155,
     "updatedAt": "2026-11-03",
@@ -16810,7 +16810,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       2
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 161,
     "printedPage": 156,
     "updatedAt": "2026-11-03",
@@ -16889,7 +16889,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       2,
       6
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 161,
     "printedPage": 156,
     "updatedAt": "2026-11-03",
@@ -16967,7 +16967,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       2
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 162,
     "printedPage": 157,
     "updatedAt": "2026-11-03",
@@ -17046,7 +17046,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       2,
       6
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 162,
     "printedPage": 157,
     "updatedAt": "2026-11-03",
@@ -17125,7 +17125,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       2,
       6
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 163,
     "printedPage": 158,
     "updatedAt": "2026-11-03",
@@ -17204,7 +17204,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       2,
       6
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 163,
     "printedPage": 158,
     "updatedAt": "2026-11-03",
@@ -17283,7 +17283,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       2,
       6
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 164,
     "printedPage": 159,
     "updatedAt": "2026-11-03",
@@ -17362,7 +17362,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       2,
       6
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 164,
     "printedPage": 159,
     "updatedAt": "2026-11-03",
@@ -17441,7 +17441,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       2,
       6
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 164,
     "printedPage": 159,
     "updatedAt": "2026-11-03",
@@ -17520,7 +17520,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       2,
       6
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 165,
     "printedPage": 160,
     "updatedAt": "2026-11-03",
@@ -17599,7 +17599,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       2,
       6
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 165,
     "printedPage": 160,
     "updatedAt": "2026-11-03",
@@ -17677,7 +17677,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       2
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 165,
     "printedPage": 160,
     "updatedAt": "2026-11-03",
@@ -17755,7 +17755,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       2
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 166,
     "printedPage": 161,
     "updatedAt": "2026-11-03",
@@ -17833,7 +17833,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       2
     ],
-    "workCategory": "road",
+    "workCategory": "road_concrete",
     "pdfPage": 166,
     "printedPage": 161,
     "updatedAt": "2026-11-03",
@@ -17911,7 +17911,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       2
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 167,
     "printedPage": 162,
     "updatedAt": "2026-11-03",
@@ -17989,7 +17989,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       2
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 168,
     "printedPage": 163,
     "updatedAt": "2026-11-03",
@@ -18067,7 +18067,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       2
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 169,
     "printedPage": 164,
     "updatedAt": "2026-11-03",
@@ -18145,7 +18145,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       3
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 169,
     "printedPage": 164,
     "updatedAt": "2026-11-03",
@@ -18223,7 +18223,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       3
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 170,
     "printedPage": 165,
     "updatedAt": "2026-11-03",
@@ -18301,7 +18301,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       3
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 170,
     "printedPage": 165,
     "updatedAt": "2026-11-03",
@@ -18379,7 +18379,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       3
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 171,
     "printedPage": 166,
     "updatedAt": "2026-11-03",
@@ -18457,7 +18457,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       3
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 171,
     "printedPage": 166,
     "updatedAt": "2026-11-03",
@@ -18535,7 +18535,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       3
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 172,
     "printedPage": 167,
     "updatedAt": "2026-11-03",
@@ -18613,7 +18613,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       3
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 172,
     "printedPage": 167,
     "updatedAt": "2026-11-03",
@@ -18691,7 +18691,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       3
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 173,
     "printedPage": 168,
     "updatedAt": "2026-11-03",
@@ -18769,7 +18769,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       3
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 173,
     "printedPage": 168,
     "updatedAt": "2026-11-03",
@@ -18847,7 +18847,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       3
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 174,
     "printedPage": 169,
     "updatedAt": "2026-11-03",
@@ -18925,7 +18925,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       3
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 174,
     "printedPage": 169,
     "updatedAt": "2026-11-03",
@@ -19003,7 +19003,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       4
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 174,
     "printedPage": 169,
     "updatedAt": "2026-11-03",
@@ -19081,7 +19081,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       3
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 175,
     "printedPage": 170,
     "updatedAt": "2026-11-03",
@@ -19159,7 +19159,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       4
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 175,
     "printedPage": 170,
     "updatedAt": "2026-11-03",
@@ -19237,7 +19237,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       4
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 176,
     "printedPage": 171,
     "updatedAt": "2026-11-03",
@@ -19315,7 +19315,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       4
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 176,
     "printedPage": 171,
     "updatedAt": "2026-11-03",
@@ -19393,7 +19393,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       4
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 177,
     "printedPage": 172,
     "updatedAt": "2026-11-03",
@@ -19471,7 +19471,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       4
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 177,
     "printedPage": 172,
     "updatedAt": "2026-11-03",
@@ -19549,7 +19549,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       4
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 177,
     "printedPage": 172,
     "updatedAt": "2026-11-03",
@@ -19627,7 +19627,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       4
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 178,
     "printedPage": 173,
     "updatedAt": "2026-11-03",
@@ -19705,7 +19705,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       4
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 178,
     "printedPage": 173,
     "updatedAt": "2026-11-03",
@@ -19783,7 +19783,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       4
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 178,
     "printedPage": 173,
     "updatedAt": "2026-11-03",
@@ -19861,7 +19861,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       3
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 179,
     "printedPage": 174,
     "updatedAt": "2026-11-03",
@@ -19939,7 +19939,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       5
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 179,
     "printedPage": 174,
     "updatedAt": "2026-11-03",
@@ -20017,7 +20017,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       5
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 180,
     "printedPage": 175,
     "updatedAt": "2026-11-03",
@@ -20095,7 +20095,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       5
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 180,
     "printedPage": 175,
     "updatedAt": "2026-11-03",
@@ -20173,7 +20173,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       5
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 180,
     "printedPage": 175,
     "updatedAt": "2026-11-03",
@@ -20251,7 +20251,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       5
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 181,
     "printedPage": 176,
     "updatedAt": "2026-11-03",
@@ -20329,7 +20329,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       5
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 181,
     "printedPage": 176,
     "updatedAt": "2026-11-03",
@@ -20407,7 +20407,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       5
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 182,
     "printedPage": 177,
     "updatedAt": "2026-11-03",
@@ -20485,7 +20485,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       5
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 182,
     "printedPage": 177,
     "updatedAt": "2026-11-03",
@@ -20563,7 +20563,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       5
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 182,
     "printedPage": 177,
     "updatedAt": "2026-11-03",
@@ -20641,7 +20641,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       5
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 183,
     "printedPage": 178,
     "updatedAt": "2026-11-03",
@@ -20719,7 +20719,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       5
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 183,
     "printedPage": 178,
     "updatedAt": "2026-11-03",
@@ -20798,7 +20798,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       2,
       6
     ],
-    "workCategory": "road",
+    "workCategory": "water",
     "pdfPage": 184,
     "printedPage": 179,
     "updatedAt": "2026-11-03",
@@ -20877,7 +20877,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       2,
       6
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 184,
     "printedPage": 179,
     "updatedAt": "2026-11-03",
@@ -20956,7 +20956,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       2,
       6
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 185,
     "printedPage": 180,
     "updatedAt": "2026-11-03",
@@ -21034,7 +21034,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       6
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 185,
     "printedPage": 180,
     "updatedAt": "2026-11-03",
@@ -21113,7 +21113,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       1,
       6
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 186,
     "printedPage": 181,
     "updatedAt": "2026-11-03",
@@ -21191,7 +21191,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       6
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 186,
     "printedPage": 181,
     "updatedAt": "2026-11-03",
@@ -21269,7 +21269,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       6
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 187,
     "printedPage": 182,
     "updatedAt": "2026-11-03",
@@ -21348,7 +21348,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       2,
       6
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 187,
     "printedPage": 182,
     "updatedAt": "2026-11-03",
@@ -21426,7 +21426,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       6
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 188,
     "printedPage": 183,
     "updatedAt": "2026-11-03",
@@ -21504,7 +21504,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       6
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 188,
     "printedPage": 183,
     "updatedAt": "2026-11-03",
@@ -21582,7 +21582,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       6
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 188,
     "printedPage": 183,
     "updatedAt": "2026-11-03",
@@ -21660,7 +21660,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       7
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 189,
     "printedPage": 184,
     "updatedAt": "2026-11-03",
@@ -21738,7 +21738,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       7
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 189,
     "printedPage": 184,
     "updatedAt": "2026-11-03",
@@ -21816,7 +21816,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       7
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 190,
     "printedPage": 185,
     "updatedAt": "2026-11-03",
@@ -21894,7 +21894,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       7
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 190,
     "printedPage": 185,
     "updatedAt": "2026-11-03",
@@ -21972,7 +21972,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       7
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 190,
     "printedPage": 185,
     "updatedAt": "2026-11-03",
@@ -22050,7 +22050,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       7
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 191,
     "printedPage": 186,
     "updatedAt": "2026-11-03",
@@ -22128,7 +22128,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       7
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 191,
     "printedPage": 186,
     "updatedAt": "2026-11-03",
@@ -22206,7 +22206,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       7
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 191,
     "printedPage": 186,
     "updatedAt": "2026-11-03",
@@ -22284,7 +22284,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       7
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 192,
     "printedPage": 187,
     "updatedAt": "2026-11-03",
@@ -22362,7 +22362,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       7
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 192,
     "printedPage": 187,
     "updatedAt": "2026-11-03",
@@ -22440,7 +22440,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       7
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 193,
     "printedPage": 188,
     "updatedAt": "2026-11-03",
@@ -22518,7 +22518,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       7
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 193,
     "printedPage": 188,
     "updatedAt": "2026-11-03",
@@ -22596,7 +22596,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       7
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 193,
     "printedPage": 188,
     "updatedAt": "2026-11-03",
@@ -22674,7 +22674,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       7
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 194,
     "printedPage": 189,
     "updatedAt": "2026-11-03",
@@ -22752,7 +22752,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       8
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 194,
     "printedPage": 189,
     "updatedAt": "2026-11-03",
@@ -22830,7 +22830,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       8
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 195,
     "printedPage": 190,
     "updatedAt": "2026-11-03",
@@ -22908,7 +22908,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       3
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 195,
     "printedPage": 190,
     "updatedAt": "2026-11-03",
@@ -22986,7 +22986,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       8
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 196,
     "printedPage": 191,
     "updatedAt": "2026-11-03",
@@ -23064,7 +23064,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       8
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 196,
     "printedPage": 191,
     "updatedAt": "2026-11-03",
@@ -23142,7 +23142,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       8
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 197,
     "printedPage": 192,
     "updatedAt": "2026-11-03",
@@ -23221,7 +23221,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       1,
       8
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 198,
     "printedPage": 193,
     "updatedAt": "2026-11-03",
@@ -23300,7 +23300,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       1,
       8
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 198,
     "printedPage": 193,
     "updatedAt": "2026-11-03",
@@ -23378,7 +23378,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       8
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 199,
     "printedPage": 194,
     "updatedAt": "2026-11-03",
@@ -23456,7 +23456,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       8
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 199,
     "printedPage": 194,
     "updatedAt": "2026-11-03",
@@ -23534,7 +23534,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       8
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 199,
     "printedPage": 194,
     "updatedAt": "2026-11-03",
@@ -24370,7 +24370,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "social",
+    "workCategory": "equipment",
     "pdfPage": 203,
     "printedPage": 198,
     "updatedAt": "2026-11-03",
@@ -24710,7 +24710,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "agriculture",
+    "workCategory": "social",
     "pdfPage": 207,
     "printedPage": 202,
     "updatedAt": "2026-11-03",
@@ -24880,7 +24880,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "agriculture",
+    "workCategory": "social",
     "pdfPage": 207,
     "printedPage": 202,
     "updatedAt": "2026-11-03",
@@ -25135,7 +25135,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "social",
+    "workCategory": "other",
     "pdfPage": 209,
     "printedPage": 204,
     "updatedAt": "2026-11-03",
@@ -25475,7 +25475,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "building",
+    "workCategory": "social",
     "pdfPage": 210,
     "printedPage": 205,
     "updatedAt": "2026-11-03",
@@ -25560,7 +25560,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "building",
+    "workCategory": "social",
     "pdfPage": 211,
     "printedPage": 206,
     "updatedAt": "2026-11-03",
@@ -25985,7 +25985,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "social",
+    "workCategory": "equipment",
     "pdfPage": 213,
     "printedPage": 208,
     "updatedAt": "2026-11-03",
@@ -26070,7 +26070,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "social",
+    "workCategory": "equipment",
     "pdfPage": 213,
     "printedPage": 208,
     "updatedAt": "2026-11-03",
@@ -27005,7 +27005,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "social",
     "pdfPage": 217,
     "printedPage": 212,
     "updatedAt": "2026-11-03",
@@ -27090,7 +27090,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "social",
     "pdfPage": 217,
     "printedPage": 212,
     "updatedAt": "2026-11-03",
@@ -27260,7 +27260,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "social",
     "pdfPage": 218,
     "printedPage": 213,
     "updatedAt": "2026-11-03",
@@ -27345,7 +27345,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "social",
     "pdfPage": 218,
     "printedPage": 213,
     "updatedAt": "2026-11-03",
@@ -27430,7 +27430,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "social",
     "pdfPage": 219,
     "printedPage": 214,
     "updatedAt": "2026-11-03",
@@ -27515,7 +27515,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "social",
     "pdfPage": 219,
     "printedPage": 214,
     "updatedAt": "2026-11-03",
@@ -27600,7 +27600,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "social",
     "pdfPage": 219,
     "printedPage": 214,
     "updatedAt": "2026-11-03",
@@ -27685,7 +27685,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "social",
     "pdfPage": 220,
     "printedPage": 215,
     "updatedAt": "2026-11-03",
@@ -27770,7 +27770,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "social",
     "pdfPage": 220,
     "printedPage": 215,
     "updatedAt": "2026-11-03",
@@ -27855,7 +27855,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "building",
+    "workCategory": "social",
     "pdfPage": 221,
     "printedPage": 216,
     "updatedAt": "2026-11-03",
@@ -27940,7 +27940,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "social",
     "pdfPage": 221,
     "printedPage": 216,
     "updatedAt": "2026-11-03",
@@ -28025,7 +28025,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "social",
     "pdfPage": 222,
     "printedPage": 217,
     "updatedAt": "2026-11-03",
@@ -28110,7 +28110,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "building",
     "pdfPage": 222,
     "printedPage": 217,
     "updatedAt": "2026-11-03",
@@ -28195,7 +28195,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "road",
+    "workCategory": "social",
     "pdfPage": 222,
     "printedPage": 217,
     "updatedAt": "2026-11-03",
@@ -28535,7 +28535,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "social",
     "pdfPage": 224,
     "printedPage": 219,
     "updatedAt": "2026-11-03",
@@ -28705,7 +28705,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "equipment",
     "pdfPage": 226,
     "printedPage": 221,
     "updatedAt": "2026-11-03",
@@ -29555,7 +29555,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "social",
     "pdfPage": 229,
     "printedPage": 224,
     "updatedAt": "2026-11-03",
@@ -29640,7 +29640,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "social",
     "pdfPage": 229,
     "printedPage": 224,
     "updatedAt": "2026-11-03",
@@ -29725,7 +29725,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "social",
     "pdfPage": 230,
     "printedPage": 225,
     "updatedAt": "2026-11-03",
@@ -29810,7 +29810,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "building",
+    "workCategory": "social",
     "pdfPage": 230,
     "printedPage": 225,
     "updatedAt": "2026-11-03",
@@ -29895,7 +29895,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "social",
     "pdfPage": 231,
     "printedPage": 226,
     "updatedAt": "2026-11-03",
@@ -29980,7 +29980,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "social",
     "pdfPage": 231,
     "printedPage": 226,
     "updatedAt": "2026-11-03",
@@ -30065,7 +30065,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "social",
     "pdfPage": 231,
     "printedPage": 226,
     "updatedAt": "2026-11-03",
@@ -30150,7 +30150,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "electric",
+    "workCategory": "social",
     "pdfPage": 232,
     "printedPage": 227,
     "updatedAt": "2026-11-03",
@@ -30235,7 +30235,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "building",
+    "workCategory": "social",
     "pdfPage": 232,
     "printedPage": 227,
     "updatedAt": "2026-11-03",
@@ -30320,7 +30320,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "social",
     "pdfPage": 232,
     "printedPage": 227,
     "updatedAt": "2026-11-03",
@@ -30405,7 +30405,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "social",
     "pdfPage": 233,
     "printedPage": 228,
     "updatedAt": "2026-11-03",
@@ -30490,7 +30490,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "electric",
     "pdfPage": 233,
     "printedPage": 228,
     "updatedAt": "2026-11-03",
@@ -30575,7 +30575,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "social",
     "pdfPage": 233,
     "printedPage": 228,
     "updatedAt": "2026-11-03",
@@ -30660,7 +30660,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "electric",
     "pdfPage": 234,
     "printedPage": 229,
     "updatedAt": "2026-11-03",
@@ -30745,7 +30745,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "social",
     "pdfPage": 234,
     "printedPage": 229,
     "updatedAt": "2026-11-03",
@@ -30830,7 +30830,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "water",
     "pdfPage": 234,
     "printedPage": 229,
     "updatedAt": "2026-11-03",
@@ -30915,7 +30915,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "water",
     "pdfPage": 235,
     "printedPage": 230,
     "updatedAt": "2026-11-03",
@@ -31000,7 +31000,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "social",
     "pdfPage": 235,
     "printedPage": 230,
     "updatedAt": "2026-11-03",
@@ -31085,7 +31085,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "social",
     "pdfPage": 236,
     "printedPage": 231,
     "updatedAt": "2026-11-03",
@@ -31170,7 +31170,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "social",
     "pdfPage": 237,
     "printedPage": 232,
     "updatedAt": "2026-11-03",
@@ -31255,7 +31255,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "social",
     "pdfPage": 237,
     "printedPage": 232,
     "updatedAt": "2026-11-03",
@@ -31340,7 +31340,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "agriculture",
     "pdfPage": 238,
     "printedPage": 233,
     "updatedAt": "2026-11-03",
@@ -31425,7 +31425,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "electric",
+    "workCategory": "equipment",
     "pdfPage": 239,
     "printedPage": 234,
     "updatedAt": "2026-11-03",
@@ -31510,7 +31510,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "equipment",
     "pdfPage": 239,
     "printedPage": 234,
     "updatedAt": "2026-11-03",
@@ -31680,7 +31680,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "equipment",
     "pdfPage": 240,
     "printedPage": 235,
     "updatedAt": "2026-11-03",
@@ -31850,7 +31850,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "agriculture",
+    "workCategory": "building",
     "pdfPage": 241,
     "printedPage": 236,
     "updatedAt": "2026-11-03",
@@ -31935,7 +31935,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "road",
+    "workCategory": "building",
     "pdfPage": 241,
     "printedPage": 236,
     "updatedAt": "2026-11-03",
@@ -32955,7 +32955,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "water",
+    "workCategory": "building",
     "pdfPage": 246,
     "printedPage": 241,
     "updatedAt": "2026-11-03",
@@ -33040,7 +33040,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "agriculture",
+    "workCategory": "social",
     "pdfPage": 246,
     "printedPage": 241,
     "updatedAt": "2026-11-03",
@@ -33956,7 +33956,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       1
     ],
-    "workCategory": "road",
+    "workCategory": "road_gravel",
     "pdfPage": 11,
     "printedPage": 10,
     "updatedAt": "2026-11-03",
@@ -34041,7 +34041,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 18,
     "printedPage": 17,
     "updatedAt": "2026-11-03",
@@ -34275,7 +34275,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       2
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 19,
     "printedPage": 18,
     "updatedAt": "2026-11-03",
@@ -34353,7 +34353,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       2
     ],
-    "workCategory": "road",
+    "workCategory": "road_gravel",
     "pdfPage": 12,
     "printedPage": 11,
     "updatedAt": "2026-11-03",
@@ -34431,7 +34431,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       2
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 19,
     "printedPage": 18,
     "updatedAt": "2026-11-03",
@@ -34509,7 +34509,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       2
     ],
-    "workCategory": "road",
+    "workCategory": "road_gravel",
     "pdfPage": 12,
     "printedPage": 11,
     "updatedAt": "2026-11-03",
@@ -34587,7 +34587,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       2
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 20,
     "printedPage": 19,
     "updatedAt": "2026-11-03",
@@ -34665,7 +34665,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       2
     ],
-    "workCategory": "road",
+    "workCategory": "road_concrete",
     "pdfPage": 12,
     "printedPage": 11,
     "updatedAt": "2026-11-03",
@@ -34743,7 +34743,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       3
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 20,
     "printedPage": 19,
     "updatedAt": "2026-11-03",
@@ -34821,7 +34821,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       2
     ],
-    "workCategory": "road",
+    "workCategory": "road_gravel",
     "pdfPage": 13,
     "printedPage": 12,
     "updatedAt": "2026-11-03",
@@ -34900,7 +34900,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       3,
       4
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 21,
     "printedPage": 20,
     "updatedAt": "2026-11-03",
@@ -34978,7 +34978,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       3
     ],
-    "workCategory": "road",
+    "workCategory": "road_gravel",
     "pdfPage": 13,
     "printedPage": 12,
     "updatedAt": "2026-11-03",
@@ -35056,7 +35056,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       5
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 21,
     "printedPage": 20,
     "updatedAt": "2026-11-03",
@@ -35134,7 +35134,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       3
     ],
-    "workCategory": "road",
+    "workCategory": "road_gravel",
     "pdfPage": 14,
     "printedPage": 13,
     "updatedAt": "2026-11-03",
@@ -35212,7 +35212,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       3
     ],
-    "workCategory": "road",
+    "workCategory": "road_gravel",
     "pdfPage": 14,
     "printedPage": 13,
     "updatedAt": "2026-11-03",
@@ -35290,7 +35290,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       3
     ],
-    "workCategory": "road",
+    "workCategory": "road_gravel",
     "pdfPage": 14,
     "printedPage": 13,
     "updatedAt": "2026-11-03",
@@ -35524,7 +35524,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       6
     ],
-    "workCategory": "road",
+    "workCategory": "road_gravel",
     "pdfPage": 15,
     "printedPage": 14,
     "updatedAt": "2026-11-03",
@@ -35602,7 +35602,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       7
     ],
-    "workCategory": "road",
+    "workCategory": "road_concrete",
     "pdfPage": 15,
     "printedPage": 14,
     "updatedAt": "2026-11-03",
@@ -35680,7 +35680,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       8
     ],
-    "workCategory": "road",
+    "workCategory": "road_gravel",
     "pdfPage": 16,
     "printedPage": 15,
     "updatedAt": "2026-11-03",
@@ -35838,7 +35838,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       4,
       7
     ],
-    "workCategory": "social",
+    "workCategory": "agriculture",
     "pdfPage": 6,
     "printedPage": 5,
     "updatedAt": "2026-11-03",
@@ -36002,7 +36002,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "electric",
+    "workCategory": "social",
     "pdfPage": 8,
     "printedPage": 7,
     "updatedAt": "2026-11-03",
@@ -36087,7 +36087,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "social",
+    "workCategory": "equipment",
     "pdfPage": 27,
     "printedPage": 26,
     "updatedAt": "2026-11-03",
@@ -36172,7 +36172,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "building",
+    "workCategory": "social",
     "pdfPage": 7,
     "printedPage": 6,
     "updatedAt": "2026-11-03",
@@ -36257,7 +36257,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "building",
+    "workCategory": "social",
     "pdfPage": 7,
     "printedPage": 6,
     "updatedAt": "2026-11-03",
@@ -36597,7 +36597,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "equipment",
     "pdfPage": 24,
     "printedPage": 23,
     "updatedAt": "2026-11-03",
@@ -36682,7 +36682,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "equipment",
     "pdfPage": 24,
     "printedPage": 23,
     "updatedAt": "2026-11-03",
@@ -36767,7 +36767,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "building",
     "pdfPage": 25,
     "printedPage": 24,
     "updatedAt": "2026-11-03",
@@ -36852,7 +36852,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "building",
     "pdfPage": 25,
     "printedPage": 24,
     "updatedAt": "2026-11-03",
@@ -36937,7 +36937,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "building",
     "pdfPage": 25,
     "printedPage": 24,
     "updatedAt": "2026-11-03",
@@ -37022,7 +37022,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "equipment",
     "pdfPage": 26,
     "printedPage": 25,
     "updatedAt": "2026-11-03",
@@ -37107,7 +37107,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "equipment",
     "pdfPage": 26,
     "printedPage": 25,
     "updatedAt": "2026-11-03",
@@ -37192,7 +37192,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "building",
     "pdfPage": 25,
     "printedPage": 24,
     "updatedAt": "2026-11-03",
@@ -37277,7 +37277,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "building",
     "pdfPage": 25,
     "printedPage": 24,
     "updatedAt": "2026-11-03",
@@ -37362,7 +37362,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "equipment",
     "pdfPage": 26,
     "printedPage": 25,
     "updatedAt": "2026-11-03",
@@ -37447,7 +37447,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "equipment",
     "pdfPage": 26,
     "printedPage": 25,
     "updatedAt": "2026-11-03",
@@ -37532,7 +37532,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "social",
+    "workCategory": "building",
     "pdfPage": 25,
     "printedPage": 24,
     "updatedAt": "2026-11-03",
@@ -37617,7 +37617,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "equipment",
     "pdfPage": 26,
     "printedPage": 25,
     "updatedAt": "2026-11-03",
@@ -37702,7 +37702,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "building",
     "pdfPage": 25,
     "printedPage": 24,
     "updatedAt": "2026-11-03",
@@ -37780,7 +37780,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       3
     ],
-    "workCategory": "road",
+    "workCategory": "road_concrete",
     "pdfPage": 7,
     "printedPage": 4,
     "updatedAt": "2026-11-03",
@@ -38357,7 +38357,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "social",
+    "workCategory": "equipment",
     "pdfPage": 22,
     "printedPage": 19,
     "updatedAt": "2026-11-03",
@@ -38442,7 +38442,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "social",
+    "workCategory": "equipment",
     "pdfPage": 22,
     "printedPage": 19,
     "updatedAt": "2026-11-03",
@@ -38782,7 +38782,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "social",
     "pdfPage": 12,
     "printedPage": 9,
     "updatedAt": "2026-11-03",
@@ -38867,7 +38867,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "building",
+    "workCategory": "social",
     "pdfPage": 13,
     "printedPage": 10,
     "updatedAt": "2026-11-03",
@@ -38952,7 +38952,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "water",
     "pdfPage": 14,
     "printedPage": 11,
     "updatedAt": "2026-11-03",
@@ -39037,7 +39037,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "agriculture",
     "pdfPage": 15,
     "printedPage": 12,
     "updatedAt": "2026-11-03",
@@ -39122,7 +39122,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "social",
     "pdfPage": 16,
     "printedPage": 13,
     "updatedAt": "2026-11-03",
@@ -39207,7 +39207,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "water",
     "pdfPage": 17,
     "printedPage": 14,
     "updatedAt": "2026-11-03",
@@ -39292,7 +39292,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "social",
     "pdfPage": 17,
     "printedPage": 14,
     "updatedAt": "2026-11-03",
@@ -39377,7 +39377,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "social",
     "pdfPage": 18,
     "printedPage": 15,
     "updatedAt": "2026-11-03",
@@ -39462,7 +39462,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "social",
     "pdfPage": 19,
     "printedPage": 16,
     "updatedAt": "2026-11-03",
@@ -39632,7 +39632,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "building",
     "pdfPage": 21,
     "printedPage": 18,
     "updatedAt": "2026-11-03",
@@ -39717,7 +39717,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "building",
     "pdfPage": 21,
     "printedPage": 18,
     "updatedAt": "2026-11-03",
@@ -39802,7 +39802,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "equipment",
     "pdfPage": 21,
     "printedPage": 18,
     "updatedAt": "2026-11-03",
@@ -39887,7 +39887,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "equipment",
     "pdfPage": 22,
     "printedPage": 19,
     "updatedAt": "2026-11-03",
@@ -39972,7 +39972,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "equipment",
     "pdfPage": 23,
     "printedPage": 20,
     "updatedAt": "2026-11-03",
@@ -40057,7 +40057,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "social",
     "pdfPage": 6,
     "printedPage": 5,
     "updatedAt": "2026-11-03",
@@ -40145,7 +40145,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       4,
       7
     ],
-    "workCategory": "social",
+    "workCategory": "agriculture",
     "pdfPage": 11,
     "printedPage": 8,
     "updatedAt": "2026-11-03",
@@ -40454,7 +40454,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "social",
     "pdfPage": 15,
     "printedPage": 12,
     "updatedAt": "2026-11-03",
@@ -40550,7 +40550,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
     "villages": [
       7
     ],
-    "workCategory": "road",
+    "workCategory": "road_asphalt",
     "pdfPage": 7,
     "printedPage": 5,
     "updatedAt": "2026-11-03",
@@ -40843,7 +40843,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "building",
     "pdfPage": 5,
     "printedPage": 4,
     "updatedAt": "2026-11-03",
@@ -40938,7 +40938,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "social",
+    "workCategory": "building",
     "pdfPage": 5,
     "printedPage": 1,
     "updatedAt": "2026-11-03",
@@ -41033,7 +41033,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "building",
     "pdfPage": 6,
     "printedPage": 2,
     "updatedAt": "2026-11-03",
@@ -41128,7 +41128,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "building",
     "pdfPage": 6,
     "printedPage": 2,
     "updatedAt": "2026-11-03",
@@ -41318,7 +41318,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "building",
+    "workCategory": "social",
     "pdfPage": 7,
     "printedPage": 4,
     "updatedAt": "2026-11-03",
@@ -41421,7 +41421,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "building",
     "pdfPage": 8,
     "printedPage": 5,
     "updatedAt": "2026-11-03",
@@ -41516,7 +41516,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "other",
+    "workCategory": "social",
     "pdfPage": 5,
     "printedPage": 4,
     "updatedAt": "2026-11-03",
@@ -41611,7 +41611,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       7,
       8
     ],
-    "workCategory": "road",
+    "workCategory": "electric",
     "pdfPage": 6,
     "printedPage": 4,
     "updatedAt": "2026-11-03",
@@ -41707,7 +41707,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       "villages": [
         3
       ],
-      "workCategory": "road",
+      "workCategory": "road_gravel",
       "pdfPage": 6,
       "printedPage": 3,
       "updatedAt": "2026-11-03",
@@ -41795,7 +41795,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       "villages": [
         4
       ],
-      "workCategory": "road",
+      "workCategory": "road_gravel",
       "pdfPage": 7,
       "printedPage": 4,
       "updatedAt": "2026-11-03",
@@ -41883,7 +41883,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       "villages": [
         5
       ],
-      "workCategory": "road",
+      "workCategory": "road_gravel",
       "pdfPage": 8,
       "printedPage": 5,
       "updatedAt": "2026-11-03",
@@ -41971,7 +41971,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       "villages": [
         6
       ],
-      "workCategory": "road",
+      "workCategory": "road_gravel",
       "pdfPage": 9,
       "printedPage": 6,
       "updatedAt": "2026-11-03",
@@ -42059,7 +42059,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       "villages": [
         7
       ],
-      "workCategory": "road",
+      "workCategory": "road_gravel",
       "pdfPage": 10,
       "printedPage": 7,
       "updatedAt": "2026-11-03",
@@ -42147,7 +42147,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
       "villages": [
         8
       ],
-      "workCategory": "road",
+      "workCategory": "road_gravel",
       "pdfPage": 11,
       "printedPage": 8,
       "updatedAt": "2026-11-03",
@@ -42242,7 +42242,7 @@ export const INITIAL_PLAN_PROJECTS: LocalPlanProject[] = [
         7,
         8
       ],
-      "workCategory": "social",
+      "workCategory": "building",
       "pdfPage": 12,
       "printedPage": 9,
       "updatedAt": "2026-11-03",

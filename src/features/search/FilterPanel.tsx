@@ -35,6 +35,7 @@ interface FilterPanelProps {
   onReset: () => void;
   hasActiveFilters: boolean;
   projectCountsByDoc?: Record<string, number>;
+  categoryCounts?: Record<string, number>;
   viewMode?: ProjectViewMode;
   onViewModeChange?: (mode: ProjectViewMode) => void;
 }
@@ -88,6 +89,7 @@ export function FilterPanel({
   onReset,
   hasActiveFilters,
   projectCountsByDoc = {},
+  categoryCounts = {},
   viewMode = 'card',
   onViewModeChange,
 }: FilterPanelProps) {
@@ -578,6 +580,51 @@ export function FilterPanel({
         )}
       </div>
 
+      {/* Quick Work Category Filter Bar */}
+      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden pt-2 border-t border-slate-100 dark:border-slate-800/80">
+        <span className="text-[11px] font-bold text-slate-400 dark:text-slate-500 shrink-0 mr-1">
+          หมวดงาน:
+        </span>
+        <button
+          type="button"
+          onClick={() => onSelectCategory(null)}
+          className={`px-2.5 py-1 rounded-lg text-xs font-semibold whitespace-nowrap transition-all shrink-0 cursor-pointer ${
+            selectedCategory === null
+              ? 'bg-sky-600 text-white shadow-xs'
+              : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+          }`}
+        >
+          ทั้งหมด
+        </button>
+        {WORK_CATEGORIES.map((cat) => {
+          const isSelected = selectedCategory === cat.key;
+          const count = categoryCounts[cat.key];
+          return (
+            <button
+              key={cat.key}
+              type="button"
+              onClick={() => onSelectCategory(isSelected ? null : cat.key)}
+              className={`px-2.5 py-1 rounded-lg text-xs font-semibold whitespace-nowrap transition-all shrink-0 cursor-pointer ${
+                isSelected
+                  ? 'bg-sky-600 text-white shadow-xs'
+                  : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+              }`}
+            >
+              <span>{cat.label}</span>
+              {count !== undefined && (
+                <span
+                  className={`ml-1 font-mono text-[10.5px] ${
+                    isSelected ? 'text-sky-100' : 'text-slate-400 dark:text-slate-500'
+                  }`}
+                >
+                  ({count})
+                </span>
+              )}
+            </button>
+          );
+        })}
+      </div>
+
       {/* Active Advanced Filter Chips (When drawer is closed but filters are active) */}
       {!advancedOpen && activeAdvancedCount > 0 && (
         <div className="flex flex-wrap items-center gap-1.5 pt-1 border-t border-slate-100 dark:border-slate-800/80">
@@ -650,10 +697,10 @@ export function FilterPanel({
               }
               className="w-full px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 text-slate-800 dark:text-slate-200 font-medium outline-none focus:border-sky-500"
             >
-              <option value="">ทุกประเภทงาน</option>
+              <option value="">ทุกประเภทงาน (ทั้งหมด {categoryCounts['all'] || Object.values(categoryCounts).reduce((a, b) => a + b, 0) || 522} โครงการ)</option>
               {WORK_CATEGORIES.map((c) => (
                 <option key={c.key} value={c.key}>
-                  {c.label}
+                  {c.label} {categoryCounts[c.key] ? `(${categoryCounts[c.key]})` : ''}
                 </option>
               ))}
             </select>

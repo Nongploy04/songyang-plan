@@ -192,6 +192,16 @@ export default function PlanHomePage() {
     return map;
   }, [projects]);
 
+  // Project counts per work category
+  const categoryCounts = useMemo(() => {
+    const map: Record<string, number> = {};
+    for (const p of projects) {
+      const cat = p.workCategory || 'other';
+      map[cat] = (map[cat] || 0) + 1;
+    }
+    return map;
+  }, [projects]);
+
   // Filter & Search Logic
   const filteredProjects = useMemo(() => {
     const q = toArabic(query).toLowerCase().trim();
@@ -216,8 +226,12 @@ export default function PlanHomePage() {
         return false;
       }
 
-      if (selectedCategory !== null && p.workCategory !== selectedCategory) {
-        return false;
+      if (selectedCategory !== null) {
+        if (selectedCategory === 'road') {
+          if (!['road_asphalt', 'road_gravel', 'road_concrete'].includes(p.workCategory)) return false;
+        } else if (p.workCategory !== selectedCategory) {
+          return false;
+        }
       }
 
       if (selectedYear !== null) {
@@ -536,6 +550,7 @@ export default function PlanHomePage() {
             onReset={handleResetFilters}
             hasActiveFilters={hasActiveFilters}
             projectCountsByDoc={projectCountsByDoc}
+            categoryCounts={categoryCounts}
             viewMode={viewMode}
             onViewModeChange={handleViewModeChange}
           />
