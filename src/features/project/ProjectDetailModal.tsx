@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
-import { LocalPlanProject } from '../../domain/types.ts';
-import { toThai, formatCurrency } from '../../domain/thaiNumerals.ts';
+import React, { useState, useEffect } from 'react';
+import { type LocalPlanProject, getProjectFiscalYears } from '../../domain/types.ts';
+import { toArabic, formatCurrency } from '../../domain/thaiNumerals.ts';
 import { getVillageLabel } from '../../domain/villages.ts';
 import { generateOfficialCitation } from '../../domain/citation.ts';
 import {
@@ -10,53 +10,83 @@ import {
   IconPrint,
   IconCopy,
   IconCheck,
-  IconMapPin,
   IconFileText,
   IconCalendar,
 } from '../../components/icons/index.tsx';
 
 interface ProjectDetailModalProps {
   project: LocalPlanProject | null;
-  useThaiNumerals: boolean;
   onClose: () => void;
   onPrint: (p: LocalPlanProject) => void;
 }
 
 export function ProjectDetailModal({
   project,
-  useThaiNumerals,
   onClose,
   onPrint,
 }: ProjectDetailModalProps) {
   const [copied, setCopied] = useState(false);
 
+  useEffect(() => {
+    if (!project) return;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [project, onClose]);
+
   if (!project) return null;
 
-  const displaySeq = useThaiNumerals ? toThai(project.seq) : project.seq;
-  const displayPrintedPage = useThaiNumerals ? toThai(project.printedPage) : project.printedPage;
-  const displayPdfPage = useThaiNumerals ? toThai(project.pdfPage) : project.pdfPage;
-  const displayTotal = formatCurrency(project.totalBudget, useThaiNumerals);
+  const displaySeq = toArabic(project.seq);
+  const displayPrintedPage = toArabic(project.printedPage);
+  const displayPdfPage = toArabic(project.pdfPage);
+  const displayTotal = formatCurrency(project.totalBudget, false);
+  const cleanName = toArabic(project.name);
+  const cleanObjective = toArabic(project.objective);
+  const cleanTarget = toArabic(project.target);
+  const cleanExpected = toArabic(project.expectedResult);
+  const cleanAgency = toArabic(project.agency);
+  const cleanDocTitle = toArabic(project.documentTitle);
+  const cleanStrategyName = toArabic(project.strategyName);
 
   const officialCitation = generateOfficialCitation({
-    planTitle: project.documentTitle,
+    planTitle: cleanDocTitle,
     strategyNo: project.strategyNo,
     seq: project.seq,
-    printedPage: project.printedPage,
-    useThaiNumerals,
+    printedPage: displayPrintedPage,
+    useThaiNumerals: false,
   });
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(officialCitation);
+    try {
+      if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
+        navigator.clipboard.writeText(officialCitation).catch(() => {});
+      }
+    } catch {
+      // Ignore clipboard error
+    }
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const years = [2571, 2572, 2573, 2574, 2575];
+  const years = getProjectFiscalYears(project);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md animate-fade-in no-print">
+    <div
+      onClick={onClose}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md animate-fade-in no-print"
+    >
       <div
-        className="relative w-full max-w-2xl max-h-[90vh] flex flex-col rounded-3xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl border border-black/10 dark:border-white/15 shadow-2xl overflow-hidden"
+        className="relative w-full max-w-2xl max-h-[90vh] flex flex-col rounded-3xl bg-white/95 dark:bg-[#0c1222]/95 [backdrop-filter:blur(28px)_saturate(190%)] [-webkit-backdrop-filter:blur(28px)_saturate(190%)] border border-black/[0.08] dark:border-white/[0.12] shadow-2xl overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -71,10 +101,10 @@ export function ProjectDetailModal({
               </span>
             </div>
             <h2 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-slate-100 leading-snug">
-              {project.name}
+              {cleanName}
             </h2>
             <p className="text-xs text-slate-500 dark:text-slate-400">
-              {project.strategyName}
+              ประเด็นการพัฒนาที่ {project.strategyNo}: {cleanStrategyName}
             </p>
           </div>
 
@@ -127,7 +157,7 @@ export function ProjectDetailModal({
                 วัตถุประสงค์
               </h4>
               <p className="text-sm text-slate-800 dark:text-slate-200 leading-relaxed">
-                {project.objective}
+                {cleanObjective}
               </p>
             </div>
 
@@ -136,8 +166,8 @@ export function ProjectDetailModal({
                 <IconFileText className="w-4 h-4 text-sky-600" />
                 เป้าหมาย (ผลผลิตของโครงการ)
               </h4>
-              <p className="text-sm text-slate-800 dark:text-slate-200 leading-relaxed font-serif">
-                {project.target}
+              <p className="text-sm text-slate-800 dark:text-slate-200 leading-relaxed">
+                {cleanTarget}
               </p>
             </div>
           </div>
@@ -146,7 +176,7 @@ export function ProjectDetailModal({
           <div className="space-y-2">
             <h4 className="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
               <IconCalendar className="w-4 h-4 text-sky-600" />
-              งบประมาณรายปี (พ.ศ. ๒๕๗๑ - ๒๕๗๕)
+              งบประมาณรายปี (พ.ศ. {years[0]} - {years[years.length - 1]})
             </h4>
 
             <div className="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700">
@@ -155,21 +185,21 @@ export function ProjectDetailModal({
                   <tr>
                     {years.map((y) => (
                       <th key={y} className="p-2.5 text-center font-bold border-b border-slate-200 dark:border-slate-700">
-                        {useThaiNumerals ? toThai(y) : y}
+                        ปี {y}
                       </th>
                     ))}
                     <th className="p-2.5 text-center font-bold bg-sky-50 dark:bg-sky-950 text-sky-900 dark:text-sky-200 border-b border-slate-200 dark:border-slate-700">
-                      รวม ๕ ปี
+                      รวม 5 ปี
                     </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800 font-medium">
                   <tr>
                     {years.map((y) => {
-                      const amount = project.budgets[y as keyof typeof project.budgets];
+                      const amount = project.budgets[y];
                       return (
                         <td key={y} className="p-2.5 text-center text-slate-800 dark:text-slate-200">
-                          {formatCurrency(amount, useThaiNumerals)}
+                          {amount && amount > 0 ? formatCurrency(amount, false) : '-'}
                         </td>
                       );
                     })}
@@ -183,20 +213,27 @@ export function ProjectDetailModal({
           </div>
 
           {/* Meta Info: Village, Agency, Expected Result */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
             <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800">
               <span className="text-slate-400 block mb-0.5">สถานที่ / หมู่บ้าน</span>
               <span className="font-semibold text-slate-800 dark:text-slate-200">
-                {project.villages.length === 8
-                  ? 'ทุกหมู่บ้านในตำบลสงยาง'
+                {project.villages.length >= 8
+                  ? 'ทุกหมู่บ้านในตำบลสงยาง (ม.1 - ม.8)'
                   : project.villages.map((no) => getVillageLabel(no)).join(', ')}
+              </span>
+            </div>
+
+            <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800">
+              <span className="text-slate-400 block mb-0.5">ผลที่คาดว่าจะได้รับ</span>
+              <span className="font-semibold text-slate-800 dark:text-slate-200">
+                {cleanExpected}
               </span>
             </div>
 
             <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800">
               <span className="text-slate-400 block mb-0.5">หน่วยงานรับผิดชอบ</span>
               <span className="font-semibold text-slate-800 dark:text-slate-200">
-                {project.agency}
+                {cleanAgency}
               </span>
             </div>
           </div>
@@ -205,17 +242,24 @@ export function ProjectDetailModal({
         {/* Footer Actions */}
         <div className="p-4 sm:p-5 border-t border-slate-200 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-900/80 flex items-center justify-between gap-3">
           <div className="text-xs text-slate-500 dark:text-slate-400">
-            {project.documentTitle}
+            {cleanDocTitle}
           </div>
 
           <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            >
+              ปิดหน้าต่าง
+            </button>
             <button
               type="button"
               onClick={() => onPrint(project)}
               className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs sm:text-sm font-semibold shadow-xs hover:shadow-md transition-all"
             >
               <IconPrint className="w-4 h-4" />
-              <span>พิมพ์หน้านี้ (ผ.๐๒)</span>
+              <span>พิมพ์หน้านี้ (แบบ ผ.02)</span>
             </button>
           </div>
         </div>

@@ -1,16 +1,43 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { INITIAL_PLAN_PROJECTS } from '../data/initialProjects.ts';
-import { LocalPlanProject } from '../domain/types.ts';
-import { toArabic, toThai, formatCurrency } from '../domain/thaiNumerals.ts';
+import type { LocalPlanProject } from '../domain/types.ts';
+import { toArabic, formatCurrency } from '../domain/thaiNumerals.ts';
+import { getVillageLabel } from '../domain/villages.ts';
+import { PLAN_2571_2575_OFFICIAL_SUMMARY } from '../domain/documents.ts';
 import { SearchBar } from '../features/search/SearchBar.tsx';
 import { FilterPanel } from '../features/search/FilterPanel.tsx';
 import { ProjectCard } from '../features/project/ProjectCard.tsx';
 import { ProjectDetailModal } from '../features/project/ProjectDetailModal.tsx';
 import { PrintOfficialSheet } from '../features/project/PrintOfficialSheet.tsx';
+import { safeGetJson, safeSetJson } from '../lib/safeBrowserStorage.ts';
 import { formatBuildStamp } from '../lib/build-version.js';
-import { IconLayers, IconPrint } from '../components/icons/index.tsx';
+import { IconLayers, IconPrint, IconFileText } from '../components/icons/index.tsx';
+
+interface PersistedFilterPrefs {
+  documentId: string | null;
+  villageNo: number | null;
+  strategyNo: number | null;
+  workCategory: string | null;
+  fiscalYear: number | null;
+}
+
+const FILTER_CACHE_KEY = 'songyang_plan_filters_v2';
+
+function isValidFilterPrefs(val: unknown): val is PersistedFilterPrefs {
+  if (!val || typeof val !== 'object') return false;
+  const v = val as Record<string, unknown>;
+  const isStrOrNull = (x: unknown) => x === null || typeof x === 'string';
+  const isNumOrNull = (x: unknown) => x === null || (typeof x === 'number' && Number.isFinite(x));
+  return (
+    isStrOrNull(v.documentId) &&
+    isNumOrNull(v.villageNo) &&
+    isNumOrNull(v.strategyNo) &&
+    isStrOrNull(v.workCategory) &&
+    isNumOrNull(v.fiscalYear)
+  );
+}
 
 export default function PlanHomePage() {
   const [projects] = useState<LocalPlanProject[]>(INITIAL_PLAN_PROJECTS);
@@ -20,10 +47,71 @@ export default function PlanHomePage() {
   const [selectedStrategy, setSelectedStrategy] = useState<number | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedYear, setSelectedYear] = useState<number | null>(null);
-  const [useThaiNumerals, setUseThaiNumerals] = useState(false);
+  const [showSummaryTable, setShowSummaryTable] = useState<boolean>(false);
+  const [hydrated, setHydrated] = useState(false);
 
   const [activeProject, setActiveProject] = useState<LocalPlanProject | null>(null);
   const [printProject, setPrintProject] = useState<LocalPlanProject | null>(null);
+
+  // Hydrate filter state from Self-Healing Cache on mount
+  useEffect(() => {
+    const cached = safeGetJson<PersistedFilterPrefs>(
+      FILTER_CACHE_KEY,
+      isValidFilterPrefs,
+      {
+        documentId: null,
+        villageNo: null,
+        strategyNo: null,
+        workCategory: null,
+        fiscalYear: null,
+      }
+    );
+    setSelectedDocumentId(cached.documentId);
+    setSelectedVillage(cached.villageNo);
+    setSelectedStrategy(cached.strategyNo);
+    setSelectedCategory(cached.workCategory);
+    setSelectedYear(cached.fiscalYear);
+    setHydrated(true);
+  }, []);
+
+  // Save filter state to Self-Healing Cache on change
+  useEffect(() => {
+    if (!hydrated) return;
+    safeSetJson<PersistedFilterPrefs>(FILTER_CACHE_KEY, {
+      documentId: selectedDocumentId,
+      villageNo: selectedVillage,
+      strategyNo: selectedStrategy,
+      workCategory: selectedCategory,
+      fiscalYear: selectedYear,
+    });
+  }, [
+    hydrated,
+    selectedDocumentId,
+    selectedVillage,
+    selectedStrategy,
+    selectedCategory,
+    selectedYear,
+  ]);
+
+  // Clear single-project print state after printing finishes
+  useEffect(() => {
+    const handleAfterPrint = () => {
+      setPrintProject(null);
+    };
+    window.addEventListener('afterprint', handleAfterPrint);
+    return () => {
+      window.removeEventListener('afterprint', handleAfterPrint);
+    };
+  }, []);
+
+  // Project counts per document volume
+  const projectCountsByDoc = useMemo(() => {
+    const map: Record<string, number> = {};
+    for (const p of projects) {
+      map[p.documentId] = (map[p.documentId] || 0) + 1;
+    }
+    return map;
+  }, [projects]);
 
   // Filter & Search Logic
   const filteredProjects = useMemo(() => {
@@ -52,38 +140,49 @@ export default function PlanHomePage() {
 
       // Fiscal Year Filter
       if (selectedYear !== null) {
-        const amount = p.budgets[selectedYear as keyof typeof p.budgets];
+        const amount = p.budgets[selectedYear];
         if (!amount || amount <= 0) return false;
       }
 
-      // Query Search (matches project name, target, objective, seq, village, agency)
+      // Query Search (matches project name, target, objective, seq, village names, document title, agency)
       if (q) {
-        const normalizedName = toArabic(p.name).toLowerCase();
-        const normalizedTarget = toArabic(p.target).toLowerCase();
-        const normalizedObjective = toArabic(p.objective).toLowerCase();
-        const normalizedSeq = toArabic(p.seqRaw);
-        const normalizedAgency = toArabic(p.agency).toLowerCase();
+        const villageText = p.villages.map((no) => getVillageLabel(no)).join(' ').toLowerCase();
+        const searchable = [
+          toArabic(p.name),
+          toArabic(p.target),
+          toArabic(p.objective),
+          toArabic(p.agency),
+          toArabic(p.documentTitle),
+          toArabic(p.strategyName),
+          villageText,
+        ]
+          .join(' ')
+          .toLowerCase();
 
-        const match =
-          normalizedName.includes(q) ||
-          normalizedTarget.includes(q) ||
-          normalizedObjective.includes(q) ||
-          normalizedSeq === q ||
-          normalizedAgency.includes(q);
+        const normalizedSeq = toArabic(p.seqRaw || String(p.seq));
+        const match = searchable.includes(q) || normalizedSeq === q;
 
         if (!match) return false;
       }
 
       return true;
     });
-  }, [projects, query, selectedVillage, selectedStrategy, selectedCategory, selectedYear]);
+  }, [
+    projects,
+    query,
+    selectedDocumentId,
+    selectedVillage,
+    selectedStrategy,
+    selectedCategory,
+    selectedYear,
+  ]);
 
   // Aggregate stats
   const totalBudget = useMemo(() => {
     return filteredProjects.reduce((acc, curr) => acc + (curr.totalBudget || 0), 0);
   }, [filteredProjects]);
 
-  const totalBudgetFormatted = formatCurrency(totalBudget, useThaiNumerals);
+  const totalBudgetFormatted = formatCurrency(totalBudget, false);
 
   const hasActiveFilters =
     Boolean(query) ||
@@ -121,18 +220,18 @@ export default function PlanHomePage() {
       {/* On-screen Web UI */}
       <div className="no-print min-h-screen flex flex-col">
         {/* Top Header */}
-        <header className="sticky top-0 z-30 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+        <header className="sticky top-0 z-30 bg-white/95 dark:bg-[#0c1222]/95 [backdrop-filter:blur(28px)_saturate(190%)] [-webkit-backdrop-filter:blur(28px)_saturate(190%)] border-b border-black/[0.08] dark:border-white/[0.12]">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-2">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-sky-600 flex items-center justify-center text-white shadow-xs">
                 <IconLayers className="w-5 h-5 text-white" />
               </div>
               <div>
                 <h1 className="text-base sm:text-lg font-bold text-slate-900 dark:text-slate-100 leading-tight">
-                  แผนพัฒนาท้องถิ่น อบต.สงยาง
+                  ระบบสืบค้นแผนพัฒนาท้องถิ่น อบต.สงยาง
                 </h1>
                 <p className="text-2xs sm:text-xs text-slate-500 dark:text-slate-400">
-                  อบต.สงยาง อ.มหาชนะชัย จ.ยโสธร • ฉบับ พ.ศ. ๒๕๗๑ - ๒๕๗๕
+                  อบต.สงยาง อ.มหาชนะชัย จ.ยโสธร • สารบบแผนพัฒนาท้องถิ่น (พ.ศ. 2561 - 2575)
                 </p>
               </div>
             </div>
@@ -140,12 +239,26 @@ export default function PlanHomePage() {
             <div className="flex items-center gap-2">
               <button
                 type="button"
+                onClick={() => setShowSummaryTable((prev) => !prev)}
+                className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold border transition-colors ${
+                  showSummaryTable
+                    ? 'bg-sky-600 text-white border-sky-600'
+                    : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50'
+                }`}
+              >
+                <IconFileText className="w-4 h-4" />
+                <span className="hidden sm:inline">ตารางสรุปยอดแผน (แบบ ผ.01)</span>
+                <span className="sm:hidden">ผ.01</span>
+              </button>
+
+              <button
+                type="button"
                 onClick={handlePrintAllFiltered}
                 className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-semibold transition-colors"
-                title="พิมพ์รายการที่กรองทั้งหมดเป็นแบบ ผ.๐๒"
+                title="พิมพ์รายการที่กรองทั้งหมดเป็นแบบ ผ.02"
               >
                 <IconPrint className="w-4 h-4 text-sky-600" />
-                <span className="hidden sm:inline">พิมพ์ชุดข้อมูล (ผ.๐๒)</span>
+                <span className="hidden sm:inline">พิมพ์ตารางที่กรอง (แบบ ผ.02)</span>
               </button>
             </div>
           </div>
@@ -153,14 +266,85 @@ export default function PlanHomePage() {
 
         {/* Main Content */}
         <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-6 space-y-6">
+          {/* Collapsible Official Summary Table (แบบ ผ.01) */}
+          {showSummaryTable && (
+            <section className="bg-white dark:bg-slate-900 p-5 rounded-3xl border border-sky-200 dark:border-sky-900/60 shadow-sm space-y-3">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div>
+                  <h2 className="text-sm sm:text-base font-bold text-slate-900 dark:text-slate-100">
+                    ตารางสรุปจำนวนโครงการและงบประมาณ แผนพัฒนาท้องถิ่น (พ.ศ. 2571 - 2575) ตามแบบ ผ.01 (หน้า 61)
+                  </h2>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
+                    คลิกที่แถวยุทธศาสตร์เพื่อกรองดูโครงการในด้านนั้นได้ทันที
+                  </p>
+                </div>
+                <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-sky-100 dark:bg-sky-950 text-sky-800 dark:text-sky-300">
+                  รวมทั้งเล่ม 419 โครงการ • 2,485,336,443 บาท
+                </span>
+              </div>
+
+              <div className="overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-800">
+                <table className="w-full text-xs text-left border-collapse">
+                  <thead className="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+                    <tr>
+                      <th className="p-2.5 border-b border-slate-200 dark:border-slate-700">ประเด็นการพัฒนา (ยุทธศาสตร์)</th>
+                      <th className="p-2.5 text-center border-b border-slate-200 dark:border-slate-700">หน้าเอกสาร</th>
+                      <th className="p-2.5 text-right border-b border-slate-200 dark:border-slate-700">จำนวนโครงการ</th>
+                      <th className="p-2.5 text-right border-b border-slate-200 dark:border-slate-700">ปี 2571</th>
+                      <th className="p-2.5 text-right border-b border-slate-200 dark:border-slate-700">ปี 2572</th>
+                      <th className="p-2.5 text-right border-b border-slate-200 dark:border-slate-700">ปี 2573</th>
+                      <th className="p-2.5 text-right border-b border-slate-200 dark:border-slate-700">ปี 2574</th>
+                      <th className="p-2.5 text-right border-b border-slate-200 dark:border-slate-700">ปี 2575</th>
+                      <th className="p-2.5 text-right border-b border-slate-200 dark:border-slate-700 bg-sky-50 dark:bg-sky-950/50">งบประมาณรวม 5 ปี</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                    {PLAN_2571_2575_OFFICIAL_SUMMARY.map((row) => {
+                      const isSelected = selectedStrategy === row.strategyNo;
+                      return (
+                        <tr
+                          key={row.strategyNo}
+                          onClick={() => {
+                            setSelectedDocumentId('plan_2571_2575_main');
+                            setSelectedStrategy(isSelected ? null : row.strategyNo);
+                          }}
+                          className={`cursor-pointer transition-colors ${
+                            isSelected
+                              ? 'bg-sky-50 dark:bg-sky-950/60 font-semibold'
+                              : 'hover:bg-slate-50 dark:hover:bg-slate-800/50'
+                          }`}
+                        >
+                          <td className="p-2.5 font-medium text-slate-900 dark:text-slate-100">
+                            ด้านที่ {row.strategyNo}: {row.strategyShortName}
+                          </td>
+                          <td className="p-2.5 text-center text-slate-500">หน้า {row.printedPageRange}</td>
+                          <td className="p-2.5 text-right font-bold text-sky-600 dark:text-sky-400">
+                            {row.projectCount.toLocaleString('en-US')}
+                          </td>
+                          <td className="p-2.5 text-right">{formatCurrency(row.budgets[2571], false)}</td>
+                          <td className="p-2.5 text-right">{formatCurrency(row.budgets[2572], false)}</td>
+                          <td className="p-2.5 text-right">{formatCurrency(row.budgets[2573], false)}</td>
+                          <td className="p-2.5 text-right">{formatCurrency(row.budgets[2574], false)}</td>
+                          <td className="p-2.5 text-right">{formatCurrency(row.budgets[2575], false)}</td>
+                          <td className="p-2.5 text-right font-bold bg-sky-50/40 dark:bg-sky-950/30">
+                            {formatCurrency(row.totalBudget, false)}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          )}
+
           {/* Search Bar Section */}
           <section className="bg-white dark:bg-slate-900 p-5 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xs">
             <SearchBar
               value={query}
               onChange={setQuery}
-              useThaiNumerals={useThaiNumerals}
-              onToggleThaiNumerals={() => setUseThaiNumerals(!useThaiNumerals)}
               totalCount={filteredProjects.length}
+              totalDatasetCount={projects.length}
               totalBudgetFormatted={totalBudgetFormatted}
             />
           </section>
@@ -177,17 +361,26 @@ export default function PlanHomePage() {
             onSelectCategory={setSelectedCategory}
             selectedYear={selectedYear}
             onSelectYear={setSelectedYear}
-            useThaiNumerals={useThaiNumerals}
             onReset={handleResetFilters}
             hasActiveFilters={hasActiveFilters}
+            projectCountsByDoc={projectCountsByDoc}
           />
 
           {/* Projects Results Grid */}
           <section className="space-y-4">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-wrap items-center justify-between gap-2">
               <h2 className="text-sm font-bold text-slate-800 dark:text-slate-200">
-                รายการโครงการ ({filteredProjects.length})
+                รายการโครงการ ({filteredProjects.length.toLocaleString('en-US')} โครงการ)
               </h2>
+              {hasActiveFilters && (
+                <button
+                  type="button"
+                  onClick={handleResetFilters}
+                  className="text-xs font-semibold text-sky-600 dark:text-sky-400 hover:underline"
+                >
+                  แสดงทั้งหมด ({projects.length.toLocaleString('en-US')} โครงการ)
+                </button>
+              )}
             </div>
 
             {filteredProjects.length === 0 ? (
@@ -209,7 +402,6 @@ export default function PlanHomePage() {
                   <ProjectCard
                     key={p.id}
                     project={p}
-                    useThaiNumerals={useThaiNumerals}
                     onSelect={setActiveProject}
                     onPrintDirect={handlePrint}
                   />
@@ -221,7 +413,7 @@ export default function PlanHomePage() {
 
         {/* Footer */}
         <footer className="mt-auto py-6 border-t border-slate-200 dark:border-slate-800 text-center text-xs text-slate-400">
-          <div>ระบบสารสนเทศแผนพัฒนาท้องถิ่น องค์การบริหารส่วนตำบลสงยาง</div>
+          <div>ระบบสารสนเทศแผนพัฒนาท้องถิ่น องค์การบริหารส่วนตำบลสงยาง อำเภอมหาชนะชัย จังหวัดยโสธร</div>
           <div className="mt-1 font-mono text-3xs text-slate-400">{formatBuildStamp()}</div>
         </footer>
       </div>
@@ -229,7 +421,6 @@ export default function PlanHomePage() {
       {/* Project Detail Modal */}
       <ProjectDetailModal
         project={activeProject}
-        useThaiNumerals={useThaiNumerals}
         onClose={() => setActiveProject(null)}
         onPrint={handlePrint}
       />
@@ -238,7 +429,6 @@ export default function PlanHomePage() {
       <PrintOfficialSheet
         project={printProject}
         projects={printProject ? undefined : filteredProjects}
-        useThaiNumerals={useThaiNumerals}
       />
     </>
   );

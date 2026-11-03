@@ -1,33 +1,33 @@
 'use client';
 
 import React from 'react';
-import { LocalPlanProject } from '../../domain/types.ts';
-import { toThai, formatCurrency } from '../../domain/thaiNumerals.ts';
+import { type LocalPlanProject, getProjectFiscalYears } from '../../domain/types.ts';
+import { toArabic, formatCurrency } from '../../domain/thaiNumerals.ts';
 
 interface PrintOfficialSheetProps {
   project: LocalPlanProject | null;
   projects?: LocalPlanProject[];
-  useThaiNumerals?: boolean;
 }
 
 export function PrintOfficialSheet({
   project,
   projects,
-  useThaiNumerals = true,
 }: PrintOfficialSheetProps) {
   const items = project ? [project] : projects || [];
 
   if (items.length === 0) return null;
 
-  const currentStrategyName = items[0]?.strategyName || 'การพัฒนาด้านโครงสร้างพื้นฐานทุกด้านอย่างสมดุล';
-  const currentPrintedPage = items[0]?.printedPage || 62;
-  const displayPrintedPage = useThaiNumerals ? toThai(currentPrintedPage) : currentPrintedPage;
+  const firstItem = items[0];
+  const currentStrategyName = toArabic(firstItem?.strategyName || 'การพัฒนาด้านโครงสร้างพื้นฐานทุกด้านอย่างสมดุล');
+  const currentDocumentTitle = toArabic(firstItem?.documentTitle || 'แผนพัฒนาท้องถิ่น (พ.ศ. 2571 - 2575)');
+  const currentPrintedPage = toArabic(firstItem?.printedPage || 62);
+  const fiscalYears = getProjectFiscalYears(firstItem);
 
   return (
     <div className="print-only hidden p-6 bg-white text-black font-serif">
       {/* Official Top Right Tag */}
       <div className="text-right text-xs font-semibold mb-2">
-        แบบ ผ.๐๒
+        แบบ ผ.02
       </div>
 
       {/* Official Header */}
@@ -36,7 +36,7 @@ export function PrintOfficialSheet({
           บัญชีรายละเอียดโครงการพัฒนาท้องถิ่น
         </h2>
         <h3 className="text-xs font-semibold">
-          แผนพัฒนาท้องถิ่น (พ.ศ.๒๕๗๑-๒๕๗๕)
+          {currentDocumentTitle}
         </h3>
         <h4 className="text-xs font-medium">
           องค์การบริหารส่วนตำบลสงยาง อำเภอมหาชนะชัย จังหวัดยโสธร
@@ -45,7 +45,7 @@ export function PrintOfficialSheet({
 
       {/* Strategy Category */}
       <div className="text-xs font-bold mb-2">
-        ประเด็นการพัฒนาที่ {useThaiNumerals ? toThai(items[0]?.strategyNo) : items[0]?.strategyNo} {currentStrategyName}
+        ประเด็นการพัฒนาที่ {firstItem?.strategyNo} {currentStrategyName}
       </div>
 
       {/* Official Pho 02 Table */}
@@ -59,11 +59,9 @@ export function PrintOfficialSheet({
             <th className="border border-black p-1" colSpan={5}>
               งบประมาณ (บาท)
               <div className="grid grid-cols-5 border-t border-black mt-1 pt-1 font-semibold text-3xs">
-                <span>{useThaiNumerals ? '๒๕๗๑' : '2571'}</span>
-                <span>{useThaiNumerals ? '๒๕๗๒' : '2572'}</span>
-                <span>{useThaiNumerals ? '๒๕๗๓' : '2573'}</span>
-                <span>{useThaiNumerals ? '๒๕๗๔' : '2574'}</span>
-                <span>{useThaiNumerals ? '๒๕๗๕' : '2575'}</span>
+                {fiscalYears.map((yr) => (
+                  <span key={yr}>{yr}</span>
+                ))}
               </div>
             </th>
             <th className="border border-black p-1.5 w-28">ผลที่คาด<br/>ว่าจะได้รับ</th>
@@ -72,37 +70,34 @@ export function PrintOfficialSheet({
         </thead>
         <tbody>
           {items.map((p) => {
-            const seqStr = useThaiNumerals ? toThai(p.seq) : p.seq;
-            const b71 = p.budgets[2571] ? formatCurrency(p.budgets[2571], useThaiNumerals) : '-';
-            const b72 = p.budgets[2572] ? formatCurrency(p.budgets[2572], useThaiNumerals) : '-';
-            const b73 = p.budgets[2573] ? formatCurrency(p.budgets[2573], useThaiNumerals) : '-';
-            const b74 = p.budgets[2574] ? formatCurrency(p.budgets[2574], useThaiNumerals) : '-';
-            const b75 = p.budgets[2575] ? formatCurrency(p.budgets[2575], useThaiNumerals) : '-';
-
+            const yrs = getProjectFiscalYears(p);
             return (
               <tr key={p.id} className="align-top">
                 <td className="border border-black p-1.5 text-center font-bold">
-                  {seqStr}
+                  {toArabic(p.seq)}
                 </td>
                 <td className="border border-black p-1.5 font-medium">
-                  {p.name}
+                  {toArabic(p.name)}
                 </td>
                 <td className="border border-black p-1.5">
-                  {p.objective}
+                  {toArabic(p.objective)}
                 </td>
                 <td className="border border-black p-1.5">
-                  {p.target}
+                  {toArabic(p.target)}
                 </td>
-                <td className="border border-black p-1 text-right text-3xs whitespace-nowrap">{b71}</td>
-                <td className="border border-black p-1 text-right text-3xs whitespace-nowrap">{b72}</td>
-                <td className="border border-black p-1 text-right text-3xs whitespace-nowrap">{b73}</td>
-                <td className="border border-black p-1 text-right text-3xs whitespace-nowrap">{b74}</td>
-                <td className="border border-black p-1 text-right text-3xs whitespace-nowrap">{b75}</td>
+                {yrs.map((yr) => {
+                  const val = p.budgets[yr];
+                  return (
+                    <td key={yr} className="border border-black p-1 text-right text-3xs whitespace-nowrap">
+                      {val && val > 0 ? formatCurrency(val, false) : '-'}
+                    </td>
+                  );
+                })}
                 <td className="border border-black p-1.5">
-                  {p.expectedResult}
+                  {toArabic(p.expectedResult)}
                 </td>
                 <td className="border border-black p-1.5 text-center">
-                  {p.agency}
+                  {toArabic(p.agency)}
                 </td>
               </tr>
             );
@@ -112,7 +107,7 @@ export function PrintOfficialSheet({
 
       {/* Official Page Number Footer */}
       <div className="mt-4 text-right text-xs font-semibold">
-        หน้า {displayPrintedPage}
+        หน้า {currentPrintedPage}
       </div>
     </div>
   );

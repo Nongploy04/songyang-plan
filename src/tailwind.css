@@ -129,6 +129,14 @@
     .backdrop-filter {
       backdrop-filter: none !important;
       -webkit-backdrop-filter: none !important;
+      background-color: #ffffff !important;
+    }
+
+    .dark [class*="backdrop-blur"],
+    .dark [class*="bg-glass"],
+    .dark .bg-glass,
+    .dark .backdrop-filter {
+      background-color: #0c1222 !important;
     }
   }
 

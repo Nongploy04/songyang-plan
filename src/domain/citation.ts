@@ -1,4 +1,4 @@
-import { toThai } from './thaiNumerals.ts';
+import { toArabic, toThai } from './thaiNumerals.ts';
 
 export interface CitationParams {
   planTitle?: string;
@@ -10,19 +10,21 @@ export interface CitationParams {
 
 export function generateOfficialCitation(params: CitationParams): string {
   const {
-    planTitle = 'แผนพัฒนาท้องถิ่น (พ.ศ. ๒๕๗๑-๒๕๗๕)',
+    planTitle = 'แผนพัฒนาท้องถิ่น (พ.ศ. 2571-2575)',
     strategyNo,
     seq,
     printedPage,
-    useThaiNumerals = true,
+    useThaiNumerals = false,
   } = params;
 
   if (useThaiNumerals) {
     const sNo = toThai(strategyNo);
     const sSeq = toThai(seq);
     const sPage = toThai(printedPage);
-    return `ปรากฏใน${planTitle} ประเด็นการพัฒนาที่ ${sNo} ลำดับที่ ${sSeq} หน้า ${sPage}`;
+    return `ปรากฏใน${toThai(planTitle)} ประเด็นการพัฒนาที่ ${sNo} ลำดับที่ ${sSeq} หน้า ${sPage}`;
   }
 
-  return `ปรากฏใน${planTitle} ประเด็นการพัฒนาที่ ${strategyNo} ลำดับที่ ${seq} หน้า ${printedPage}`;
+  const arabicTitle = toArabic(planTitle);
+  const arabicPage = toArabic(printedPage);
+  return `ปรากฏใน${arabicTitle} ประเด็นการพัฒนาที่ ${strategyNo} ลำดับที่ ${seq} หน้า ${arabicPage}`;
 }
