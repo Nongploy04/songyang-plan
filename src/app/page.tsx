@@ -10,6 +10,7 @@ import { SearchBar } from '../features/search/SearchBar.tsx';
 import {
   FilterPanel,
   type ProjectViewMode,
+  type PlanPeriodFilter,
 } from '../features/search/FilterPanel.tsx';
 import { ProjectCard } from '../features/project/ProjectCard.tsx';
 import { ProjectListView } from '../features/project/ProjectListView.tsx';
@@ -37,6 +38,7 @@ import {
 } from '../components/icons/index.tsx';
 
 interface PersistedFilterPrefs {
+  period?: PlanPeriodFilter;
   documentId: string | null;
   villageNo: number | null;
   strategyNo: number | null;
@@ -53,7 +55,13 @@ function isValidFilterPrefs(val: unknown): val is PersistedFilterPrefs {
   const isStrOrNull = (x: unknown) => x === null || typeof x === 'string';
   const isNumOrNull = (x: unknown) =>
     x === null || (typeof x === 'number' && Number.isFinite(x));
+  const isValidPeriod =
+    v.period === undefined ||
+    v.period === null ||
+    v.period === '2571-2575' ||
+    v.period === '2566-2570';
   return (
+    isValidPeriod &&
     isStrOrNull(v.documentId) &&
     isNumOrNull(v.villageNo) &&
     isNumOrNull(v.strategyNo) &&
@@ -65,6 +73,7 @@ function isValidFilterPrefs(val: unknown): val is PersistedFilterPrefs {
 export default function PlanHomePage() {
   const [projects] = useState<LocalPlanProject[]>(INITIAL_PLAN_PROJECTS);
   const [query, setQuery] = useState('');
+  const [selectedPeriod, setSelectedPeriod] = useState<PlanPeriodFilter>(null);
   const [selectedDocumentId, setSelectedDocumentId] = useState<string | null>(null);
   const [selectedVillage, setSelectedVillage] = useState<number | null>(null);
   const [selectedStrategy, setSelectedStrategy] = useState<number | null>(null);
@@ -88,6 +97,7 @@ export default function PlanHomePage() {
       FILTER_CACHE_KEY,
       isValidFilterPrefs,
       {
+        period: null,
         documentId: null,
         villageNo: null,
         strategyNo: null,
@@ -95,6 +105,7 @@ export default function PlanHomePage() {
         fiscalYear: null,
       }
     );
+    setSelectedPeriod(cached.period ?? null);
     setSelectedDocumentId(cached.documentId);
     setSelectedVillage(cached.villageNo);
     setSelectedStrategy(cached.strategyNo);
@@ -139,6 +150,7 @@ export default function PlanHomePage() {
   useEffect(() => {
     if (!hydrated) return;
     safeSetJson<PersistedFilterPrefs>(FILTER_CACHE_KEY, {
+      period: selectedPeriod,
       documentId: selectedDocumentId,
       villageNo: selectedVillage,
       strategyNo: selectedStrategy,
@@ -147,6 +159,7 @@ export default function PlanHomePage() {
     });
   }, [
     hydrated,
+    selectedPeriod,
     selectedDocumentId,
     selectedVillage,
     selectedStrategy,
@@ -179,8 +192,15 @@ export default function PlanHomePage() {
     const q = toArabic(query).toLowerCase().trim();
 
     return projects.filter((p) => {
-      if (selectedDocumentId !== null && p.documentId !== selectedDocumentId) {
-        return false;
+      if (selectedDocumentId !== null) {
+        if (p.documentId !== selectedDocumentId) return false;
+      } else if (selectedPeriod !== null) {
+        if (selectedPeriod === '2571-2575' && p.documentId !== 'plan_2571_2575_main') {
+          return false;
+        }
+        if (selectedPeriod === '2566-2570' && p.documentId === 'plan_2571_2575_main') {
+          return false;
+        }
       }
 
       if (selectedVillage !== null && !p.villages.includes(selectedVillage)) {
@@ -238,6 +258,7 @@ export default function PlanHomePage() {
   }, [
     projects,
     query,
+    selectedPeriod,
     selectedDocumentId,
     selectedVillage,
     selectedStrategy,
@@ -253,6 +274,7 @@ export default function PlanHomePage() {
 
   const hasActiveFilters =
     Boolean(query) ||
+    selectedPeriod !== null ||
     selectedDocumentId !== null ||
     selectedVillage !== null ||
     selectedStrategy !== null ||
@@ -261,6 +283,7 @@ export default function PlanHomePage() {
 
   const handleResetFilters = () => {
     setQuery('');
+    setSelectedPeriod(null);
     setSelectedDocumentId(null);
     setSelectedVillage(null);
     setSelectedStrategy(null);
@@ -436,6 +459,7 @@ export default function PlanHomePage() {
                         <tr
                           key={row.strategyNo}
                           onClick={() => {
+                            setSelectedPeriod('2571-2575');
                             setSelectedDocumentId('plan_2571_2575_main');
                             setSelectedStrategy(isSelected ? null : row.strategyNo);
                           }}
@@ -492,6 +516,8 @@ export default function PlanHomePage() {
 
           {/* 2. Compact Filter Toolbar + Collapsible Drawer + View Mode Switcher */}
           <FilterPanel
+            selectedPeriod={selectedPeriod}
+            onSelectPeriod={setSelectedPeriod}
             selectedDocumentId={selectedDocumentId}
             onSelectDocumentId={setSelectedDocumentId}
             selectedVillage={selectedVillage}

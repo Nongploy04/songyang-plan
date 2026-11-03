@@ -1,21 +1,28 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { SONGYANG_VILLAGES } from '../../domain/villages.ts';
 import { SONGYANG_STRATEGIES } from '../../domain/strategies.ts';
 import { WORK_CATEGORIES } from '../../domain/workCategories.ts';
-import { PLAN_DOCUMENTS } from '../../domain/documents.ts';
+import { PLAN_DOCUMENTS, type LocalPlanDocument } from '../../domain/documents.ts';
 import {
   IconSliders,
   IconRotateCcw,
   IconGrid,
   IconList,
   IconX,
+  IconArchive,
+  IconExternalLink,
+  IconFileText,
+  IconLayers,
 } from '../../components/icons/index.tsx';
 
 export type ProjectViewMode = 'card' | 'list';
+export type PlanPeriodFilter = '2571-2575' | '2566-2570' | null;
 
 interface FilterPanelProps {
+  selectedPeriod: PlanPeriodFilter;
+  onSelectPeriod: (period: PlanPeriodFilter) => void;
   selectedDocumentId: string | null;
   onSelectDocumentId: (id: string | null) => void;
   selectedVillage: number | null;
@@ -35,7 +42,40 @@ interface FilterPanelProps {
 
 const ALL_YEARS = [2566, 2567, 2568, 2569, 2570, 2571, 2572, 2573, 2574, 2575];
 
+const KIND_STYLES: Record<
+  LocalPlanDocument['kind'],
+  { pill: string; activePill: string; badge: string }
+> = {
+  main: {
+    pill: 'bg-sky-50/90 dark:bg-sky-950/50 text-sky-800 dark:text-sky-200 border-sky-200 dark:border-sky-800/80 hover:border-sky-400',
+    activePill: 'bg-sky-600 text-white border-sky-600 shadow-xs',
+    badge: 'bg-sky-200/80 dark:bg-sky-900 text-sky-900 dark:text-sky-100',
+  },
+  review: {
+    pill: 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700',
+    activePill: 'bg-slate-700 text-white border-slate-700 shadow-xs',
+    badge: 'bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200',
+  },
+  edit: {
+    pill: 'bg-amber-50/90 dark:bg-amber-950/40 text-amber-900 dark:text-amber-200 border-amber-200/90 dark:border-amber-800/70 hover:border-amber-400',
+    activePill: 'bg-amber-600 text-white border-amber-600 shadow-xs',
+    badge: 'bg-amber-200/80 dark:bg-amber-900/90 text-amber-950 dark:text-amber-100',
+  },
+  change: {
+    pill: 'bg-violet-50/90 dark:bg-violet-950/40 text-violet-900 dark:text-violet-200 border-violet-200/90 dark:border-violet-800/70 hover:border-violet-400',
+    activePill: 'bg-violet-600 text-white border-violet-600 shadow-xs',
+    badge: 'bg-violet-200/80 dark:bg-violet-900/90 text-violet-950 dark:text-violet-100',
+  },
+  add: {
+    pill: 'bg-emerald-50/90 dark:bg-emerald-950/40 text-emerald-900 dark:text-emerald-200 border-emerald-200/90 dark:border-emerald-800/70 hover:border-emerald-400',
+    activePill: 'bg-emerald-600 text-white border-emerald-600 shadow-xs',
+    badge: 'bg-emerald-200/80 dark:bg-emerald-900/90 text-emerald-950 dark:text-emerald-100',
+  },
+};
+
 export function FilterPanel({
+  selectedPeriod,
+  onSelectPeriod,
   selectedDocumentId,
   onSelectDocumentId,
   selectedVillage,
@@ -53,6 +93,7 @@ export function FilterPanel({
   onViewModeChange,
 }: FilterPanelProps) {
   const [advancedOpen, setAdvancedOpen] = useState(false);
+  const [archiveOpen, setArchiveOpen] = useState(false);
 
   const activeAdvancedCount =
     (selectedStrategy !== null ? 1 : 0) +
@@ -63,10 +104,337 @@ export function FilterPanel({
     WORK_CATEGORIES.map((c) => [c.key, c.label])
   );
 
+  // Separate active indexed documents (with >0 extracted projects) vs historical archive PDFs
+  const activeDocs = useMemo(
+    () => PLAN_DOCUMENTS.filter((d) => d.isActive && (projectCountsByDoc[d.id] || 0) > 0),
+    [projectCountsByDoc]
+  );
+
+  const archivedDocs = useMemo(
+    () => PLAN_DOCUMENTS.filter((d) => !d.isActive),
+    []
+  );
+
+  // Period project totals
+  const count2571_2575 = projectCountsByDoc['plan_2571_2575_main'] || 419;
+  const docs2566_2570 = useMemo(
+    () => activeDocs.filter((d) => d.period === '2566-2570'),
+    [activeDocs]
+  );
+  const count2566_2570 = useMemo(
+    () =>
+      docs2566_2570.reduce(
+        (sum, d) => sum + (projectCountsByDoc[d.id] || 0),
+        0
+      ),
+    [docs2566_2570, projectCountsByDoc]
+  );
+  const totalAllProjects = count2571_2575 + count2566_2570;
+
+  // Group 2566-2570 amendments by revisionYear descending (2569 -> 2568 -> 2566)
+  const amendmentsByYear = useMemo(() => {
+    const years = [2569, 2568, 2566];
+    return years
+      .map((yr) => {
+        const docs = docs2566_2570.filter((d) => d.revisionYear === yr);
+        const totalProjects = docs.reduce(
+          (acc, d) => acc + (projectCountsByDoc[d.id] || 0),
+          0
+        );
+        return {
+          year: yr,
+          docs,
+          totalProjects,
+        };
+      })
+      .filter((g) => g.docs.length > 0);
+  }, [docs2566_2570, projectCountsByDoc]);
+
+  const handleSelectPeriodCard = (period: PlanPeriodFilter) => {
+    onSelectPeriod(period);
+    if (period === null) {
+      onSelectDocumentId(null);
+    } else if (period === '2571-2575') {
+      onSelectDocumentId('plan_2571_2575_main');
+    } else if (period === '2566-2570') {
+      // If currently on 2571-2575 main, clear specific doc so all 14 amendments of 2566-2570 show
+      if (selectedDocumentId === 'plan_2571_2575_main') {
+        onSelectDocumentId(null);
+      }
+    }
+  };
+
+  const handleSelectDocButton = (doc: LocalPlanDocument) => {
+    if (selectedDocumentId === doc.id) {
+      // Toggle off specific document -> stay in its period
+      onSelectDocumentId(null);
+      onSelectPeriod(doc.period === '2571-2575' ? null : '2566-2570');
+    } else {
+      onSelectPeriod(doc.period === '2571-2575' ? '2571-2575' : '2566-2570');
+      onSelectDocumentId(doc.id);
+    }
+  };
+
   return (
-    <div className="rounded-2xl bg-white/95 dark:bg-[#0c1222]/95 [backdrop-filter:blur(28px)_saturate(190%)] [-webkit-backdrop-filter:blur(28px)_saturate(190%)] border border-black/[0.08] dark:border-white/[0.12] shadow-sm p-3 sm:p-3.5 space-y-3">
-      {/* Primary Compact Control Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-2">
+    <div className="rounded-2xl bg-white/95 dark:bg-[#0c1222]/95 [backdrop-filter:blur(28px)_saturate(190%)] [-webkit-backdrop-filter:blur(28px)_saturate(190%)] border border-black/[0.08] dark:border-white/[0.12] shadow-sm p-3.5 sm:p-4 space-y-3.5">
+      {/* =====================================================================
+          TIER 1: 5-YEAR PLAN PERIOD SELECTOR CARDS (แบ่งตามห้วงแผนหลัก 5 ปี)
+      ===================================================================== */}
+      <div className="space-y-2">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <span className="inline-flex items-center justify-center w-5 h-5 rounded-md bg-sky-100 dark:bg-sky-950 text-sky-700 dark:text-sky-300 text-[11px] font-extrabold">
+              1
+            </span>
+            <h3 className="text-xs font-extrabold text-slate-800 dark:text-slate-200">
+              เลือกห้วงแผนพัฒนาท้องถิ่น (แผนหลัก 5 ปี และชุดแก้ไข/เพิ่มเติม)
+            </h3>
+          </div>
+
+          {/* Archive PDF Drawer Trigger */}
+          <button
+            type="button"
+            onClick={() => setArchiveOpen((prev) => !prev)}
+            className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-semibold border transition-colors cursor-pointer ${
+              archiveOpen
+                ? 'bg-slate-800 text-white dark:bg-slate-200 dark:text-slate-900 border-slate-800 dark:border-slate-200'
+                : 'bg-slate-100/90 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 border-slate-200/80 dark:border-slate-700/80 hover:border-slate-400'
+            }`}
+          >
+            <IconArchive className="w-3.5 h-3.5" />
+            <span>คลังไฟล์ PDF เล่มเก่า/ทบทวนย้อนหลัง ({archivedDocs.length} เล่ม)</span>
+          </button>
+        </div>
+
+        {/* 3 Period Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+          {/* Card A: All Periods Combined */}
+          <button
+            type="button"
+            onClick={() => handleSelectPeriodCard(null)}
+            className={`text-left p-3 rounded-xl border transition-all cursor-pointer flex flex-col justify-between gap-1.5 ${
+              selectedPeriod === null && selectedDocumentId === null
+                ? 'bg-sky-50/90 dark:bg-sky-950/60 border-sky-500 dark:border-sky-500 ring-1 ring-sky-500/30 shadow-xs'
+                : 'bg-slate-50/70 dark:bg-slate-900/50 border-slate-200/80 dark:border-slate-800 hover:border-sky-300 dark:hover:border-sky-800'
+            }`}
+          >
+            <div className="flex items-center justify-between gap-1.5 w-full">
+              <span className="px-2 py-0.5 rounded-md text-[10px] font-extrabold bg-slate-200/80 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+                ทุกห้วงแผนรวมกัน
+              </span>
+              <span className="text-[11px] font-extrabold text-sky-700 dark:text-sky-300 tabular-nums">
+                {totalAllProjects.toLocaleString('en-US')} โครงการ
+              </span>
+            </div>
+            <div>
+              <div className="text-sm font-extrabold text-slate-900 dark:text-slate-100">
+                ทุกเล่มแผน ({activeDocs.length} ฉบับที่มีข้อมูล)
+              </div>
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate">
+                ค้นหาข้ามเล่มหลัก 2571-2575 และฉบับแก้ไข 2566-2570
+              </p>
+            </div>
+          </button>
+
+          {/* Card B: 2571 - 2575 Master Plan */}
+          <button
+            type="button"
+            onClick={() => handleSelectPeriodCard('2571-2575')}
+            className={`text-left p-3 rounded-xl border transition-all cursor-pointer flex flex-col justify-between gap-1.5 ${
+              selectedPeriod === '2571-2575' ||
+              selectedDocumentId === 'plan_2571_2575_main'
+                ? 'bg-sky-50/90 dark:bg-sky-950/60 border-sky-500 dark:border-sky-500 ring-1 ring-sky-500/30 shadow-xs'
+                : 'bg-slate-50/70 dark:bg-slate-900/50 border-slate-200/80 dark:border-slate-800 hover:border-sky-300 dark:hover:border-sky-800'
+            }`}
+          >
+            <div className="flex items-center justify-between gap-1.5 w-full">
+              <span className="px-2 py-0.5 rounded-md text-[10px] font-extrabold bg-sky-100 dark:bg-sky-900/80 text-sky-800 dark:text-sky-200">
+                แผนหลัก 5 ปี • 1 เล่มหลัก
+              </span>
+              <span className="text-[11px] font-extrabold text-sky-700 dark:text-sky-300 tabular-nums">
+                {count2571_2575.toLocaleString('en-US')} โครงการ
+              </span>
+            </div>
+            <div>
+              <div className="text-sm font-extrabold text-slate-900 dark:text-slate-100">
+                ห้วงแผน พ.ศ. 2571 – 2575
+              </div>
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate">
+                แผนพัฒนาท้องถิ่น 5 ปี ฉบับหลัก (ยังไม่มีฉบับแก้ไข)
+              </p>
+            </div>
+          </button>
+
+          {/* Card C: 2566 - 2570 Amendments & Additions */}
+          <button
+            type="button"
+            onClick={() => handleSelectPeriodCard('2566-2570')}
+            className={`text-left p-3 rounded-xl border transition-all cursor-pointer flex flex-col justify-between gap-1.5 ${
+              selectedPeriod === '2566-2570'
+                ? 'bg-amber-50/90 dark:bg-amber-950/40 border-amber-500 dark:border-amber-500 ring-1 ring-amber-500/30 shadow-xs'
+                : 'bg-slate-50/70 dark:bg-slate-900/50 border-slate-200/80 dark:border-slate-800 hover:border-amber-300 dark:hover:border-amber-800'
+            }`}
+          >
+            <div className="flex items-center justify-between gap-1.5 w-full">
+              <span className="px-2 py-0.5 rounded-md text-[10px] font-extrabold bg-amber-100 dark:bg-amber-900/80 text-amber-900 dark:text-amber-200">
+                แก้ไข/เพิ่มเติม • {docs2566_2570.length} ฉบับ
+              </span>
+              <span className="text-[11px] font-extrabold text-amber-700 dark:text-amber-300 tabular-nums">
+                {count2566_2570.toLocaleString('en-US')} โครงการ
+              </span>
+            </div>
+            <div>
+              <div className="text-sm font-extrabold text-slate-900 dark:text-slate-100">
+                ห้วงแผน พ.ศ. 2566 – 2570
+              </div>
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate">
+                รวมฉบับแก้ไข • เปลี่ยนแปลง • เพิ่มเติม (ปี 2566, 2568, 2569)
+              </p>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      {/* =====================================================================
+          TIER 2: SUB-VOLUME & AMENDMENT SELECTOR GROUPED BY YEAR (เมื่อเลือกห้วง 2566-2570 หรือดูรายละเอียดเล่ม)
+      ===================================================================== */}
+      {selectedPeriod === '2566-2570' && (
+        <div className="rounded-xl bg-slate-50/90 dark:bg-slate-900/70 border border-slate-200/80 dark:border-slate-800 p-3 space-y-2.5">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <span className="inline-flex items-center justify-center w-5 h-5 rounded-md bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 text-[11px] font-extrabold">
+                2
+              </span>
+              <span className="text-xs font-extrabold text-slate-800 dark:text-slate-200">
+                เลือกเล่มการแก้ไข / เปลี่ยนแปลง / เพิ่มเติม ในห้วงแผน พ.ศ. 2566 – 2570 (แบ่งตามปีที่ประกาศ)
+              </span>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => onSelectDocumentId(null)}
+              className={`px-2.5 py-1 rounded-lg text-[11px] font-bold border transition-all cursor-pointer ${
+                selectedDocumentId === null
+                  ? 'bg-amber-600 text-white border-amber-600 shadow-xs'
+                  : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-amber-400'
+              }`}
+            >
+              แสดงรวมทั้ง {docs2566_2570.length} ฉบับ ({count2566_2570} โครงการ)
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-2.5">
+            {amendmentsByYear.map((group) => (
+              <div
+                key={group.year}
+                className="rounded-xl bg-white dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800/90 p-2.5 space-y-2"
+              >
+                <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800/80 pb-1.5">
+                  <span className="text-xs font-extrabold text-slate-800 dark:text-slate-200">
+                    ประกาศปี พ.ศ. {group.year}
+                  </span>
+                  <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 tabular-nums">
+                    {group.docs.length} ฉบับ • {group.totalProjects} โครงการ
+                  </span>
+                </div>
+
+                <div className="flex flex-wrap gap-1.5">
+                  {group.docs.map((doc) => {
+                    const count = projectCountsByDoc[doc.id] || 0;
+                    const isSelected = selectedDocumentId === doc.id;
+                    const style = KIND_STYLES[doc.kind];
+                    return (
+                      <button
+                        key={doc.id}
+                        type="button"
+                        onClick={() => handleSelectDocButton(doc)}
+                        title={doc.title}
+                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-bold border transition-all cursor-pointer ${
+                          isSelected ? style.activePill : style.pill
+                        }`}
+                      >
+                        <span>{doc.shortTitle}</span>
+                        <span
+                          className={`px-1.5 py-0.2 rounded-md text-[10px] font-extrabold tabular-nums ${
+                            isSelected
+                              ? 'bg-white/25 text-white'
+                              : style.badge
+                          }`}
+                        >
+                          {count}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* =====================================================================
+          COLLAPSIBLE HISTORICAL ARCHIVE PDF DRAWER (คลังไฟล์ PDF เล่มเก่า/ทบทวนย้อนหลัง 5 เล่ม)
+      ===================================================================== */}
+      {archiveOpen && (
+        <div className="rounded-xl bg-slate-100/90 dark:bg-slate-900/90 border border-slate-300/80 dark:border-slate-700 p-3 space-y-2.5">
+          <div className="flex items-start justify-between gap-2">
+            <div className="space-y-0.5">
+              <div className="flex items-center gap-1.5 text-xs font-extrabold text-slate-800 dark:text-slate-200">
+                <IconArchive className="w-4 h-4 text-slate-600 dark:text-slate-400" />
+                <span>
+                  คลังไฟล์ PDF ต้นฉบับเล่มเก่า / เล่มทบทวนประจำปีที่ถูกยกยอดโครงการไปเล่มใหม่แล้ว ({archivedDocs.length} เล่ม)
+                </span>
+              </div>
+              <p className="text-[11px] text-slate-600 dark:text-slate-400">
+                เอกสารทั้ง {archivedDocs.length} เล่มด้านล่างเป็นไฟล์สแกนแผนฉบับเต็มในอดีต ซึ่งรายการโครงการได้ถูกทบทวนและยกยอดไปอยู่ในเล่มหลักปัจจุบันแล้ว จึงแยกไว้เป็นคลังเอกสารอ้างอิงเพื่อไม่ให้ปุ่มตัวกรองแสดง 0 โครงการ
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setArchiveOpen(false)}
+              title="ปิดคลังไฟล์ PDF เล่มเก่า"
+              aria-label="ปิดคลังไฟล์ PDF เล่มเก่า"
+              className="w-7 h-7 rounded-lg flex items-center justify-center text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-800 cursor-pointer shrink-0"
+            >
+              <IconX className="w-4 h-4" />
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+            {archivedDocs.map((doc) => (
+              <a
+                key={doc.id}
+                href={doc.officialPdfUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex items-center justify-between gap-2 p-2.5 rounded-xl bg-white dark:bg-slate-950/80 border border-slate-200/90 dark:border-slate-800 hover:border-sky-400 dark:hover:border-sky-600 transition-all"
+              >
+                <div className="min-w-0">
+                  <div className="flex items-center gap-1.5">
+                    <IconFileText className="w-3.5 h-3.5 text-slate-400 group-hover:text-sky-600 shrink-0" />
+                    <span className="text-xs font-bold text-slate-800 dark:text-slate-200 truncate">
+                      {doc.shortTitle}
+                    </span>
+                  </div>
+                  <div className="text-[11px] text-slate-500 dark:text-slate-400 truncate mt-0.5">
+                    ห้วง พ.ศ. {doc.period} • สแกนเต็มเล่ม {doc.pageCount} หน้า
+                  </div>
+                </div>
+                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 group-hover:bg-sky-600 group-hover:text-white transition-colors shrink-0">
+                  <span>เปิด PDF</span>
+                  <IconExternalLink className="w-3 h-3" />
+                </span>
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* =====================================================================
+          PRIMARY COMPACT CONTROL BAR (หมู่บ้าน + เลือกเล่มด่วน + ตัวกรองขั้นสูง + สลับมุมมอง)
+      ===================================================================== */}
+      <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-slate-100 dark:border-slate-800/80">
         {/* Left: Quick Selects + Advanced Filter Icon Button + Reset Icon Button */}
         <div className="flex flex-wrap items-center gap-2 flex-1 min-w-0">
           {/* Village Select */}
@@ -90,28 +458,50 @@ export function FilterPanel({
             ))}
           </select>
 
-          {/* Plan Document Select */}
+          {/* Grouped Plan Document Select (Only Active Volumes with >0 Projects) */}
           <select
             value={selectedDocumentId ?? ''}
-            onChange={(e) =>
-              onSelectDocumentId(e.target.value === '' ? null : e.target.value)
-            }
+            onChange={(e) => {
+              const val = e.target.value === '' ? null : e.target.value;
+              onSelectDocumentId(val);
+              if (val === 'plan_2571_2575_main') {
+                onSelectPeriod('2571-2575');
+              } else if (val !== null) {
+                onSelectPeriod('2566-2570');
+              }
+            }}
             aria-label="กรองตามเล่มแผนพัฒนาท้องถิ่น"
-            className={`px-3 py-2 rounded-xl text-xs font-semibold border outline-none transition-colors cursor-pointer max-w-[230px] sm:max-w-[280px] truncate ${
+            className={`px-3 py-2 rounded-xl text-xs font-semibold border outline-none transition-colors cursor-pointer max-w-[240px] sm:max-w-[300px] truncate ${
               selectedDocumentId !== null
                 ? 'bg-sky-50 dark:bg-sky-950/70 border-sky-400 dark:border-sky-600 text-sky-800 dark:text-sky-200'
                 : 'bg-slate-100/80 dark:bg-slate-800/80 border-slate-200/80 dark:border-slate-700/80 text-slate-700 dark:text-slate-200 hover:border-slate-300'
             }`}
           >
-            <option value="">ทุกเล่มแผน ({PLAN_DOCUMENTS.length} ฉบับ)</option>
-            {PLAN_DOCUMENTS.map((doc) => {
-              const count = projectCountsByDoc[doc.id] || 0;
-              return (
-                <option key={doc.id} value={doc.id}>
-                  {doc.shortTitle} {count > 0 ? `(${count} โครงการ)` : ''}
-                </option>
-              );
-            })}
+            <option value="">
+              {selectedPeriod === '2566-2570'
+                ? `ทุกฉบับในห้วง 2566-2570 (${docs2566_2570.length} ฉบับ • ${count2566_2570} โครงการ)`
+                : `ทุกเล่มแผนที่มีข้อมูล (${activeDocs.length} ฉบับ • ${totalAllProjects} โครงการ)`}
+            </option>
+            <optgroup label="ห้วงแผน พ.ศ. 2571 - 2575 (เล่มหลัก)">
+              <option value="plan_2571_2575_main">
+                พ.ศ. 2571-2575 (เล่มหลัก) ({count2571_2575} โครงการ)
+              </option>
+            </optgroup>
+            {amendmentsByYear.map((group) => (
+              <optgroup
+                key={group.year}
+                label={`ห้วงแผน พ.ศ. 2566 - 2570 (ประกาศปี ${group.year})`}
+              >
+                {group.docs.map((doc) => {
+                  const count = projectCountsByDoc[doc.id] || 0;
+                  return (
+                    <option key={doc.id} value={doc.id}>
+                      {doc.shortTitle} ({count} โครงการ)
+                    </option>
+                  );
+                })}
+              </optgroup>
+            ))}
           </select>
 
           {/* Icon-Only Advanced Filter Drawer Toggle */}
