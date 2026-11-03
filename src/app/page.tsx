@@ -25,7 +25,8 @@ import {
   safeGetText,
   safeSetText,
 } from '../lib/safeBrowserStorage.ts';
-import { formatBuildStamp } from '../lib/build-version.js';
+import { formatBuildStamp, runBuildVersionGate } from '../lib/build-version.js';
+import { SongyangUpdateNotice, type BuildUpdateChoice } from '../components/SongyangUpdateNotice.tsx';
 import {
   IconLayers,
   IconTable,
@@ -90,9 +91,11 @@ export default function PlanHomePage() {
   const [activeProject, setActiveProject] = useState<LocalPlanProject | null>(null);
   const [printProject, setPrintProject] = useState<LocalPlanProject | null>(null);
   const [printMode, setPrintMode] = useState<PrintPackMode>('table_only');
+  const [pendingUpdate, setPendingUpdate] = useState<BuildUpdateChoice | null>(null);
 
   // Hydrate filter state, view mode & theme from Self-Healing Cache on mount
   useEffect(() => {
+    runBuildVersionGate((update: BuildUpdateChoice) => setPendingUpdate(update));
     const cached = safeGetJson<PersistedFilterPrefs>(
       FILTER_CACHE_KEY,
       isValidFilterPrefs,
@@ -630,6 +633,13 @@ export default function PlanHomePage() {
         project={printProject || activeProject}
         printMode={printMode}
       />
+
+      {pendingUpdate ? (
+        <SongyangUpdateNotice
+          pendingUpdate={pendingUpdate}
+          onDismiss={() => setPendingUpdate(null)}
+        />
+      ) : null}
     </>
   );
 }
