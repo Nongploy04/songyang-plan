@@ -1,0 +1,8 @@
+node_modules/
+.next/
+.git/
+pipeline/raw_pdfs/
+pipeline/source_pdfs/
+pipeline/out/
+test-results/
+scratch/

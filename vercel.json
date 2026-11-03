@@ -1,5 +1,3 @@
 {
-  "framework": "nextjs",
-  "installCommand": "npx --yes npm@11.19.0 ci --strict-peer-deps --legacy-peer-deps=false",
-  "buildCommand": "node --version && npx --yes npm@11.19.0 --version && npx --yes npm@11.19.0 run build"
+  "framework": "nextjs"
 }
