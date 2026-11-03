@@ -9,6 +9,7 @@ interface SearchBarProps {
   totalCount: number;
   totalDatasetCount: number;
   totalBudgetFormatted: string;
+  totalBudgetLabel?: string;
 }
 
 const QUICK_KEYWORDS = [
@@ -27,6 +28,7 @@ export function SearchBar({
   totalCount,
   totalDatasetCount,
   totalBudgetFormatted,
+  totalBudgetLabel = 'กรอบงบประมาณรวม',
 }: SearchBarProps) {
   return (
     <div className="rounded-2xl bg-white/95 dark:bg-[#0c1222]/95 [backdrop-filter:blur(28px)_saturate(190%)] [-webkit-backdrop-filter:blur(28px)_saturate(190%)] border border-black/[0.08] dark:border-white/[0.12] shadow-sm p-3.5 sm:p-4 space-y-3">
@@ -93,7 +95,7 @@ export function SearchBar({
           </span>
           <span className="text-slate-300 dark:text-slate-700">•</span>
           <span>
-            งบรวม{' '}
+            {totalBudgetLabel}{' '}
             <strong className="font-extrabold text-sky-600 dark:text-sky-400 tabular-nums">
               {totalBudgetFormatted}
             </strong>{' '}

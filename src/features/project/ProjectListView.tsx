@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { type LocalPlanProject } from '../../domain/types.ts';
 import { toArabic, formatCurrency } from '../../domain/thaiNumerals.ts';
+import { getProjectDisplayBudget } from '../../domain/budgetUtils.ts';
 import { getVillageLabel } from '../../domain/villages.ts';
 import { generateOfficialCitation } from '../../domain/citation.ts';
 import { getCompactDocBadge } from './ProjectCard.tsx';
@@ -16,12 +17,14 @@ import {
 
 interface ProjectListViewProps {
   projects: LocalPlanProject[];
+  selectedYear?: number | null;
   onSelect: (p: LocalPlanProject) => void;
   onPrintDirect: (p: LocalPlanProject) => void;
 }
 
 export function ProjectListView({
   projects,
+  selectedYear,
   onSelect,
   onPrintDirect,
 }: ProjectListViewProps) {
@@ -59,7 +62,7 @@ export function ProjectListView({
         <div className="col-span-1">ลำดับ</div>
         <div className="col-span-6 lg:col-span-7">ชื่อโครงการ / สถานที่ดำเนินการ</div>
         <div className="col-span-2">เล่มแผน • หน้า</div>
-        <div className="col-span-2 lg:col-span-1 text-right">งบรวม</div>
+        <div className="col-span-2 lg:col-span-1 text-right">งบประมาณ</div>
         <div className="col-span-1 text-right">จัดการ</div>
       </div>
 
@@ -68,7 +71,7 @@ export function ProjectListView({
         {projects.map((project, idx) => {
           const displaySeq = toArabic(project.seq);
           const displayPrintedPage = toArabic(project.printedPage);
-          const displayTotal = formatCurrency(project.totalBudget, false);
+          const budgetDisplay = getProjectDisplayBudget(project, selectedYear);
           const cleanName = toArabic(project.name);
           const docBadge = getCompactDocBadge(project);
           const isCopied = copiedId === project.id;
@@ -105,7 +108,7 @@ export function ProjectListView({
                 <LiquidTooltip
                   title={`#${displaySeq} ${cleanName}`}
                   description={`${villageLabels} • ด้านที่ ${project.strategyNo} (${docBadge.label} หน้า ${displayPrintedPage})`}
-                  badge={`งบ ${displayTotal} ฿`}
+                  badge={`${budgetDisplay.sublabel} ${budgetDisplay.text} ฿`}
                   placement="bottom"
                   align="left"
                   className="w-full"
@@ -146,16 +149,16 @@ export function ProjectListView({
                 </span>
               </div>
 
-              {/* Col 4: Total Budget */}
+              {/* Col 4: Project Budget */}
               <div className="md:col-span-2 lg:col-span-1 md:text-right flex items-center justify-between md:block pt-1 md:pt-0">
                 <span className="md:hidden text-xs text-slate-500 dark:text-slate-400">
-                  งบรวม:
+                  {budgetDisplay.sublabel}:
                 </span>
-                <div>
-                  <span className="text-sm font-extrabold text-sky-600 dark:text-sky-400 tabular-nums">
-                    {displayTotal}
+                <div title={budgetDisplay.sublabel}>
+                  <span className="text-xs sm:text-sm font-extrabold text-sky-600 dark:text-sky-400 tabular-nums">
+                    {budgetDisplay.text}
                   </span>
-                  <span className="text-[11px] text-slate-500 dark:text-slate-400 ml-1">
+                  <span className="text-[10px] text-slate-400 dark:text-slate-500 ml-1">
                     ฿
                   </span>
                 </div>

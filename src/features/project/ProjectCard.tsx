@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { type LocalPlanProject } from '../../domain/types.ts';
 import { toArabic, formatCurrency } from '../../domain/thaiNumerals.ts';
+import { getProjectDisplayBudget } from '../../domain/budgetUtils.ts';
 import { getVillageLabel } from '../../domain/villages.ts';
 import { generateOfficialCitation } from '../../domain/citation.ts';
 import { LiquidTooltip } from '../../components/LiquidTooltip.tsx';
@@ -16,6 +17,7 @@ import {
 
 interface ProjectCardProps {
   project: LocalPlanProject;
+  selectedYear?: number | null;
   onSelect: (p: LocalPlanProject) => void;
   onPrintDirect: (p: LocalPlanProject) => void;
 }
@@ -48,6 +50,7 @@ export function getCompactDocBadge(project: LocalPlanProject): {
 
 export function ProjectCard({
   project,
+  selectedYear,
   onSelect,
   onPrintDirect,
 }: ProjectCardProps) {
@@ -55,7 +58,7 @@ export function ProjectCard({
 
   const displaySeq = toArabic(project.seq);
   const displayPrintedPage = toArabic(project.printedPage);
-  const displayTotal = formatCurrency(project.totalBudget, false);
+  const budgetDisplay = getProjectDisplayBudget(project, selectedYear);
   const cleanName = toArabic(project.name);
 
   const handleCopyCitation = (e: React.MouseEvent) => {
@@ -166,7 +169,7 @@ export function ProjectCard({
         <LiquidTooltip
           title={`#${displaySeq} ${cleanName}`}
           description={`${villageLabels} • ด้านที่ ${project.strategyNo} (${docBadge.label} หน้า ${displayPrintedPage})`}
-          badge={`งบ ${displayTotal} ฿`}
+          badge={`${budgetDisplay.sublabel} ${budgetDisplay.text} ฿`}
           placement="bottom"
           align="left"
           className="w-full"
@@ -192,15 +195,20 @@ export function ProjectCard({
         </div>
       </div>
 
-      {/* Clean Footer: Total Budget + Subtle Detail Indicator */}
+      {/* Clean Footer: Budget + Subtle Detail Indicator */}
       <div className="pt-3.5 border-t border-slate-100 dark:border-slate-800/80 flex items-baseline justify-between gap-2">
-        <div className="flex items-baseline gap-1.5">
-          <span className="text-base sm:text-lg font-extrabold text-sky-600 dark:text-sky-400 tabular-nums">
-            {displayTotal}
+        <div className="flex flex-col min-w-0">
+          <span className="text-[10px] uppercase font-bold text-slate-400 dark:text-slate-500 truncate">
+            {budgetDisplay.sublabel}
           </span>
-          <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
-            บาท
-          </span>
+          <div className="flex items-baseline gap-1.5 flex-wrap">
+            <span className="text-base sm:text-lg font-extrabold text-sky-600 dark:text-sky-400 tabular-nums">
+              {budgetDisplay.text}
+            </span>
+            <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
+              บาท
+            </span>
+          </div>
         </div>
 
         <span className="inline-flex items-center gap-0.5 text-xs font-semibold text-slate-400 group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors shrink-0">

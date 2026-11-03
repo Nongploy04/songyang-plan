@@ -5,6 +5,7 @@ import { SONGYANG_VILLAGES } from '../../domain/villages.ts';
 import { SONGYANG_STRATEGIES } from '../../domain/strategies.ts';
 import { WORK_CATEGORIES } from '../../domain/workCategories.ts';
 import { PLAN_DOCUMENTS, type LocalPlanDocument } from '../../domain/documents.ts';
+import { SongyangSelect, type SelectOption } from '../../components/SongyangSelect.tsx';
 import {
   IconSliders,
   IconRotateCcw,
@@ -14,6 +15,9 @@ import {
   IconArchive,
   IconExternalLink,
   IconFileText,
+  IconMapPin,
+  IconCalendar,
+  IconLayers,
 } from '../../components/icons/index.tsx';
 
 export type ProjectViewMode = 'card' | 'list';
@@ -175,6 +179,87 @@ export function FilterPanel({
       onSelectDocumentId(doc.id);
     }
   };
+
+  // =========================================================================
+  // CUSTOM THEMED DROPDOWN OPTIONS (SongyangSelect)
+  // =========================================================================
+  const villageOptions: SelectOption<number | null>[] = useMemo(() => [
+    { value: null, label: 'ทุกหมู่บ้าน (ม.1 - ม.8)' },
+    ...SONGYANG_VILLAGES.map((v) => ({
+      value: v.no,
+      label: `หมู่ ${v.no} ${v.name}`,
+    })),
+  ], []);
+
+  const documentOptions: SelectOption<string | null>[] = useMemo(() => {
+    const list: SelectOption<string | null>[] = [
+      {
+        value: null,
+        label:
+          selectedPeriod === '2566-2570'
+            ? `ทุกฉบับในห้วง 2566-2570 (${docs2566_2570.length} ฉบับ)`
+            : `ทุกเล่มแผนที่มีข้อมูล (${activeDocs.length} ฉบับ)`,
+        badge: selectedPeriod === '2566-2570' ? count2566_2570 : totalAllProjects,
+      },
+      {
+        value: 'plan_2571_2575_main',
+        label: 'พ.ศ. 2571-2575 (เล่มหลัก)',
+        badge: count2571_2575,
+      },
+    ];
+    for (const group of amendmentsByYear) {
+      for (const doc of group.docs) {
+        const count = projectCountsByDoc[doc.id] || 0;
+        list.push({
+          value: doc.id,
+          label: `${doc.shortTitle} (ปี ${group.year})`,
+          badge: count,
+        });
+      }
+    }
+    return list;
+  }, [
+    selectedPeriod,
+    docs2566_2570.length,
+    count2566_2570,
+    activeDocs.length,
+    totalAllProjects,
+    count2571_2575,
+    amendmentsByYear,
+    projectCountsByDoc,
+  ]);
+
+  const strategyOptions: SelectOption<number | null>[] = useMemo(() => [
+    { value: null, label: 'ทุกด้านยุทธศาสตร์ (ด้านที่ 1 - 7)' },
+    ...SONGYANG_STRATEGIES.map((s) => ({
+      value: s.no,
+      label: `ด้านที่ ${s.no}: ${s.shortName}`,
+    })),
+  ], []);
+
+  const categoryOptions: SelectOption<string | null>[] = useMemo(() => [
+    {
+      value: null,
+      label: 'ทุกประเภทงาน',
+      badge:
+        categoryCounts['all'] ||
+        Object.values(categoryCounts).reduce((a, b) => a + b, 0) ||
+        522,
+    },
+    ...WORK_CATEGORIES.map((c) => ({
+      value: c.key,
+      label: c.label,
+      badge: categoryCounts[c.key] || 0,
+    })),
+  ], [categoryCounts]);
+
+  const yearOptions: SelectOption<number | null>[] = useMemo(() => [
+    { value: null, label: 'ทุกปีงบประมาณ (2566 - 2575)' },
+    ...ALL_YEARS.map((yr) => ({
+      value: yr,
+      label: `ปีงบประมาณ พ.ศ. ${yr}`,
+    })),
+  ], []);
 
   return (
     <div className="rounded-2xl bg-white/95 dark:bg-[#0c1222]/95 [backdrop-filter:blur(28px)_saturate(190%)] [-webkit-backdrop-filter:blur(28px)_saturate(190%)] border border-black/[0.08] dark:border-white/[0.12] shadow-sm p-3.5 sm:p-4 space-y-3.5">
@@ -438,32 +523,20 @@ export function FilterPanel({
       <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-slate-100 dark:border-slate-800/80">
         {/* Left: Quick Selects + Advanced Filter Icon Button + Reset Icon Button */}
         <div className="flex flex-wrap items-center gap-2 flex-1 min-w-0">
-          {/* Village Select */}
-          <select
-            value={selectedVillage ?? ''}
-            onChange={(e) =>
-              onSelectVillage(e.target.value === '' ? null : Number(e.target.value))
-            }
-            aria-label="กรองตามหมู่บ้าน"
-            className={`px-3 py-2 rounded-xl text-xs font-semibold border outline-none transition-colors cursor-pointer ${
-              selectedVillage !== null
-                ? 'bg-sky-50 dark:bg-sky-950/70 border-sky-400 dark:border-sky-600 text-sky-800 dark:text-sky-200'
-                : 'bg-slate-100/80 dark:bg-slate-800/80 border-slate-200/80 dark:border-slate-700/80 text-slate-700 dark:text-slate-200 hover:border-slate-300'
-            }`}
-          >
-            <option value="">ทุกหมู่บ้าน (ม.1 - ม.8)</option>
-            {SONGYANG_VILLAGES.map((v) => (
-              <option key={v.no} value={v.no}>
-                หมู่ {v.no} {v.name}
-              </option>
-            ))}
-          </select>
+          {/* Village Custom Dropdown */}
+          <SongyangSelect<number | null>
+            value={selectedVillage}
+            onChange={onSelectVillage}
+            options={villageOptions}
+            placeholder="ทุกหมู่บ้าน (ม.1 - ม.8)"
+            ariaLabel="กรองตามหมู่บ้าน"
+            icon={<IconMapPin className="w-3.5 h-3.5" />}
+          />
 
-          {/* Grouped Plan Document Select (Only Active Volumes with >0 Projects) */}
-          <select
-            value={selectedDocumentId ?? ''}
-            onChange={(e) => {
-              const val = e.target.value === '' ? null : e.target.value;
+          {/* Grouped Plan Document Custom Dropdown */}
+          <SongyangSelect<string | null>
+            value={selectedDocumentId}
+            onChange={(val) => {
               onSelectDocumentId(val);
               if (val === 'plan_2571_2575_main') {
                 onSelectPeriod('2571-2575');
@@ -471,39 +544,16 @@ export function FilterPanel({
                 onSelectPeriod('2566-2570');
               }
             }}
-            aria-label="กรองตามเล่มแผนพัฒนาท้องถิ่น"
-            className={`px-3 py-2 rounded-xl text-xs font-semibold border outline-none transition-colors cursor-pointer max-w-[240px] sm:max-w-[300px] truncate ${
-              selectedDocumentId !== null
-                ? 'bg-sky-50 dark:bg-sky-950/70 border-sky-400 dark:border-sky-600 text-sky-800 dark:text-sky-200'
-                : 'bg-slate-100/80 dark:bg-slate-800/80 border-slate-200/80 dark:border-slate-700/80 text-slate-700 dark:text-slate-200 hover:border-slate-300'
-            }`}
-          >
-            <option value="">
-              {selectedPeriod === '2566-2570'
-                ? `ทุกฉบับในห้วง 2566-2570 (${docs2566_2570.length} ฉบับ • ${count2566_2570} โครงการ)`
-                : `ทุกเล่มแผนที่มีข้อมูล (${activeDocs.length} ฉบับ • ${totalAllProjects} โครงการ)`}
-            </option>
-            <optgroup label="ห้วงแผน พ.ศ. 2571 - 2575 (เล่มหลัก)">
-              <option value="plan_2571_2575_main">
-                พ.ศ. 2571-2575 (เล่มหลัก) ({count2571_2575} โครงการ)
-              </option>
-            </optgroup>
-            {amendmentsByYear.map((group) => (
-              <optgroup
-                key={group.year}
-                label={`ห้วงแผน พ.ศ. 2566 - 2570 (ประกาศปี ${group.year})`}
-              >
-                {group.docs.map((doc) => {
-                  const count = projectCountsByDoc[doc.id] || 0;
-                  return (
-                    <option key={doc.id} value={doc.id}>
-                      {doc.shortTitle} ({count} โครงการ)
-                    </option>
-                  );
-                })}
-              </optgroup>
-            ))}
-          </select>
+            options={documentOptions}
+            placeholder={
+              selectedPeriod === '2566-2570'
+                ? `ทุกฉบับ 2566-2570 (${docs2566_2570.length} ฉบับ)`
+                : `ทุกเล่มแผน (${activeDocs.length} ฉบับ)`
+            }
+            ariaLabel="กรองตามเล่มแผนพัฒนาท้องถิ่น"
+            className="max-w-[260px] sm:max-w-[320px]"
+            icon={<IconFileText className="w-3.5 h-3.5" />}
+          />
 
           {/* Icon-Only Advanced Filter Drawer Toggle */}
           <button
@@ -669,20 +719,15 @@ export function FilterPanel({
             <label className="block text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-1">
               ยุทธศาสตร์การพัฒนา (7 ด้าน)
             </label>
-            <select
-              value={selectedStrategy ?? ''}
-              onChange={(e) =>
-                onSelectStrategy(e.target.value === '' ? null : Number(e.target.value))
-              }
-              className="w-full px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 text-slate-800 dark:text-slate-200 font-medium outline-none focus:border-sky-500"
-            >
-              <option value="">ทุกด้านยุทธศาสตร์ (ด้านที่ 1 - 7)</option>
-              {SONGYANG_STRATEGIES.map((s) => (
-                <option key={s.no} value={s.no}>
-                  ด้านที่ {s.no}: {s.shortName}
-                </option>
-              ))}
-            </select>
+            <SongyangSelect<number | null>
+              value={selectedStrategy}
+              onChange={onSelectStrategy}
+              options={strategyOptions}
+              placeholder="ทุกด้านยุทธศาสตร์ (ด้านที่ 1 - 7)"
+              ariaLabel="ยุทธศาสตร์การพัฒนา"
+              className="w-full"
+              icon={<IconLayers className="w-3.5 h-3.5" />}
+            />
           </div>
 
           {/* 2. Category Select */}
@@ -690,20 +735,15 @@ export function FilterPanel({
             <label className="block text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-1">
               ประเภทงาน / หมวดหมู่โครงการ
             </label>
-            <select
-              value={selectedCategory ?? ''}
-              onChange={(e) =>
-                onSelectCategory(e.target.value === '' ? null : e.target.value)
-              }
-              className="w-full px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 text-slate-800 dark:text-slate-200 font-medium outline-none focus:border-sky-500"
-            >
-              <option value="">ทุกประเภทงาน (ทั้งหมด {categoryCounts['all'] || Object.values(categoryCounts).reduce((a, b) => a + b, 0) || 522} โครงการ)</option>
-              {WORK_CATEGORIES.map((c) => (
-                <option key={c.key} value={c.key}>
-                  {c.label} {categoryCounts[c.key] ? `(${categoryCounts[c.key]})` : ''}
-                </option>
-              ))}
-            </select>
+            <SongyangSelect<string | null>
+              value={selectedCategory}
+              onChange={onSelectCategory}
+              options={categoryOptions}
+              placeholder="ทุกประเภทงาน"
+              ariaLabel="ประเภทงาน / หมวดหมู่โครงการ"
+              className="w-full"
+              icon={<IconGrid className="w-3.5 h-3.5" />}
+            />
           </div>
 
           {/* 3. Fiscal Year Select */}
@@ -711,20 +751,15 @@ export function FilterPanel({
             <label className="block text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-1">
               ปีงบประมาณที่มีการตั้งงบ
             </label>
-            <select
-              value={selectedYear ?? ''}
-              onChange={(e) =>
-                onSelectYear(e.target.value === '' ? null : Number(e.target.value))
-              }
-              className="w-full px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 text-slate-800 dark:text-slate-200 font-medium outline-none focus:border-sky-500"
-            >
-              <option value="">ทุกปีงบประมาณ (2566 - 2575)</option>
-              {ALL_YEARS.map((yr) => (
-                <option key={yr} value={yr}>
-                  ปีงบประมาณ พ.ศ. {yr}
-                </option>
-              ))}
-            </select>
+            <SongyangSelect<number | null>
+              value={selectedYear}
+              onChange={onSelectYear}
+              options={yearOptions}
+              placeholder="ทุกปีงบประมาณ (2566 - 2575)"
+              ariaLabel="ปีงบประมาณที่มีการตั้งงบ"
+              className="w-full"
+              icon={<IconCalendar className="w-3.5 h-3.5" />}
+            />
           </div>
         </div>
       )}

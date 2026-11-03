@@ -4,6 +4,7 @@ import React, { useState, useMemo, useEffect, startTransition } from 'react';
 import { INITIAL_PLAN_PROJECTS } from '../data/initialProjects.ts';
 import type { LocalPlanProject } from '../domain/types.ts';
 import { toArabic, formatCurrency } from '../domain/thaiNumerals.ts';
+import { calculateOverallBudget } from '../domain/budgetUtils.ts';
 import { getVillageLabel } from '../domain/villages.ts';
 import { PLAN_2571_2575_OFFICIAL_SUMMARY } from '../domain/documents.ts';
 import { SearchBar } from '../features/search/SearchBar.tsx';
@@ -285,11 +286,9 @@ export default function PlanHomePage() {
     selectedYear,
   ]);
 
-  const totalBudget = useMemo(() => {
-    return filteredProjects.reduce((acc, curr) => acc + (curr.totalBudget || 0), 0);
-  }, [filteredProjects]);
-
-  const totalBudgetFormatted = formatCurrency(totalBudget, false);
+  const budgetSummary = useMemo(() => {
+    return calculateOverallBudget(filteredProjects, selectedYear);
+  }, [filteredProjects, selectedYear]);
 
   const hasActiveFilters =
     Boolean(query) ||
@@ -530,7 +529,8 @@ export default function PlanHomePage() {
             onChange={setQuery}
             totalCount={filteredProjects.length}
             totalDatasetCount={projects.length}
-            totalBudgetFormatted={totalBudgetFormatted}
+            totalBudgetFormatted={budgetSummary.formatted}
+            totalBudgetLabel={budgetSummary.label}
           />
 
           {/* 2. Compact Filter Toolbar + Collapsible Drawer + View Mode Switcher */}
@@ -610,6 +610,7 @@ export default function PlanHomePage() {
                   <ProjectCard
                     key={p.id}
                     project={p}
+                    selectedYear={selectedYear}
                     onSelect={setActiveProject}
                     onPrintDirect={(proj) => handlePrint(proj, 'table_only')}
                   />
@@ -618,6 +619,7 @@ export default function PlanHomePage() {
             ) : (
               <ProjectListView
                 projects={filteredProjects}
+                selectedYear={selectedYear}
                 onSelect={setActiveProject}
                 onPrintDirect={(proj) => handlePrint(proj, 'table_only')}
               />
@@ -639,6 +641,7 @@ export default function PlanHomePage() {
       {/* Project Detail Modal (Progressive Disclosure — Full 5-Year Budgets, Target, Lineage, Scan Preview) */}
       <ProjectDetailModal
         project={activeProject}
+        selectedYear={selectedYear}
         onClose={() => setActiveProject(null)}
         onPrint={handlePrint}
       />
