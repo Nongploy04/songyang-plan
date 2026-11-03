@@ -13,6 +13,7 @@ import {
   IconCheck,
   IconFileText,
   IconCalendar,
+  IconAlertTriangle,
 } from '../../components/icons/index.tsx';
 
 export type PrintPackMode = 'table_only' | 'full_official_pack';
@@ -30,6 +31,9 @@ export function ProjectDetailModal({
 }: ProjectDetailModalProps) {
   const [copied, setCopied] = useState(false);
   const [printMode, setPrintMode] = useState<PrintPackMode>('table_only');
+  const [reportOpen, setReportOpen] = useState(false);
+  const [reportNote, setReportNote] = useState('');
+  const [reportCopied, setReportCopied] = useState(false);
 
   useEffect(() => {
     if (!project) return;
@@ -89,6 +93,19 @@ export function ProjectDetailModal({
     }
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleCopyReport = () => {
+    const textToCopy = `[แจ้งข้อมูลคลาดเคลื่อน แผนพัฒนาท้องถิ่น อบต.สงยาง]\nรหัสโครงการ: ${project.id}\nชื่อโครงการ: ${cleanName}\nเอกสารอ้างอิง: ${cleanDocTitle} (ลำดับที่ ${displaySeq} หน้า ${displayPrintedPage})\nข้อความที่ต้องการแจ้ง: ${reportNote.trim() || 'ขอให้เจ้าหน้าที่ตรวจสอบความถูกต้องเทียบกับเอกสารจริง'}`;
+    try {
+      if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
+        navigator.clipboard.writeText(textToCopy).catch(() => {});
+      }
+    } catch {
+      // Ignore clipboard error
+    }
+    setReportCopied(true);
+    setTimeout(() => setReportCopied(false), 2500);
   };
 
   const years = getProjectFiscalYears(project);
@@ -374,6 +391,61 @@ export function ProjectDetailModal({
             </div>
           </div>
 
+          {/* SECTION 4: Report Data Discrepancy Box */}
+          {reportOpen && (
+            <div className="rounded-2xl border border-amber-300 dark:border-amber-800 bg-amber-50/70 dark:bg-amber-950/40 p-4 space-y-3">
+              <div className="flex items-start justify-between gap-2">
+                <div className="flex items-center gap-2 text-xs font-bold text-amber-900 dark:text-amber-200">
+                  <IconAlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
+                  <span>แจ้งข้อมูลคลาดเคลื่อน / เสนอแนะแก้ไขสำหรับโครงการนี้</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setReportOpen(false)}
+                  className="w-6 h-6 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
+                >
+                  <IconX className="w-4 h-4" />
+                </button>
+              </div>
+              <p className="text-[11px] text-slate-600 dark:text-slate-400">
+                หากพบว่าตัวสะกดจากเครื่องสแกนขาวดำของ อบต. เลือนราง หรือตัวเลขงบประมาณไม่ชัดเจน สามารถพิมพ์ระบุจุดที่ต้องการให้ตรวจสอบ และกดคัดลอกข้อความเพื่อส่งต่อให้เจ้าหน้าที่ อบต. ได้ทันที
+              </p>
+              <textarea
+                value={reportNote}
+                onChange={(e) => setReportNote(e.target.value)}
+                placeholder="ระบุจุดที่ต้องการแจ้ง เช่น ตัวสะกดชื่อถนน, วรรณยุกต์ หรือตัวเลขงบประมาณ..."
+                rows={2}
+                className="w-full p-2.5 rounded-xl border border-amber-200 dark:border-amber-900/60 bg-white dark:bg-slate-900 text-xs text-slate-800 dark:text-slate-200 outline-none focus:border-amber-500"
+              />
+              <div className="flex items-center justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setReportOpen(false)}
+                  className="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-xs text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
+                >
+                  ยกเลิก
+                </button>
+                <button
+                  type="button"
+                  onClick={handleCopyReport}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold shadow-xs transition-colors cursor-pointer"
+                >
+                  {reportCopied ? (
+                    <>
+                      <IconCheck className="w-3.5 h-3.5" />
+                      <span>คัดลอกข้อความสำเร็จ!</span>
+                    </>
+                  ) : (
+                    <>
+                      <IconCopy className="w-3.5 h-3.5" />
+                      <span>คัดลอกข้อความแจ้งเรื่อง</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          )}
+
           {/* Meta Info: Village, Agency, Expected Result */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
             <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800">
@@ -408,6 +480,19 @@ export function ProjectDetailModal({
           </div>
 
           <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setReportOpen((prev) => !prev)}
+              title="แจ้งข้อมูลคลาดเคลื่อนสำหรับโครงการนี้"
+              className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border text-xs font-semibold transition-colors cursor-pointer ${
+                reportOpen
+                  ? 'bg-amber-100 text-amber-900 border-amber-400 dark:bg-amber-950 dark:text-amber-200'
+                  : 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+              }`}
+            >
+              <IconAlertTriangle className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+              <span>แจ้งข้อมูลคลาดเคลื่อน</span>
+            </button>
             <button
               type="button"
               onClick={onClose}

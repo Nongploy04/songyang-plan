@@ -14,7 +14,6 @@ import {
   IconArchive,
   IconExternalLink,
   IconFileText,
-  IconLayers,
 } from '../../components/icons/index.tsx';
 
 export type ProjectViewMode = 'card' | 'list';

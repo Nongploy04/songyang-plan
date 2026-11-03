@@ -15,14 +15,20 @@ export interface BrowserStorageLike {
 const resilientWrappers = new WeakMap<object, BrowserStorageLike>();
 let memoryOnlyStorage: BrowserStorageLike | null = null;
 
+interface GlobalWithStorage {
+  localStorage?: Storage;
+  sessionStorage?: Storage;
+}
+
 export function getStorage(storageType: 'local' | 'session' = 'local'): Storage | null {
   try {
+    const g = typeof globalThis !== 'undefined' ? (globalThis as unknown as GlobalWithStorage) : undefined;
     if (storageType === 'local') {
       if (typeof window !== 'undefined' && window.localStorage) return window.localStorage;
-      if (typeof globalThis !== 'undefined' && (globalThis as any).localStorage) return (globalThis as any).localStorage;
+      if (g?.localStorage) return g.localStorage;
     } else {
       if (typeof window !== 'undefined' && window.sessionStorage) return window.sessionStorage;
-      if (typeof globalThis !== 'undefined' && (globalThis as any).sessionStorage) return (globalThis as any).sessionStorage;
+      if (g?.sessionStorage) return g.sessionStorage;
     }
     return null;
   } catch {

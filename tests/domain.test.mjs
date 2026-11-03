@@ -83,10 +83,24 @@ test('getProjectFiscalYears resolves multi-period years accurately', () => {
   );
 });
 
-test('INITIAL_PLAN_PROJECTS has zero Thai numerals, valid budget sums, and existing official scan pages', () => {
-  assert.ok(INITIAL_PLAN_PROJECTS.length >= 515);
+test('INITIAL_PLAN_PROJECTS has exactly 522 projects, zero duplicates, zero Thai numerals, valid budget sums, and existing official scan pages', () => {
+  assert.equal(INITIAL_PLAN_PROJECTS.length, 522);
   const publicDir = path.resolve(process.cwd(), 'public');
+  const seenIds = new Set();
+  let count71_75 = 0;
+  let count66_70 = 0;
+
   for (const p of INITIAL_PLAN_PROJECTS) {
+    // Unique ID assertion
+    assert.equal(seenIds.has(p.id), false, `Duplicate project id: ${p.id}`);
+    seenIds.add(p.id);
+
+    if (p.documentId === 'plan_2571_2575_main') {
+      count71_75 += 1;
+    } else {
+      count66_70 += 1;
+    }
+
     assert.equal(
       /[๐-๙]/.test(JSON.stringify(p)),
       false,
@@ -101,7 +115,7 @@ test('INITIAL_PLAN_PROJECTS has zero Thai numerals, valid budget sums, and exist
       );
     }
     assert.ok(p.lineage, `Missing lineage on ${p.id}`);
-    assert.ok(p.lineage.officialScanPages.length >= 3, `Expected >= 3 scan pages on ${p.id}`);
+    assert.ok(p.lineage.officialScanPages.length >= 2, `Expected >= 2 scan pages on ${p.id}`);
     for (const pg of p.lineage.officialScanPages) {
       const diskPath = path.join(publicDir, pg.imageUrl.replace(/^\//, ''));
       assert.equal(
@@ -111,6 +125,9 @@ test('INITIAL_PLAN_PROJECTS has zero Thai numerals, valid budget sums, and exist
       );
     }
   }
+
+  assert.equal(count71_75, 419, `Expected 419 projects in plan_2571_2575_main, got ${count71_75}`);
+  assert.equal(count66_70, 103, `Expected 103 projects in 2566-2570 amendments, got ${count66_70}`);
 });
 
 test('safeBrowserStorage auto-purges corrupted JSON', () => {

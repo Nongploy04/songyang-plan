@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, startTransition } from 'react';
 import { INITIAL_PLAN_PROJECTS } from '../data/initialProjects.ts';
 import type { LocalPlanProject } from '../domain/types.ts';
 import { toArabic, formatCurrency } from '../domain/thaiNumerals.ts';
@@ -105,31 +105,33 @@ export default function PlanHomePage() {
         fiscalYear: null,
       }
     );
-    setSelectedPeriod(cached.period ?? null);
-    setSelectedDocumentId(cached.documentId);
-    setSelectedVillage(cached.villageNo);
-    setSelectedStrategy(cached.strategyNo);
-    setSelectedCategory(cached.workCategory);
-    setSelectedYear(cached.fiscalYear);
+    startTransition(() => {
+      setSelectedPeriod(cached.period ?? null);
+      setSelectedDocumentId(cached.documentId);
+      setSelectedVillage(cached.villageNo);
+      setSelectedStrategy(cached.strategyNo);
+      setSelectedCategory(cached.workCategory);
+      setSelectedYear(cached.fiscalYear);
 
-    const savedView = safeGetText(VIEW_MODE_CACHE_KEY, 'card');
-    if (savedView === 'card' || savedView === 'list') {
-      setViewMode(savedView);
-    }
-
-    const savedTheme = safeGetText('so_plan_theme', 'light');
-    const isDark = savedTheme === 'dark';
-    setDarkMode(isDark);
-    document.documentElement.classList.toggle('dark', isDark);
-
-    if (typeof window !== 'undefined') {
-      const host = window.location.hostname;
-      if (host === 'localhost' || host === '127.0.0.1') {
-        setPortalUrl('http://localhost:3001');
+      const savedView = safeGetText(VIEW_MODE_CACHE_KEY, 'card');
+      if (savedView === 'card' || savedView === 'list') {
+        setViewMode(savedView);
       }
-    }
 
-    setHydrated(true);
+      const savedTheme = safeGetText('so_plan_theme', 'light');
+      const isDark = savedTheme === 'dark';
+      setDarkMode(isDark);
+      document.documentElement.classList.toggle('dark', isDark);
+
+      if (typeof window !== 'undefined') {
+        const host = window.location.hostname;
+        if (host === 'localhost' || host === '127.0.0.1') {
+          setPortalUrl('http://localhost:3001');
+        }
+      }
+
+      setHydrated(true);
+    });
   }, []);
 
   const toggleDarkMode = () => {

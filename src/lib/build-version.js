@@ -2,7 +2,7 @@
 // MANDATORY AI RULE: bump BUILD_VERSION on EVERY code change before build/push.
 // Format: 'YYYY-MM-DD HH:mm (v1.0.X)' Asia/Bangkok (UTC+7), HH:mm.
 // =========================================================================
-export const BUILD_VERSION = '2026-11-03 11:50 (v1.0.9)';
+export const BUILD_VERSION = '2026-11-03 12:42 (v1.0.10)';
 
 export const PWA_VERSION_KEY = 'so_plan_pwa_version';
 
