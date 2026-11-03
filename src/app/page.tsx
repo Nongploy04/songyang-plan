@@ -7,13 +7,34 @@ import { toArabic, formatCurrency } from '../domain/thaiNumerals.ts';
 import { getVillageLabel } from '../domain/villages.ts';
 import { PLAN_2571_2575_OFFICIAL_SUMMARY } from '../domain/documents.ts';
 import { SearchBar } from '../features/search/SearchBar.tsx';
-import { FilterPanel } from '../features/search/FilterPanel.tsx';
+import {
+  FilterPanel,
+  type ProjectViewMode,
+} from '../features/search/FilterPanel.tsx';
 import { ProjectCard } from '../features/project/ProjectCard.tsx';
-import { ProjectDetailModal, type PrintPackMode } from '../features/project/ProjectDetailModal.tsx';
+import { ProjectListView } from '../features/project/ProjectListView.tsx';
+import {
+  ProjectDetailModal,
+  type PrintPackMode,
+} from '../features/project/ProjectDetailModal.tsx';
 import { PrintOfficialSheet } from '../features/project/PrintOfficialSheet.tsx';
-import { safeGetJson, safeSetJson, safeGetText, safeSetText } from '../lib/safeBrowserStorage.ts';
+import {
+  safeGetJson,
+  safeSetJson,
+  safeGetText,
+  safeSetText,
+} from '../lib/safeBrowserStorage.ts';
 import { formatBuildStamp } from '../lib/build-version.js';
-import { IconLayers, IconFileText, IconSun, IconMoon, IconArrowLeft } from '../components/icons/index.tsx';
+import {
+  IconLayers,
+  IconTable,
+  IconSun,
+  IconMoon,
+  IconArrowLeft,
+  IconGrid,
+  IconList,
+  IconX,
+} from '../components/icons/index.tsx';
 
 interface PersistedFilterPrefs {
   documentId: string | null;
@@ -24,12 +45,14 @@ interface PersistedFilterPrefs {
 }
 
 const FILTER_CACHE_KEY = 'songyang_plan_filters_v2';
+const VIEW_MODE_CACHE_KEY = 'songyang_plan_view_mode_v1';
 
 function isValidFilterPrefs(val: unknown): val is PersistedFilterPrefs {
   if (!val || typeof val !== 'object') return false;
   const v = val as Record<string, unknown>;
   const isStrOrNull = (x: unknown) => x === null || typeof x === 'string';
-  const isNumOrNull = (x: unknown) => x === null || (typeof x === 'number' && Number.isFinite(x));
+  const isNumOrNull = (x: unknown) =>
+    x === null || (typeof x === 'number' && Number.isFinite(x));
   return (
     isStrOrNull(v.documentId) &&
     isNumOrNull(v.villageNo) &&
@@ -47,16 +70,19 @@ export default function PlanHomePage() {
   const [selectedStrategy, setSelectedStrategy] = useState<number | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedYear, setSelectedYear] = useState<number | null>(null);
+  const [viewMode, setViewMode] = useState<ProjectViewMode>('card');
   const [showSummaryTable, setShowSummaryTable] = useState<boolean>(false);
   const [darkMode, setDarkMode] = useState<boolean>(false);
-  const [portalUrl, setPortalUrl] = useState<string>('https://songyang-portal.vercel.app');
+  const [portalUrl, setPortalUrl] = useState<string>(
+    'https://songyang-portal.vercel.app'
+  );
   const [hydrated, setHydrated] = useState(false);
 
   const [activeProject, setActiveProject] = useState<LocalPlanProject | null>(null);
   const [printProject, setPrintProject] = useState<LocalPlanProject | null>(null);
   const [printMode, setPrintMode] = useState<PrintPackMode>('table_only');
 
-  // Hydrate filter state & theme from Self-Healing Cache on mount
+  // Hydrate filter state, view mode & theme from Self-Healing Cache on mount
   useEffect(() => {
     const cached = safeGetJson<PersistedFilterPrefs>(
       FILTER_CACHE_KEY,
@@ -74,6 +100,11 @@ export default function PlanHomePage() {
     setSelectedStrategy(cached.strategyNo);
     setSelectedCategory(cached.workCategory);
     setSelectedYear(cached.fiscalYear);
+
+    const savedView = safeGetText(VIEW_MODE_CACHE_KEY, 'card');
+    if (savedView === 'card' || savedView === 'list') {
+      setViewMode(savedView);
+    }
 
     const savedTheme = safeGetText('so_plan_theme', 'light');
     const isDark = savedTheme === 'dark';
@@ -97,6 +128,11 @@ export default function PlanHomePage() {
       safeSetText('so_plan_theme', next ? 'dark' : 'light');
       return next;
     });
+  };
+
+  const handleViewModeChange = (mode: ProjectViewMode) => {
+    setViewMode(mode);
+    safeSetText(VIEW_MODE_CACHE_KEY, mode);
   };
 
   // Save filter state to Self-Healing Cache on change
@@ -143,35 +179,32 @@ export default function PlanHomePage() {
     const q = toArabic(query).toLowerCase().trim();
 
     return projects.filter((p) => {
-      // Document Filter
       if (selectedDocumentId !== null && p.documentId !== selectedDocumentId) {
         return false;
       }
 
-      // Village Filter
       if (selectedVillage !== null && !p.villages.includes(selectedVillage)) {
         return false;
       }
 
-      // Strategy Filter
       if (selectedStrategy !== null && p.strategyNo !== selectedStrategy) {
         return false;
       }
 
-      // Category Filter
       if (selectedCategory !== null && p.workCategory !== selectedCategory) {
         return false;
       }
 
-      // Fiscal Year Filter
       if (selectedYear !== null) {
         const amount = p.budgets[selectedYear];
         if (!amount || amount <= 0) return false;
       }
 
-      // Query Search (matches project name, target, objective, seq, village names, document title, lineage origin, agency)
       if (q) {
-        const villageText = p.villages.map((no) => getVillageLabel(no)).join(' ').toLowerCase();
+        const villageText = p.villages
+          .map((no) => getVillageLabel(no))
+          .join(' ')
+          .toLowerCase();
         const lineageText = p.lineage
           ? [
               p.lineage.statusLabel,
@@ -187,6 +220,7 @@ export default function PlanHomePage() {
           toArabic(p.agency),
           toArabic(p.documentTitle),
           toArabic(p.strategyName),
+           `หน้า ${toArabic(p.printedPage)}`,
           villageText,
           toArabic(lineageText),
         ]
@@ -211,7 +245,6 @@ export default function PlanHomePage() {
     selectedYear,
   ]);
 
-  // Aggregate stats
   const totalBudget = useMemo(() => {
     return filteredProjects.reduce((acc, curr) => acc + (curr.totalBudget || 0), 0);
   }, [filteredProjects]);
@@ -239,10 +272,16 @@ export default function PlanHomePage() {
     setPrintProject(p);
     setPrintMode(mode);
 
-    // Preload scan images before triggering window.print()
     const allPages = p.lineage?.officialScanPages || [];
-    const tablePages = allPages.filter((pg) => pg.role === 'table_old' || pg.role === 'table_current');
-    const pagesToLoad = mode === 'full_official_pack' ? allPages : tablePages.length > 0 ? tablePages : allPages;
+    const tablePages = allPages.filter(
+      (pg) => pg.role === 'table_old' || pg.role === 'table_current'
+    );
+    const pagesToLoad =
+      mode === 'full_official_pack'
+        ? allPages
+        : tablePages.length > 0
+        ? tablePages
+        : allPages;
 
     Promise.all(
       pagesToLoad.map(
@@ -265,44 +304,49 @@ export default function PlanHomePage() {
     <>
       {/* On-screen Web UI */}
       <div className="no-print min-h-screen flex flex-col">
-        {/* Top Header */}
-        <header className="sticky top-0 z-30 bg-white/95 dark:bg-[#0c1222]/95 [backdrop-filter:blur(28px)_saturate(190%)] [-webkit-backdrop-filter:blur(28px)_saturate(190%)] border-b border-black/[0.08] dark:border-white/[0.12]">
+        {/* Top Sticky Header — Clean & Icon-Only Actions */}
+        <header className="sticky top-0 z-30 bg-white/95 dark:bg-[#0c1222]/95 [backdrop-filter:blur(28px)_saturate(190%)] [-webkit-backdrop-filter:blur(28px)_saturate(190%)] border-b border-black/[0.08] dark:border-white/[0.12] shadow-sm">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+            {/* Left: Icon-Only Portal Back Button + Logo & Title */}
+            <div className="flex items-center gap-2.5 min-w-0">
               <a
                 href={portalUrl}
                 title="กลับหน้าหลัก Songyang Portal"
-                className="inline-flex items-center gap-1 px-2.5 py-2 rounded-xl text-xs font-semibold border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors shrink-0"
+                aria-label="กลับหน้าหลัก Songyang Portal"
+                className="w-9 h-9 rounded-xl flex items-center justify-center border border-slate-200/80 dark:border-slate-700/80 bg-slate-100/90 dark:bg-slate-800/90 text-slate-700 dark:text-slate-200 hover:bg-sky-50 dark:hover:bg-sky-950/70 hover:text-sky-600 dark:hover:text-sky-400 transition-colors shrink-0"
               >
                 <IconArrowLeft className="w-4 h-4" />
-                <span className="hidden md:inline">Portal</span>
               </a>
-              <div className="w-10 h-10 rounded-xl bg-sky-600 flex items-center justify-center text-white shadow-xs shrink-0">
+
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-sky-600 to-blue-800 flex items-center justify-center text-white shadow-xs shrink-0">
                 <IconLayers className="w-5 h-5 text-white" />
               </div>
+
               <div className="min-w-0">
-                <h1 className="text-sm sm:text-lg font-bold text-slate-900 dark:text-slate-100 leading-tight truncate">
-                  ระบบสืบค้นและพิมพ์แผนพัฒนาท้องถิ่น อบต.สงยาง
+                <h1 className="text-sm sm:text-base font-extrabold text-slate-900 dark:text-slate-100 leading-tight truncate">
+                  แผนพัฒนาท้องถิ่น อบต.สงยาง
                 </h1>
-                <p className="text-2xs sm:text-xs text-slate-500 dark:text-slate-400 truncate">
-                  อบต.สงยาง อ.มหาชนะชัย จ.ยโสธร • ตรวจสอบเล่มแผน ประวัติการแก้ไข และสั่งปริ้นหน้าสแกนต้นฉบับจริง
+                <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate">
+                  ค้นหาโครงการ • ตรวจสอบประวัติเล่มแผน • พิมพ์หน้าสแกนจริง
                 </p>
               </div>
             </div>
 
+            {/* Right: Icon-Only Header Controls */}
             <div className="flex items-center gap-2 shrink-0">
               <button
                 type="button"
                 onClick={() => setShowSummaryTable((prev) => !prev)}
-                className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold border transition-colors cursor-pointer ${
+                title="ตารางสรุปยอดแผนพัฒนาท้องถิ่น (แบบ ผ.01)"
+                aria-label="ตารางสรุปยอดแผนพัฒนาท้องถิ่น (แบบ ผ.01)"
+                aria-pressed={showSummaryTable}
+                className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center border transition-all cursor-pointer ${
                   showSummaryTable
-                    ? 'bg-sky-600 text-white border-sky-600'
-                    : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700'
+                    ? 'bg-sky-600 text-white border-sky-600 shadow-xs'
+                    : 'bg-slate-100/90 dark:bg-slate-800/90 border-slate-200/80 dark:border-slate-700/80 text-slate-700 dark:text-slate-200 hover:bg-sky-50 dark:hover:bg-sky-950/70 hover:text-sky-600 dark:hover:text-sky-400'
                 }`}
               >
-                <IconFileText className="w-4 h-4" />
-                <span className="hidden sm:inline">ตารางสรุปยอดแผน (แบบ ผ.01)</span>
-                <span className="sm:hidden">ผ.01</span>
+                <IconTable className="w-4 h-4" />
               </button>
 
               <button
@@ -310,19 +354,23 @@ export default function PlanHomePage() {
                 onClick={toggleDarkMode}
                 aria-label={darkMode ? 'สลับเป็นโหมดสว่าง' : 'สลับเป็นโหมดมืด'}
                 title={darkMode ? 'สลับเป็นโหมดสว่าง' : 'สลับเป็นโหมดมืด'}
-                className="inline-flex items-center justify-center w-9 h-9 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-amber-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors cursor-pointer"
+                className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center border border-slate-200/80 dark:border-slate-700/80 bg-slate-100/90 dark:bg-slate-800/90 text-slate-700 dark:text-amber-300 hover:bg-sky-50 dark:hover:bg-sky-950/70 hover:text-sky-600 transition-all cursor-pointer"
               >
-                {darkMode ? <IconSun className="w-4 h-4" /> : <IconMoon className="w-4 h-4" />}
+                {darkMode ? (
+                  <IconSun className="w-4 h-4" />
+                ) : (
+                  <IconMoon className="w-4 h-4" />
+                )}
               </button>
             </div>
           </div>
         </header>
 
         {/* Main Content */}
-        <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-6 space-y-6">
+        <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-5 space-y-4">
           {/* Collapsible Official Summary Table (แบบ ผ.01) */}
           {showSummaryTable && (
-            <section className="bg-white dark:bg-slate-900 p-5 rounded-3xl border border-sky-200 dark:border-sky-900/60 shadow-sm space-y-3">
+            <section className="rounded-2xl bg-white/95 dark:bg-[#0c1222]/95 [backdrop-filter:blur(28px)_saturate(190%)] [-webkit-backdrop-filter:blur(28px)_saturate(190%)] p-4 sm:p-5 border border-sky-200 dark:border-sky-900/60 shadow-lg space-y-3">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div>
                   <h2 className="text-sm sm:text-base font-bold text-slate-900 dark:text-slate-100">
@@ -332,27 +380,56 @@ export default function PlanHomePage() {
                     คลิกที่แถวยุทธศาสตร์เพื่อกรองดูโครงการในด้านนั้นได้ทันที
                   </p>
                 </div>
-                <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-sky-100 dark:bg-sky-950 text-sky-800 dark:text-sky-300">
-                  รวมทั้งเล่ม 419 โครงการ • 2,485,336,443 บาท
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-sky-100 dark:bg-sky-950 text-sky-800 dark:text-sky-300">
+                    รวมทั้งเล่ม 419 โครงการ • 2,485,336,443 บาท
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setShowSummaryTable(false)}
+                    title="ปิดตารางสรุป"
+                    aria-label="ปิดตารางสรุป"
+                    className="w-8 h-8 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
+                  >
+                    <IconX className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
 
-              <div className="overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-800">
+              <div className="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-800">
                 <table className="w-full text-xs text-left border-collapse">
                   <thead className="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
                     <tr>
-                      <th className="p-2.5 border-b border-slate-200 dark:border-slate-700">ประเด็นการพัฒนา (ยุทธศาสตร์)</th>
-                      <th className="p-2.5 text-center border-b border-slate-200 dark:border-slate-700">หน้าเอกสาร</th>
-                      <th className="p-2.5 text-right border-b border-slate-200 dark:border-slate-700">จำนวนโครงการ</th>
-                      <th className="p-2.5 text-right border-b border-slate-200 dark:border-slate-700">ปี 2571</th>
-                      <th className="p-2.5 text-right border-b border-slate-200 dark:border-slate-700">ปี 2572</th>
-                      <th className="p-2.5 text-right border-b border-slate-200 dark:border-slate-700">ปี 2573</th>
-                      <th className="p-2.5 text-right border-b border-slate-200 dark:border-slate-700">ปี 2574</th>
-                      <th className="p-2.5 text-right border-b border-slate-200 dark:border-slate-700">ปี 2575</th>
-                      <th className="p-2.5 text-right border-b border-slate-200 dark:border-slate-700 bg-sky-50 dark:bg-sky-950/50">งบประมาณรวม 5 ปี</th>
+                      <th className="p-2.5 border-b border-slate-200 dark:border-slate-700">
+                        ประเด็นการพัฒนา (ยุทธศาสตร์)
+                      </th>
+                      <th className="p-2.5 text-center border-b border-slate-200 dark:border-slate-700">
+                        หน้าเอกสาร
+                      </th>
+                      <th className="p-2.5 text-right border-b border-slate-200 dark:border-slate-700">
+                        จำนวนโครงการ
+                      </th>
+                      <th className="p-2.5 text-right border-b border-slate-200 dark:border-slate-700">
+                        ปี 2571
+                      </th>
+                      <th className="p-2.5 text-right border-b border-slate-200 dark:border-slate-700">
+                        ปี 2572
+                      </th>
+                      <th className="p-2.5 text-right border-b border-slate-200 dark:border-slate-700">
+                        ปี 2573
+                      </th>
+                      <th className="p-2.5 text-right border-b border-slate-200 dark:border-slate-700">
+                        ปี 2574
+                      </th>
+                      <th className="p-2.5 text-right border-b border-slate-200 dark:border-slate-700">
+                        ปี 2575
+                      </th>
+                      <th className="p-2.5 text-right border-b border-slate-200 dark:border-slate-700 bg-sky-50 dark:bg-sky-950/50">
+                        งบประมาณรวม 5 ปี
+                      </th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800 tabular-nums">
                     {PLAN_2571_2575_OFFICIAL_SUMMARY.map((row) => {
                       const isSelected = selectedStrategy === row.strategyNo;
                       return (
@@ -371,15 +448,27 @@ export default function PlanHomePage() {
                           <td className="p-2.5 font-medium text-slate-900 dark:text-slate-100">
                             ด้านที่ {row.strategyNo}: {row.strategyShortName}
                           </td>
-                          <td className="p-2.5 text-center text-slate-500">หน้า {row.printedPageRange}</td>
+                          <td className="p-2.5 text-center text-slate-500">
+                            หน้า {row.printedPageRange}
+                          </td>
                           <td className="p-2.5 text-right font-bold text-sky-600 dark:text-sky-400">
                             {row.projectCount.toLocaleString('en-US')}
                           </td>
-                          <td className="p-2.5 text-right">{formatCurrency(row.budgets[2571], false)}</td>
-                          <td className="p-2.5 text-right">{formatCurrency(row.budgets[2572], false)}</td>
-                          <td className="p-2.5 text-right">{formatCurrency(row.budgets[2573], false)}</td>
-                          <td className="p-2.5 text-right">{formatCurrency(row.budgets[2574], false)}</td>
-                          <td className="p-2.5 text-right">{formatCurrency(row.budgets[2575], false)}</td>
+                          <td className="p-2.5 text-right">
+                            {formatCurrency(row.budgets[2571], false)}
+                          </td>
+                          <td className="p-2.5 text-right">
+                            {formatCurrency(row.budgets[2572], false)}
+                          </td>
+                          <td className="p-2.5 text-right">
+                            {formatCurrency(row.budgets[2573], false)}
+                          </td>
+                          <td className="p-2.5 text-right">
+                            {formatCurrency(row.budgets[2574], false)}
+                          </td>
+                          <td className="p-2.5 text-right">
+                            {formatCurrency(row.budgets[2575], false)}
+                          </td>
                           <td className="p-2.5 text-right font-bold bg-sky-50/40 dark:bg-sky-950/30">
                             {formatCurrency(row.totalBudget, false)}
                           </td>
@@ -392,18 +481,16 @@ export default function PlanHomePage() {
             </section>
           )}
 
-          {/* Search Bar Section */}
-          <section className="bg-white dark:bg-slate-900 p-5 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xs">
-            <SearchBar
-              value={query}
-              onChange={setQuery}
-              totalCount={filteredProjects.length}
-              totalDatasetCount={projects.length}
-              totalBudgetFormatted={totalBudgetFormatted}
-            />
-          </section>
+          {/* 1. Search Bar Section */}
+          <SearchBar
+            value={query}
+            onChange={setQuery}
+            totalCount={filteredProjects.length}
+            totalDatasetCount={projects.length}
+            totalBudgetFormatted={totalBudgetFormatted}
+          />
 
-          {/* Filter Panel */}
+          {/* 2. Compact Filter Toolbar + Collapsible Drawer + View Mode Switcher */}
           <FilterPanel
             selectedDocumentId={selectedDocumentId}
             onSelectDocumentId={setSelectedDocumentId}
@@ -418,39 +505,60 @@ export default function PlanHomePage() {
             onReset={handleResetFilters}
             hasActiveFilters={hasActiveFilters}
             projectCountsByDoc={projectCountsByDoc}
+            viewMode={viewMode}
+            onViewModeChange={handleViewModeChange}
           />
 
-          {/* Projects Results Grid */}
-          <section className="space-y-4">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <h2 className="text-sm font-bold text-slate-800 dark:text-slate-200">
-                รายการโครงการ ({filteredProjects.length.toLocaleString('en-US')} โครงการ)
-              </h2>
-              {hasActiveFilters && (
+          {/* 3. Projects Results Section */}
+          <section className="space-y-3">
+            <div className="flex flex-wrap items-center justify-between gap-2 px-1">
+              <div className="flex items-center gap-2">
+                <h2 className="text-sm font-bold text-slate-800 dark:text-slate-200">
+                  รายการโครงการ ({filteredProjects.length.toLocaleString('en-US')} โครงการ)
+                </h2>
+                <span className="hidden sm:inline-block px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-sky-100/80 dark:bg-sky-950/80 text-sky-700 dark:text-sky-300">
+                  คลิกที่โครงการเพื่อดูงบรายปีและรายละเอียดทั้งหมด
+                </span>
+              </div>
+
+              <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+                <span>มุมมอง:</span>
                 <button
                   type="button"
-                  onClick={handleResetFilters}
-                  className="text-xs font-semibold text-sky-600 dark:text-sky-400 hover:underline"
+                  onClick={() =>
+                    handleViewModeChange(viewMode === 'card' ? 'list' : 'card')
+                  }
+                  className="inline-flex items-center gap-1 font-semibold text-sky-600 dark:text-sky-400 hover:underline cursor-pointer"
                 >
-                  แสดงทั้งหมด ({projects.length.toLocaleString('en-US')} โครงการ)
+                  {viewMode === 'card' ? (
+                    <>
+                      <IconGrid className="w-3.5 h-3.5" />
+                      <span>การ์ด</span>
+                    </>
+                  ) : (
+                    <>
+                      <IconList className="w-3.5 h-3.5" />
+                      <span>รายการตาราง</span>
+                    </>
+                  )}
                 </button>
-              )}
+              </div>
             </div>
 
             {filteredProjects.length === 0 ? (
-              <div className="text-center py-16 bg-white dark:bg-slate-900 rounded-3xl border border-dashed border-slate-300 dark:border-slate-800">
-                <p className="text-slate-500 dark:text-slate-400 text-sm">
+              <div className="text-center py-14 bg-white dark:bg-slate-900 rounded-3xl border border-dashed border-slate-300 dark:border-slate-800">
+                <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">
                   ไม่พบโครงการที่ตรงกับเงื่อนไขการค้นหา
                 </p>
                 <button
                   type="button"
                   onClick={handleResetFilters}
-                  className="mt-3 px-4 py-2 rounded-xl text-xs font-semibold text-sky-600 hover:bg-sky-50 dark:hover:bg-slate-800 transition-colors"
+                  className="mt-3 px-4 py-2 rounded-xl text-xs font-semibold bg-sky-600 text-white hover:bg-sky-700 transition-colors cursor-pointer"
                 >
                   ล้างตัวกรองทั้งหมด
                 </button>
               </div>
-            ) : (
+            ) : viewMode === 'card' ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {filteredProjects.map((p) => (
                   <ProjectCard
@@ -461,18 +569,28 @@ export default function PlanHomePage() {
                   />
                 ))}
               </div>
+            ) : (
+              <ProjectListView
+                projects={filteredProjects}
+                onSelect={setActiveProject}
+                onPrintDirect={(proj) => handlePrint(proj, 'table_only')}
+              />
             )}
           </section>
         </main>
 
         {/* Footer */}
         <footer className="mt-auto py-6 border-t border-slate-200 dark:border-slate-800 text-center text-xs text-slate-400">
-          <div>ระบบสารสนเทศแผนพัฒนาท้องถิ่น องค์การบริหารส่วนตำบลสงยาง อำเภอมหาชนะชัย จังหวัดยโสธร</div>
-          <div className="mt-1 font-mono text-3xs text-slate-400">{formatBuildStamp()}</div>
+          <div>
+            ระบบสารสนเทศแผนพัฒนาท้องถิ่น องค์การบริหารส่วนตำบลสงยาง อำเภอมหาชนะชัย จังหวัดยโสธร
+          </div>
+          <div className="mt-1 font-mono text-3xs text-slate-400">
+            {formatBuildStamp()}
+          </div>
         </footer>
       </div>
 
-      {/* Project Detail Modal */}
+      {/* Project Detail Modal (Progressive Disclosure — Full 5-Year Budgets, Target, Lineage, Scan Preview) */}
       <ProjectDetailModal
         project={activeProject}
         onClose={() => setActiveProject(null)}

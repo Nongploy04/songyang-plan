@@ -1,11 +1,17 @@
 'use client';
 
 import React, { useState } from 'react';
-import { type LocalPlanProject, getProjectFiscalYears } from '../../domain/types.ts';
+import { type LocalPlanProject } from '../../domain/types.ts';
 import { toArabic, formatCurrency } from '../../domain/thaiNumerals.ts';
 import { getVillageLabel } from '../../domain/villages.ts';
 import { generateOfficialCitation } from '../../domain/citation.ts';
-import { IconCopy, IconCheck, IconPrint, IconMapPin, IconFileText } from '../../components/icons/index.tsx';
+import {
+  IconPrint,
+  IconCopy,
+  IconCheck,
+  IconMapPin,
+  IconChevronRight,
+} from '../../components/icons/index.tsx';
 
 interface ProjectCardProps {
   project: LocalPlanProject;
@@ -13,34 +19,30 @@ interface ProjectCardProps {
   onPrintDirect: (p: LocalPlanProject) => void;
 }
 
-function safeCopyText(text: string): void {
-  try {
-    if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
-      navigator.clipboard.writeText(text).catch(() => {
-        fallbackCopyText(text);
-      });
-      return;
-    }
-  } catch {
-    // Fallback below
-  }
-  fallbackCopyText(text);
-}
+export function getCompactDocBadge(project: LocalPlanProject): {
+  label: string;
+  isModified: boolean;
+} {
+  const lineage = project.lineage;
+  const isModified = Boolean(lineage?.hasBeenModified);
+  const rawStatus = toArabic(lineage?.statusLabel || project.documentTitle || '');
 
-function fallbackCopyText(text: string): void {
-  try {
-    if (typeof document === 'undefined') return;
-    const ta = document.createElement('textarea');
-    ta.value = text;
-    ta.style.position = 'fixed';
-    ta.style.opacity = '0';
-    document.body.appendChild(ta);
-    ta.select();
-    document.execCommand('copy');
-    document.body.removeChild(ta);
-  } catch {
-    // Ignore in restricted environments
+  if (rawStatus.includes('2571-2575') && !isModified) {
+    return { label: 'แผนหลัก 71-75', isModified: false };
   }
+  if (rawStatus.includes('2566-2570') && !isModified) {
+    return { label: 'แผนหลัก 66-70', isModified: false };
+  }
+  const compact = rawStatus
+    .replace('แผนพัฒนาท้องถิ่น ', '')
+    .replace('พ.ศ. ', '')
+    .replace('ฉบับ', '')
+    .replace('ครั้งที่ ', '#')
+    .trim();
+  return {
+    label: compact.length > 22 ? `${compact.slice(0, 22)}…` : compact || 'แผนพัฒนาฯ',
+    isModified,
+  };
 }
 
 export function ProjectCard({
@@ -51,146 +53,148 @@ export function ProjectCard({
   const [copied, setCopied] = useState(false);
 
   const displaySeq = toArabic(project.seq);
-  const displayPage = toArabic(project.printedPage);
+  const displayPrintedPage = toArabic(project.printedPage);
   const displayTotal = formatCurrency(project.totalBudget, false);
   const cleanName = toArabic(project.name);
-  const cleanTarget = toArabic(project.target);
-  const cleanDocTitle = toArabic(project.documentTitle);
-
-  const fiscalYears = getProjectFiscalYears(project);
-  const fundedYears = fiscalYears.filter((yr) => (project.budgets[yr] || 0) > 0);
-  const lineage = project.lineage;
-
-  const statusBadgeStyle =
-    lineage?.status === 'edited'
-      ? 'bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800'
-      : lineage?.status === 'changed'
-      ? 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800'
-      : lineage?.status === 'added'
-      ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800'
-      : 'bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 border-sky-200 dark:border-sky-800';
 
   const handleCopyCitation = (e: React.MouseEvent) => {
     e.stopPropagation();
-    const citation = generateOfficialCitation({
-      planTitle: cleanDocTitle,
+    const text = generateOfficialCitation({
+      planTitle: toArabic(project.documentTitle),
       strategyNo: project.strategyNo,
       seq: project.seq,
-      printedPage: displayPage,
+      printedPage: displayPrintedPage,
       useThaiNumerals: false,
     });
-    safeCopyText(citation);
+
+    try {
+      if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
+        navigator.clipboard.writeText(text).catch(() => {});
+      }
+    } catch {
+      // Ignore clipboard permission errors
+    }
+
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const handlePrintClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onPrintDirect(project);
+  };
+
+  const villageLabels =
+    project.villages.length >= 8
+      ? 'ทุกหมู่บ้านในตำบลสงยาง (ม.1 - ม.8)'
+      : project.villages.map((no) => getVillageLabel(no)).join(', ');
+
+  const docBadge = getCompactDocBadge(project);
+
   return (
-    <div
+    <article
       onClick={() => onSelect(project)}
-      className="group relative bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700/80 p-5 shadow-xs hover:shadow-md hover:border-sky-300 dark:hover:border-sky-600 transition-all cursor-pointer flex flex-col justify-between"
+      className="group relative rounded-2xl bg-white/95 dark:bg-[#0c1222]/95 [backdrop-filter:blur(28px)_saturate(190%)] [-webkit-backdrop-filter:blur(28px)_saturate(190%)] border border-black/[0.08] dark:border-white/[0.12] hover:border-sky-500/60 dark:hover:border-sky-500/60 shadow-sm hover:shadow-xl transition-all duration-200 p-5 flex flex-col justify-between gap-4 cursor-pointer"
     >
       <div className="space-y-3">
-        {/* Top Badges */}
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <div className="flex items-center gap-1.5">
-            <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold bg-sky-100 dark:bg-sky-900/60 text-sky-800 dark:text-sky-200">
-              ลำดับที่ {displaySeq}
+        {/* Top Row: Compact Badges + Icon-Only Action Buttons */}
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-1.5 flex-wrap min-w-0">
+            <span
+              className="px-2.5 py-1 rounded-lg text-xs font-extrabold bg-sky-500/10 dark:bg-sky-500/15 text-sky-700 dark:text-sky-300 border border-sky-500/20 tabular-nums"
+              title={`ลำดับที่ ${displaySeq}`}
+            >
+              #{displaySeq}
             </span>
-            <span className="text-xs text-slate-500 dark:text-slate-400">
-              หน้า {displayPage} (PDF หน้า {project.pdfPage})
+
+            <span
+              className="px-2 py-1 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800/90 text-slate-700 dark:text-slate-300 tabular-nums"
+              title={`หน้าเอกสาร ${displayPrintedPage} (ไฟล์ PDF หน้า ${toArabic(project.pdfPage)})`}
+            >
+              หน้า {displayPrintedPage}
+            </span>
+
+            <span
+              className={`px-2 py-1 rounded-lg text-[11px] font-semibold truncate max-w-[140px] ${
+                docBadge.isModified
+                  ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/30'
+                  : 'bg-slate-100/80 dark:bg-slate-800/60 text-slate-500 dark:text-slate-400'
+              }`}
+              title={project.lineage?.statusLabel || toArabic(project.documentTitle)}
+            >
+              {docBadge.label}
             </span>
           </div>
-          <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300">
-            ด้านที่ {project.strategyNo}
-          </span>
-        </div>
 
-        {/* Lineage / Volume Status Banner */}
-        <div className={`px-2.5 py-1.5 rounded-xl border text-xs space-y-0.5 ${statusBadgeStyle}`}>
-          <div className="font-bold flex items-center justify-between gap-1">
-            <span>{lineage?.statusLabel || cleanDocTitle}</span>
-            <span>ล่าสุด: {lineage?.latestPageRef || `หน้า ${displayPage}`}</span>
+          {/* Icon-Only Quick Actions (Copy Citation & Print Official Scan) */}
+          <div
+            className="flex items-center gap-1 shrink-0"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              type="button"
+              onClick={handleCopyCitation}
+              title={copied ? 'คัดลอกคำอ้างอิงแล้ว' : 'คัดลอกคำอ้างอิงราชการ'}
+              aria-label="คัดลอกคำอ้างอิงราชการ"
+              className={`w-8 h-8 rounded-xl flex items-center justify-center border transition-all ${
+                copied
+                  ? 'bg-emerald-50 dark:bg-emerald-950/60 border-emerald-300 dark:border-emerald-700 text-emerald-600 dark:text-emerald-400'
+                  : 'bg-transparent border-transparent text-slate-400 hover:text-sky-600 dark:hover:text-sky-400 hover:bg-sky-50 dark:hover:bg-sky-950/60 hover:border-sky-200 dark:hover:border-sky-800/60'
+              }`}
+            >
+              {copied ? (
+                <IconCheck className="w-4 h-4" />
+              ) : (
+                <IconCopy className="w-4 h-4" />
+              )}
+            </button>
+
+            <button
+              type="button"
+              onClick={handlePrintClick}
+              title="ปริ้นหน้าเอกสารสแกนต้นฉบับจริง (A4)"
+              aria-label="ปริ้นหน้าเอกสารสแกนต้นฉบับจริง"
+              className="w-8 h-8 rounded-xl flex items-center justify-center bg-sky-50 dark:bg-sky-950/60 text-sky-600 dark:text-sky-400 border border-sky-200/70 dark:border-sky-800/70 hover:bg-sky-600 hover:text-white dark:hover:bg-sky-500 dark:hover:text-white transition-all"
+            >
+              <IconPrint className="w-4 h-4" />
+            </button>
           </div>
-          {lineage?.originReference && (
-            <div className="text-2xs opacity-90 truncate">
-              ต้นทาง: {lineage.originReference}
-            </div>
-          )}
         </div>
 
-        {/* Project Title */}
-        <h3 className="text-base font-bold text-slate-900 dark:text-slate-100 group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors leading-snug">
+        {/* Project Name (High Readability, Generous Line Spacing) */}
+        <h3 className="text-[15.5px] sm:text-base font-bold text-slate-900 dark:text-slate-100 group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors leading-relaxed line-clamp-2">
           {cleanName}
         </h3>
 
-        {/* Village Tags */}
-        <div className="flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-400">
-          <IconMapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-          <span>
-            {project.villages.length >= 8
-              ? 'ทุกหมู่บ้าน (ม.1 - ม.8)'
-              : project.villages.map((no) => getVillageLabel(no)).join(', ')}
+        {/* Single-Line Village & Strategy Metadata */}
+        <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 min-w-0">
+          <span className="inline-flex items-center gap-1 font-medium truncate">
+            <IconMapPin className="w-3.5 h-3.5 text-sky-500 shrink-0" />
+            <span className="truncate">{villageLabels}</span>
+          </span>
+          <span className="text-slate-300 dark:text-slate-700 shrink-0">•</span>
+          <span className="shrink-0 font-medium text-slate-400 dark:text-slate-500">
+            ด้านที่ {project.strategyNo}
           </span>
         </div>
-
-        {/* Target summary snippet */}
-        <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">
-          {cleanTarget}
-        </p>
-
-        {/* Active Fiscal Year Pills */}
-        {fundedYears.length > 0 && (
-          <div className="flex flex-wrap gap-1 pt-0.5">
-            {fundedYears.map((yr) => (
-              <span
-                key={yr}
-                className="inline-flex items-center px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-700/70 text-2xs font-medium text-slate-600 dark:text-slate-300"
-              >
-                ปี {yr}: {formatCurrency(project.budgets[yr], false)}
-              </span>
-            ))}
-          </div>
-        )}
       </div>
 
-      {/* Bottom Footer: Budget & Actions */}
-      <div className="mt-4 pt-3.5 border-t border-slate-100 dark:border-slate-700/60 flex items-center justify-between">
-        <div>
-          <span className="block text-2xs uppercase tracking-wider text-slate-400 font-semibold">
-            งบรวม ({fiscalYears[0]}-{fiscalYears[fiscalYears.length - 1]}) • {toArabic(project.agency)}
+      {/* Clean Footer: Total Budget + Subtle Detail Indicator */}
+      <div className="pt-3.5 border-t border-slate-100 dark:border-slate-800/80 flex items-baseline justify-between gap-2">
+        <div className="flex items-baseline gap-1.5">
+          <span className="text-base sm:text-lg font-extrabold text-sky-600 dark:text-sky-400 tabular-nums">
+            {displayTotal}
           </span>
-          <span className="text-base font-bold text-sky-600 dark:text-sky-400">
-            {displayTotal} <span className="text-xs font-normal text-slate-500">บาท</span>
+          <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
+            บาท
           </span>
         </div>
 
-        <div className="flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
-          <button
-            type="button"
-            onClick={handleCopyCitation}
-            className="p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-sky-600 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
-            title="คัดลอกคำอ้างอิงราชการสำหรับบันทึกข้อความ"
-            aria-label="คัดลอกคำอ้างอิง"
-          >
-            {copied ? (
-              <IconCheck className="w-4 h-4 text-emerald-600" />
-            ) : (
-              <IconCopy className="w-4 h-4" />
-            )}
-          </button>
-
-          <button
-            type="button"
-            onClick={() => onPrintDirect(project)}
-            className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-sky-50 dark:bg-sky-950/70 text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-900 border border-sky-200 dark:border-sky-800 text-xs font-semibold transition-colors"
-            title="สั่งพิมพ์หน้าเอกสารสแกนจริงจาก PDF ต้นฉบับ"
-            aria-label="พิมพ์หน้าเอกสารจริง"
-          >
-            <IconPrint className="w-3.5 h-3.5" />
-            <span>ปริ้นหน้าจริง</span>
-          </button>
-        </div>
+        <span className="inline-flex items-center gap-0.5 text-xs font-semibold text-slate-400 group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors shrink-0">
+          <span>รายละเอียด</span>
+          <IconChevronRight className="w-3.5 h-3.5" />
+        </span>
       </div>
-    </div>
+    </article>
   );
 }

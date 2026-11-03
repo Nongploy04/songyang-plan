@@ -1,10 +1,19 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { SONGYANG_VILLAGES } from '../../domain/villages.ts';
 import { SONGYANG_STRATEGIES } from '../../domain/strategies.ts';
 import { WORK_CATEGORIES } from '../../domain/workCategories.ts';
 import { PLAN_DOCUMENTS } from '../../domain/documents.ts';
+import {
+  IconSliders,
+  IconRotateCcw,
+  IconGrid,
+  IconList,
+  IconX,
+} from '../../components/icons/index.tsx';
+
+export type ProjectViewMode = 'card' | 'list';
 
 interface FilterPanelProps {
   selectedDocumentId: string | null;
@@ -20,7 +29,11 @@ interface FilterPanelProps {
   onReset: () => void;
   hasActiveFilters: boolean;
   projectCountsByDoc?: Record<string, number>;
+  viewMode?: ProjectViewMode;
+  onViewModeChange?: (mode: ProjectViewMode) => void;
 }
+
+const ALL_YEARS = [2566, 2567, 2568, 2569, 2570, 2571, 2572, 2573, 2574, 2575];
 
 export function FilterPanel({
   selectedDocumentId,
@@ -36,247 +49,249 @@ export function FilterPanel({
   onReset,
   hasActiveFilters,
   projectCountsByDoc = {},
+  viewMode = 'card',
+  onViewModeChange,
 }: FilterPanelProps) {
-  const years66_70 = [2566, 2567, 2568, 2569, 2570];
-  const years71_75 = [2571, 2572, 2573, 2574, 2575];
+  const [advancedOpen, setAdvancedOpen] = useState(false);
+
+  const activeAdvancedCount =
+    (selectedStrategy !== null ? 1 : 0) +
+    (selectedCategory !== null ? 1 : 0) +
+    (selectedYear !== null ? 1 : 0);
+
+  const categoryLabelMap = Object.fromEntries(
+    WORK_CATEGORIES.map((c) => [c.key, c.label])
+  );
 
   return (
-    <div className="bg-white dark:bg-slate-900 p-4 sm:p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs space-y-4">
-      <div className="flex items-center justify-between">
-        <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200">
-          ตัวกรองข้อมูลโครงการพัฒนาท้องถิ่น
-        </h3>
-        {hasActiveFilters && (
+    <div className="rounded-2xl bg-white/95 dark:bg-[#0c1222]/95 [backdrop-filter:blur(28px)_saturate(190%)] [-webkit-backdrop-filter:blur(28px)_saturate(190%)] border border-black/[0.08] dark:border-white/[0.12] shadow-sm p-3 sm:p-3.5 space-y-3">
+      {/* Primary Compact Control Bar */}
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        {/* Left: Quick Selects + Advanced Filter Icon Button + Reset Icon Button */}
+        <div className="flex flex-wrap items-center gap-2 flex-1 min-w-0">
+          {/* Village Select */}
+          <select
+            value={selectedVillage ?? ''}
+            onChange={(e) =>
+              onSelectVillage(e.target.value === '' ? null : Number(e.target.value))
+            }
+            aria-label="กรองตามหมู่บ้าน"
+            className={`px-3 py-2 rounded-xl text-xs font-semibold border outline-none transition-colors cursor-pointer ${
+              selectedVillage !== null
+                ? 'bg-sky-50 dark:bg-sky-950/70 border-sky-400 dark:border-sky-600 text-sky-800 dark:text-sky-200'
+                : 'bg-slate-100/80 dark:bg-slate-800/80 border-slate-200/80 dark:border-slate-700/80 text-slate-700 dark:text-slate-200 hover:border-slate-300'
+            }`}
+          >
+            <option value="">ทุกหมู่บ้าน (ม.1 - ม.8)</option>
+            {SONGYANG_VILLAGES.map((v) => (
+              <option key={v.no} value={v.no}>
+                หมู่ {v.no} {v.name}
+              </option>
+            ))}
+          </select>
+
+          {/* Plan Document Select */}
+          <select
+            value={selectedDocumentId ?? ''}
+            onChange={(e) =>
+              onSelectDocumentId(e.target.value === '' ? null : e.target.value)
+            }
+            aria-label="กรองตามเล่มแผนพัฒนาท้องถิ่น"
+            className={`px-3 py-2 rounded-xl text-xs font-semibold border outline-none transition-colors cursor-pointer max-w-[230px] sm:max-w-[280px] truncate ${
+              selectedDocumentId !== null
+                ? 'bg-sky-50 dark:bg-sky-950/70 border-sky-400 dark:border-sky-600 text-sky-800 dark:text-sky-200'
+                : 'bg-slate-100/80 dark:bg-slate-800/80 border-slate-200/80 dark:border-slate-700/80 text-slate-700 dark:text-slate-200 hover:border-slate-300'
+            }`}
+          >
+            <option value="">ทุกเล่มแผน ({PLAN_DOCUMENTS.length} ฉบับ)</option>
+            {PLAN_DOCUMENTS.map((doc) => {
+              const count = projectCountsByDoc[doc.id] || 0;
+              return (
+                <option key={doc.id} value={doc.id}>
+                  {doc.shortTitle} {count > 0 ? `(${count} โครงการ)` : ''}
+                </option>
+              );
+            })}
+          </select>
+
+          {/* Icon-Only Advanced Filter Drawer Toggle */}
           <button
             type="button"
-            onClick={onReset}
-            className="text-xs text-sky-600 dark:text-sky-400 hover:underline font-semibold"
+            onClick={() => setAdvancedOpen((prev) => !prev)}
+            title="ตัวกรองขั้นสูง (ยุทธศาสตร์ / ประเภทงาน / ปีงบประมาณ)"
+            aria-label="ตัวกรองขั้นสูง"
+            aria-expanded={advancedOpen}
+            className={`relative h-9 px-2.5 rounded-xl inline-flex items-center justify-center gap-1.5 border transition-all cursor-pointer ${
+              advancedOpen || activeAdvancedCount > 0
+                ? 'bg-sky-600 text-white border-sky-600 shadow-xs'
+                : 'bg-slate-100/80 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 border-slate-200/80 dark:border-slate-700/80 hover:bg-sky-50 dark:hover:bg-sky-950/50 hover:text-sky-600'
+            }`}
           >
-            ล้างตัวกรองทั้งหมด
+            <IconSliders className="w-4 h-4" />
+            {activeAdvancedCount > 0 && (
+              <span className="px-1.5 py-0.2 rounded-full text-[10px] font-extrabold bg-white text-sky-700">
+                {activeAdvancedCount}
+              </span>
+            )}
           </button>
+
+          {/* Icon-Only Reset Filters Button */}
+          {hasActiveFilters && (
+            <button
+              type="button"
+              onClick={onReset}
+              title="ล้างตัวกรองทั้งหมด"
+              aria-label="ล้างตัวกรองทั้งหมด"
+              className="w-9 h-9 rounded-xl inline-flex items-center justify-center bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800/70 hover:bg-rose-600 hover:text-white transition-all cursor-pointer"
+            >
+              <IconRotateCcw className="w-4 h-4" />
+            </button>
+          )}
+        </div>
+
+        {/* Right: View Mode Switcher (Card Grid vs List Table) */}
+        {onViewModeChange && (
+          <div
+            className="inline-flex p-1 rounded-xl bg-slate-100 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 shrink-0"
+            role="group"
+            aria-label="สลับมุมมองการแสดงผล"
+          >
+            <button
+              type="button"
+              onClick={() => onViewModeChange('card')}
+              title="มุมมองการ์ด (Card View)"
+              aria-label="มุมมองการ์ด"
+              aria-pressed={viewMode === 'card'}
+              className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all cursor-pointer ${
+                viewMode === 'card'
+                  ? 'bg-white dark:bg-slate-900 text-sky-600 dark:text-sky-400 shadow-xs'
+                  : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+              }`}
+            >
+              <IconGrid className="w-4 h-4" />
+            </button>
+
+            <button
+              type="button"
+              onClick={() => onViewModeChange('list')}
+              title="มุมมองรายการตาราง (List View)"
+              aria-label="มุมมองรายการตาราง"
+              aria-pressed={viewMode === 'list'}
+              className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all cursor-pointer ${
+                viewMode === 'list'
+                  ? 'bg-white dark:bg-slate-900 text-sky-600 dark:text-sky-400 shadow-xs'
+                  : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+              }`}
+            >
+              <IconList className="w-4 h-4" />
+            </button>
+          </div>
         )}
       </div>
 
-      {/* เลือกเล่มแผนพัฒนา */}
-      <div>
-        <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">
-          เล่มแผนพัฒนาท้องถิ่น (สารบบ 20 ฉบับ อบต.สงยาง)
-        </label>
-        <div className="flex flex-wrap gap-1.5">
-          <button
-            type="button"
-            onClick={() => onSelectDocumentId(null)}
-            className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all ${
-              selectedDocumentId === null
-                ? 'bg-slate-900 text-white dark:bg-sky-600'
-                : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
-            }`}
-          >
-            ทุกฉบับ ({PLAN_DOCUMENTS.length})
-          </button>
-          {PLAN_DOCUMENTS.map((doc) => {
-            const isSelected = selectedDocumentId === doc.id || selectedDocumentId === doc.slug;
-            const count = projectCountsByDoc[doc.id] || 0;
-            return (
-              <button
-                key={doc.id}
-                type="button"
-                onClick={() => onSelectDocumentId(isSelected ? null : doc.id)}
-                className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all inline-flex items-center gap-1 ${
-                  isSelected
-                    ? 'bg-sky-600 text-white shadow-xs'
-                    : count > 0
-                    ? 'bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 hover:bg-slate-200'
-                    : 'bg-slate-50 dark:bg-slate-800/50 text-slate-400 dark:text-slate-500 hover:bg-slate-100'
-                }`}
-                title={`${doc.title} (${doc.pageCount} หน้า)`}
-              >
-                <span>{doc.shortTitle}</span>
-                {count > 0 && (
-                  <span
-                    className={`px-1.5 py-0.2 rounded-full text-2xs font-bold ${
-                      isSelected
-                        ? 'bg-white/20 text-white'
-                        : 'bg-sky-100 dark:bg-sky-950 text-sky-700 dark:text-sky-300'
-                    }`}
-                  >
-                    {count}
-                  </span>
-                )}
-              </button>
-            );
-          })}
+      {/* Active Advanced Filter Chips (When drawer is closed but filters are active) */}
+      {!advancedOpen && activeAdvancedCount > 0 && (
+        <div className="flex flex-wrap items-center gap-1.5 pt-1 border-t border-slate-100 dark:border-slate-800/80">
+          {selectedStrategy !== null && (
+            <button
+              type="button"
+              onClick={() => onSelectStrategy(null)}
+              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-sky-50 dark:bg-sky-950/70 text-sky-700 dark:text-sky-300 border border-sky-200 dark:border-sky-800"
+            >
+              <span>ด้านที่ {selectedStrategy}</span>
+              <IconX className="w-3 h-3" />
+            </button>
+          )}
+          {selectedCategory !== null && (
+            <button
+              type="button"
+              onClick={() => onSelectCategory(null)}
+              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-sky-50 dark:bg-sky-950/70 text-sky-700 dark:text-sky-300 border border-sky-200 dark:border-sky-800"
+            >
+              <span>{categoryLabelMap[selectedCategory] || selectedCategory}</span>
+              <IconX className="w-3 h-3" />
+            </button>
+          )}
+          {selectedYear !== null && (
+            <button
+              type="button"
+              onClick={() => onSelectYear(null)}
+              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-sky-50 dark:bg-sky-950/70 text-sky-700 dark:text-sky-300 border border-sky-200 dark:border-sky-800"
+            >
+              <span>ปี {selectedYear}</span>
+              <IconX className="w-3 h-3" />
+            </button>
+          )}
         </div>
-      </div>
+      )}
 
-      {/* หมู่บ้าน */}
-      <div>
-        <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">
-          หมู่บ้านเป้าหมาย (ตำบลสงยาง หมู่ที่ 1 - 8)
-        </label>
-        <div className="flex flex-wrap gap-1.5">
-          <button
-            type="button"
-            onClick={() => onSelectVillage(null)}
-            className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all ${
-              selectedVillage === null
-                ? 'bg-slate-900 text-white dark:bg-sky-600'
-                : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
-            }`}
-          >
-            ทุกหมู่บ้าน
-          </button>
-          {SONGYANG_VILLAGES.map((v) => {
-            const isSelected = selectedVillage === v.no;
-            return (
-              <button
-                key={v.no}
-                type="button"
-                onClick={() => onSelectVillage(isSelected ? null : v.no)}
-                className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all ${
-                  isSelected
-                    ? 'bg-sky-600 text-white shadow-xs'
-                    : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200'
-                }`}
-              >
-                หมู่ {v.no} {v.name}
-              </button>
-            );
-          })}
+      {/* Collapsible Advanced Filter Drawer */}
+      {advancedOpen && (
+        <div className="pt-3 border-t border-slate-100 dark:border-slate-800/80 grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+          {/* 1. Strategy Select */}
+          <div>
+            <label className="block text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-1">
+              ยุทธศาสตร์การพัฒนา (7 ด้าน)
+            </label>
+            <select
+              value={selectedStrategy ?? ''}
+              onChange={(e) =>
+                onSelectStrategy(e.target.value === '' ? null : Number(e.target.value))
+              }
+              className="w-full px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 text-slate-800 dark:text-slate-200 font-medium outline-none focus:border-sky-500"
+            >
+              <option value="">ทุกด้านยุทธศาสตร์ (ด้านที่ 1 - 7)</option>
+              {SONGYANG_STRATEGIES.map((s) => (
+                <option key={s.no} value={s.no}>
+                  ด้านที่ {s.no}: {s.shortName}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* 2. Category Select */}
+          <div>
+            <label className="block text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-1">
+              ประเภทงาน / หมวดหมู่โครงการ
+            </label>
+            <select
+              value={selectedCategory ?? ''}
+              onChange={(e) =>
+                onSelectCategory(e.target.value === '' ? null : e.target.value)
+              }
+              className="w-full px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 text-slate-800 dark:text-slate-200 font-medium outline-none focus:border-sky-500"
+            >
+              <option value="">ทุกประเภทงาน</option>
+              {WORK_CATEGORIES.map((c) => (
+                <option key={c.key} value={c.key}>
+                  {c.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* 3. Fiscal Year Select */}
+          <div>
+            <label className="block text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-1">
+              ปีงบประมาณที่มีการตั้งงบ
+            </label>
+            <select
+              value={selectedYear ?? ''}
+              onChange={(e) =>
+                onSelectYear(e.target.value === '' ? null : Number(e.target.value))
+              }
+              className="w-full px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 text-slate-800 dark:text-slate-200 font-medium outline-none focus:border-sky-500"
+            >
+              <option value="">ทุกปีงบประมาณ (2566 - 2575)</option>
+              {ALL_YEARS.map((yr) => (
+                <option key={yr} value={yr}>
+                  ปีงบประมาณ พ.ศ. {yr}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
-      </div>
-
-      {/* ยุทธศาสตร์ / ประเด็นการพัฒนา */}
-      <div>
-        <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">
-          ยุทธศาสตร์ / ประเด็นการพัฒนา (7 ด้าน)
-        </label>
-        <div className="flex flex-wrap gap-1.5">
-          <button
-            type="button"
-            onClick={() => onSelectStrategy(null)}
-            className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all ${
-              selectedStrategy === null
-                ? 'bg-slate-900 text-white dark:bg-sky-600'
-                : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
-            }`}
-          >
-            ทุกด้าน
-          </button>
-          {SONGYANG_STRATEGIES.map((s) => {
-            const isSelected = selectedStrategy === s.no;
-            return (
-              <button
-                key={s.no}
-                type="button"
-                onClick={() => onSelectStrategy(isSelected ? null : s.no)}
-                className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all ${
-                  isSelected
-                    ? 'bg-sky-600 text-white shadow-xs'
-                    : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200'
-                }`}
-              >
-                ด้านที่ {s.no}: {s.shortName}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* หมวดหมู่งาน */}
-      <div>
-        <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">
-          ประเภทงาน / หมวดหมู่โครงการ
-        </label>
-        <div className="flex flex-wrap gap-1.5">
-          <button
-            type="button"
-            onClick={() => onSelectCategory(null)}
-            className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all ${
-              selectedCategory === null
-                ? 'bg-slate-900 text-white dark:bg-sky-600'
-                : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
-            }`}
-          >
-            ทั้งหมด
-          </button>
-          {WORK_CATEGORIES.map((c) => {
-            const isSelected = selectedCategory === c.key;
-            return (
-              <button
-                key={c.key}
-                type="button"
-                onClick={() => onSelectCategory(isSelected ? null : c.key)}
-                className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all ${
-                  isSelected
-                    ? 'bg-sky-600 text-white shadow-xs'
-                    : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200'
-                }`}
-              >
-                {c.label}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* ปีงบประมาณ */}
-      <div>
-        <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">
-          ปีงบประมาณที่มีการตั้งงบ (พ.ศ. 2566 - 2575)
-        </label>
-        <div className="flex flex-wrap items-center gap-1.5">
-          <button
-            type="button"
-            onClick={() => onSelectYear(null)}
-            className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all ${
-              selectedYear === null
-                ? 'bg-slate-900 text-white dark:bg-sky-600'
-                : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
-            }`}
-          >
-            ทุกปีงบประมาณ
-          </button>
-
-          <span className="text-2xs font-semibold text-slate-400 ml-1">ช่วง 2566-2570:</span>
-          {years66_70.map((y) => {
-            const isSelected = selectedYear === y;
-            return (
-              <button
-                key={y}
-                type="button"
-                onClick={() => onSelectYear(isSelected ? null : y)}
-                className={`px-2 py-1 rounded-lg text-xs font-medium transition-all ${
-                  isSelected
-                    ? 'bg-amber-600 text-white shadow-xs'
-                    : 'bg-amber-50/70 dark:bg-amber-950/30 text-amber-800 dark:text-amber-300 border border-amber-200/60 dark:border-amber-800/50 hover:bg-amber-100/80'
-                }`}
-              >
-                {y}
-              </button>
-            );
-          })}
-
-          <span className="text-2xs font-semibold text-slate-400 ml-1">ช่วง 2571-2575:</span>
-          {years71_75.map((y) => {
-            const isSelected = selectedYear === y;
-            return (
-              <button
-                key={y}
-                type="button"
-                onClick={() => onSelectYear(isSelected ? null : y)}
-                className={`px-2 py-1 rounded-lg text-xs font-medium transition-all ${
-                  isSelected
-                    ? 'bg-sky-600 text-white shadow-xs'
-                    : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200'
-                }`}
-              >
-                {y}
-              </button>
-            );
-          })}
-        </div>
-      </div>
+      )}
     </div>
   );
 }
