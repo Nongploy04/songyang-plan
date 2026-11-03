@@ -17,6 +17,41 @@ export interface BudgetByYear {
   2575?: number | null;
 }
 
+export interface OfficialScanPage {
+  pageNumber: number;
+  printedPage: string;
+  role: 'cover' | 'proclamation' | 'summary' | 'table_old' | 'table_current';
+  label: string;
+  imageUrl: string;
+  orientation: 'landscape' | 'portrait';
+}
+
+export interface RevisionStep {
+  stepNo: number;
+  documentId: string;
+  documentTitle: string;
+  actionLabel: string;
+  pageRef: string;
+  summary: string;
+  reason?: string;
+  isCurrentDocument?: boolean;
+  scanPageUrl?: string;
+}
+
+export interface ProjectLineage {
+  status: 'main_plan' | 'edited' | 'changed' | 'added';
+  statusLabel: string;
+  hasBeenModified: boolean;
+  latestDocumentId: string;
+  latestDocumentTitle: string;
+  latestPageRef: string;
+  originReference?: string;
+  previousDetails?: string;
+  revisionReason?: string;
+  steps: RevisionStep[];
+  officialScanPages: OfficialScanPage[];
+}
+
 export interface LocalPlanProject {
   id: string;
   documentId: string;
@@ -37,6 +72,7 @@ export interface LocalPlanProject {
   pdfPage: number;
   printedPage: number | string;
   updatedAt: string;
+  lineage?: ProjectLineage;
 }
 
 export interface FilterState {

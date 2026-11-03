@@ -9,7 +9,10 @@ export interface LocalPlanDocument {
   revisionYear?: number;
   revisionNo?: number;
   pageCount: number;
+  coverPage: number;
+  proclamationPage: number;
   fileSizeMb: number;
+  officialPdfUrl: string;
   isActive: boolean;
 }
 
@@ -29,10 +32,6 @@ export interface StrategySummaryRow {
   totalBudget: number;
 }
 
-/**
- * ข้อมูลตารางสรุปยุทธศาสตร์และจำนวนโครงการทั้งหมด (แบบ ผ.01 หน้า 61 ของเอกสาร / หน้า 66 ของไฟล์ PDF)
- * จากเล่มแผนพัฒนาท้องถิ่น (พ.ศ. 2571 - 2575) องค์การบริหารส่วนตำบลสงยาง
- */
 export const PLAN_2571_2575_OFFICIAL_SUMMARY: StrategySummaryRow[] = [
   {
     strategyNo: 1,
@@ -151,7 +150,10 @@ export const PLAN_DOCUMENTS: LocalPlanDocument[] = [
     fiscalYears: [2571, 2572, 2573, 2574, 2575],
     kind: 'main',
     pageCount: 252,
+    coverPage: 1,
+    proclamationPage: 251,
     fileSizeMb: 28.0,
+    officialPdfUrl: 'http://abt.in.th/_files_aorbortor/050635/uploads/files/%E0%B9%81%E0%B8%9C%E0%B8%99%E0%B8%9E%E0%B8%B1%E0%B8%92%E0%B8%99%E0%B8%B2%E0%B8%97%E0%B9%89%E0%B8%AD%E0%B8%87%E0%B8%96%E0%B8%B4%E0%B9%88%E0%B8%99%2071-75%20%E0%B8%9A%E0%B8%B5%E0%B8%9A%E0%B9%81%E0%B8%A5%E0%B9%89%E0%B8%A7.pdf',
     isActive: true,
   },
   {
@@ -165,7 +167,10 @@ export const PLAN_DOCUMENTS: LocalPlanDocument[] = [
     revisionYear: 2569,
     revisionNo: 3,
     pageCount: 9,
+    coverPage: 1,
+    proclamationPage: 8,
     fileSizeMb: 1.8,
+    officialPdfUrl: 'http://abt.in.th/_files_aorbortor/050635/uploads/files/%E0%B9%81%E0%B8%81%E0%B9%89%E0%B9%84%E0%B8%82%203%20%E0%B8%9B%E0%B8%B5%2069.pdf',
     isActive: true,
   },
   {
@@ -179,7 +184,10 @@ export const PLAN_DOCUMENTS: LocalPlanDocument[] = [
     revisionYear: 2569,
     revisionNo: 2,
     pageCount: 11,
+    coverPage: 1,
+    proclamationPage: 10,
     fileSizeMb: 2.5,
+    officialPdfUrl: 'http://abt.in.th/_files_aorbortor/050635/uploads/files/%E0%B9%81%E0%B8%9C%E0%B8%99(2).pdf',
     isActive: true,
   },
   {
@@ -193,7 +201,10 @@ export const PLAN_DOCUMENTS: LocalPlanDocument[] = [
     revisionYear: 2569,
     revisionNo: 1,
     pageCount: 18,
+    coverPage: 1,
+    proclamationPage: 17,
     fileSizeMb: 4.0,
+    officialPdfUrl: 'http://abt.in.th/_files_aorbortor/050635/uploads/files/%E0%B9%80%E0%B8%9B%E0%B8%A5%E0%B8%B5%E0%B9%88%E0%B8%A2%E0%B8%99%E0%B9%81%E0%B8%9B%E0%B8%A5%E0%B8%87%20%E0%B8%84%E0%B8%A3%E0%B8%B1%E0%B9%89%E0%B8%87%E0%B8%97%E0%B8%B5%E0%B9%88%201%20%E0%B8%9B%E0%B8%B5%202569.pdf',
     isActive: true,
   },
   {
@@ -207,7 +218,10 @@ export const PLAN_DOCUMENTS: LocalPlanDocument[] = [
     revisionYear: 2569,
     revisionNo: 2,
     pageCount: 26,
+    coverPage: 1,
+    proclamationPage: 25,
     fileSizeMb: 6.2,
+    officialPdfUrl: 'http://abt.in.th/_files_aorbortor/050635/uploads/files/%E0%B9%80%E0%B8%9E%E0%B8%B4%E0%B9%88%E0%B8%A1%E0%B9%80%E0%B8%95%E0%B8%B4%E0%B8%A1%20%E0%B8%84%E0%B8%A3%E0%B8%B1%E0%B9%89%E0%B8%87%E0%B8%97%E0%B8%B5%E0%B9%88%202%20%E0%B8%9B%E0%B8%B5%202569_organized.pdf',
     isActive: true,
   },
   {
@@ -221,7 +235,10 @@ export const PLAN_DOCUMENTS: LocalPlanDocument[] = [
     revisionYear: 2569,
     revisionNo: 1,
     pageCount: 9,
+    coverPage: 1,
+    proclamationPage: 8,
     fileSizeMb: 2.3,
+    officialPdfUrl: 'http://abt.in.th/_files_aorbortor/050635/uploads/files/%E0%B9%81%E0%B8%81%E0%B9%89%E0%B9%84%E0%B8%82%201%20%E0%B8%97%E0%B8%B1%E0%B8%9A69.pdf',
     isActive: true,
   },
   {
@@ -235,7 +252,10 @@ export const PLAN_DOCUMENTS: LocalPlanDocument[] = [
     revisionYear: 2569,
     revisionNo: 1,
     pageCount: 14,
+    coverPage: 1,
+    proclamationPage: 13,
     fileSizeMb: 8.3,
+    officialPdfUrl: 'http://abt.in.th/_files_aorbortor/050635/uploads/files/%E0%B9%80%E0%B8%9E%E0%B8%B4%E0%B9%88%E0%B8%A1%E0%B9%80%E0%B8%95%E0%B8%B4%E0%B8%A1%201%E0%B8%97%E0%B8%B1%E0%B8%9A2569.pdf',
     isActive: true,
   },
   {
@@ -249,7 +269,10 @@ export const PLAN_DOCUMENTS: LocalPlanDocument[] = [
     revisionYear: 2568,
     revisionNo: 3,
     pageCount: 8,
+    coverPage: 1,
+    proclamationPage: 7,
     fileSizeMb: 2.1,
+    officialPdfUrl: 'http://abt.in.th/_files_aorbortor/050635/uploads/files/%E0%B9%81%E0%B8%81%E0%B9%89%E0%B9%84%E0%B8%82%20%E0%B8%84%E0%B8%A3%E0%B8%B1%E0%B9%89%E0%B8%87%E0%B8%97%E0%B8%B5%E0%B9%88%E0%B8%B5%203%202568.pdf',
     isActive: true,
   },
   {
@@ -263,7 +286,10 @@ export const PLAN_DOCUMENTS: LocalPlanDocument[] = [
     revisionYear: 2568,
     revisionNo: 3,
     pageCount: 10,
+    coverPage: 1,
+    proclamationPage: 9,
     fileSizeMb: 2.9,
+    officialPdfUrl: 'http://abt.in.th/_files_aorbortor/050635/uploads/files/%E0%B9%81%E0%B8%9C%E0%B8%99%E0%B8%9E%E0%B8%B1%E0%B8%92%E0%B8%99%E0%B8%B2%E0%B8%97%E0%B9%89%E0%B8%AD%E0%B8%87%E0%B8%96%E0%B8%B4%E0%B9%88%E0%B8%99%203%20%E0%B8%97%E0%B8%B1%E0%B8%9A%202568(1).pdf',
     isActive: true,
   },
   {
@@ -277,7 +303,10 @@ export const PLAN_DOCUMENTS: LocalPlanDocument[] = [
     revisionYear: 2568,
     revisionNo: 2,
     pageCount: 31,
+    coverPage: 1,
+    proclamationPage: 30,
     fileSizeMb: 8.1,
+    officialPdfUrl: 'http://abt.in.th/_files_aorbortor/050635/uploads/files/%E0%B9%80%E0%B8%9E%E0%B8%B4%E0%B9%88%E0%B8%A1%E0%B9%80%E0%B8%95%E0%B8%B4%E0%B8%A1%202%20%E0%B8%9B%E0%B8%B5%202568.pdf',
     isActive: true,
   },
   {
@@ -291,7 +320,10 @@ export const PLAN_DOCUMENTS: LocalPlanDocument[] = [
     revisionYear: 2568,
     revisionNo: 3,
     pageCount: 11,
+    coverPage: 1,
+    proclamationPage: 10,
     fileSizeMb: 5.1,
+    officialPdfUrl: 'http://abt.in.th/_files_aorbortor/050635/uploads/files/%E0%B9%81%E0%B8%9C%E0%B8%99%E0%B8%9E%E0%B8%B1%E0%B8%92%E0%B8%99%E0%B8%B2%E0%B8%97%E0%B9%89%E0%B8%AD%E0%B8%87%E0%B8%96%E0%B8%B4%E0%B9%88%E0%B8%99%20%E0%B9%80%E0%B8%9B%E0%B8%A5%E0%B8%B5%E0%B9%88%E0%B8%A2%E0%B8%99%E0%B9%81%E0%B8%9B%E0%B8%A5%E0%B8%87(2).pdf',
     isActive: true,
   },
   {
@@ -305,7 +337,10 @@ export const PLAN_DOCUMENTS: LocalPlanDocument[] = [
     revisionYear: 2568,
     revisionNo: 2,
     pageCount: 8,
+    coverPage: 1,
+    proclamationPage: 7,
     fileSizeMb: 1.8,
+    officialPdfUrl: 'http://abt.in.th/_files_aorbortor/050635/uploads/files/%E0%B9%81%E0%B8%81%E0%B9%89%E0%B9%84%E0%B8%82%20%E0%B8%84%E0%B8%A3%E0%B8%B1%E0%B9%89%E0%B8%87%E0%B8%97%E0%B8%B5%E0%B9%88%202.pdf',
     isActive: true,
   },
   {
@@ -319,7 +354,10 @@ export const PLAN_DOCUMENTS: LocalPlanDocument[] = [
     revisionYear: 2568,
     revisionNo: 2,
     pageCount: 10,
+    coverPage: 1,
+    proclamationPage: 9,
     fileSizeMb: 3.6,
+    officialPdfUrl: 'http://abt.in.th/_files_aorbortor/050635/uploads/files/CCF_000223_organized(11).pdf',
     isActive: true,
   },
   {
@@ -333,7 +371,10 @@ export const PLAN_DOCUMENTS: LocalPlanDocument[] = [
     revisionYear: 2568,
     revisionNo: 1,
     pageCount: 8,
+    coverPage: 1,
+    proclamationPage: 7,
     fileSizeMb: 1.3,
+    officialPdfUrl: 'http://abt.in.th/_files_aorbortor/050635/uploads/files/%E0%B9%81%E0%B8%81%E0%B9%89%E0%B9%84%E0%B8%82%E0%B8%84%E0%B8%A3%E0%B8%B1%E0%B9%89%E0%B8%87%E0%B8%97%E0%B8%B5%E0%B9%881.pdf',
     isActive: true,
   },
   {
@@ -347,7 +388,10 @@ export const PLAN_DOCUMENTS: LocalPlanDocument[] = [
     revisionYear: 2567,
     revisionNo: 1,
     pageCount: 287,
+    coverPage: 1,
+    proclamationPage: 286,
     fileSizeMb: 34.7,
+    officialPdfUrl: 'http://abt.in.th/_files_aorbortor/050635/uploads/files/%E0%B8%97%E0%B8%9A%E0%B8%97%E0%B8%A7%E0%B8%99%201%20%E0%B8%9B%E0%B8%B5%202567%20%E0%B8%AD%E0%B8%B1%E0%B8%9E.pdf',
     isActive: true,
   },
   {
@@ -361,7 +405,10 @@ export const PLAN_DOCUMENTS: LocalPlanDocument[] = [
     revisionYear: 2566,
     revisionNo: 1,
     pageCount: 260,
+    coverPage: 1,
+    proclamationPage: 259,
     fileSizeMb: 34.4,
+    officialPdfUrl: 'http://abt.in.th/_files_aorbortor/050635/uploads/files/%E0%B9%81%E0%B8%9C%E0%B8%99%E0%B8%9E%E0%B8%B1%E0%B8%92%E0%B8%99%E0%B8%B2%E0%B8%97%E0%B9%89%E0%B8%AD%E0%B8%87%E0%B8%96%E0%B8%B4%E0%B9%88%E0%B8%99%202566-2570%20%E0%B8%97%E0%B8%9A%E0%B8%97%E0%B8%A7%E0%B8%99%20%E0%B8%84%E0%B8%A3%E0%B8%B1%E0%B9%89%E0%B8%87%E0%B8%97%E0%B8%B5%E0%B9%88%201%20%E0%B8%9B%E0%B8%B5%202566%20%E0%B8%AD%E0%B8%B1%E0%B8%9A.pdf',
     isActive: false,
   },
   {
@@ -373,7 +420,10 @@ export const PLAN_DOCUMENTS: LocalPlanDocument[] = [
     fiscalYears: [2566, 2567, 2568, 2569, 2570],
     kind: 'main',
     pageCount: 143,
+    coverPage: 1,
+    proclamationPage: 142,
     fileSizeMb: 18.3,
+    officialPdfUrl: 'http://abt.in.th/_files_aorbortor/050635/uploads/files/%E0%B9%81%E0%B8%9C%E0%B8%99%E0%B8%9E%E0%B8%B1%E0%B8%92%E0%B8%99%E0%B8%B2%E0%B8%97%E0%B9%89%E0%B8%AD%E0%B8%87%E0%B8%96%E0%B8%B4%E0%B9%88%E0%B8%99%20(%E0%B8%9E_%E0%B8%A8_2566-2570).pdf',
     isActive: false,
   },
   {
@@ -386,7 +436,10 @@ export const PLAN_DOCUMENTS: LocalPlanDocument[] = [
     kind: 'review',
     revisionYear: 2565,
     pageCount: 157,
+    coverPage: 1,
+    proclamationPage: 156,
     fileSizeMb: 19.5,
+    officialPdfUrl: 'http://abt.in.th/_files_aorbortor/050635/uploads/files/%E0%B9%81%E0%B8%9C%E0%B8%99%E0%B8%9E%E0%B8%B1%E0%B8%92%E0%B8%99%E0%B8%B2%E0%B8%97%E0%B9%89%E0%B8%AD%E0%B8%87%E0%B8%96%E0%B8%B4%E0%B9%88%E0%B8%99%20(%E0%B8%9E_%E0%B8%A8_2566-2570)%20%E0%B8%89%E0%B8%9A%E0%B8%B1%E0%B8%9A%E0%B8%97%E0%B8%9A%E0%B8%97%E0%B8%A7%E0%B8%99%20%E0%B8%9B%E0%B8%A3%E0%B8%B0%E0%B8%88%E0%B8%B3%E0%B8%9B%E0%B8%B5%20%E0%B8%9E_%E0%B8%A8_%202565_compressed.pdf',
     isActive: false,
   },
   {
@@ -398,7 +451,10 @@ export const PLAN_DOCUMENTS: LocalPlanDocument[] = [
     fiscalYears: [2566, 2567, 2568, 2569, 2570],
     kind: 'add',
     pageCount: 15,
+    coverPage: 1,
+    proclamationPage: 14,
     fileSizeMb: 1.5,
+    officialPdfUrl: 'http://abt.in.th/_files_aorbortor/050635/uploads/files/%E0%B9%81%E0%B8%9C%E0%B8%99%E0%B8%9E%E0%B8%B1%E0%B8%92%E0%B8%99%E0%B8%B2%E0%B8%97%E0%B9%89%E0%B8%AD%E0%B8%87%E0%B8%96%E0%B8%B4%E0%B9%88%E0%B8%99%20(%E0%B8%9E_%E0%B8%A8_2566-2570)%20%E0%B9%81%E0%B8%81%E0%B9%89%E0%B9%84%E0%B8%82%20%E0%B8%84%E0%B8%A3%E0%B8%B1%E0%B9%89%E0%B8%87%E0%B8%97%E0%B8%B5%E0%B9%88%201_compressed.pdf',
     isActive: false,
   },
   {
@@ -410,7 +466,10 @@ export const PLAN_DOCUMENTS: LocalPlanDocument[] = [
     fiscalYears: [2561, 2562, 2563, 2564, 2565],
     kind: 'main',
     pageCount: 203,
+    coverPage: 1,
+    proclamationPage: 202,
     fileSizeMb: 10.4,
+    officialPdfUrl: 'http://abt.in.th/_files_aorbortor/050635/uploads/files/%E0%B9%81%E0%B8%9C%E0%B8%99%E0%B8%9E%E0%B8%B1%E0%B8%92%E0%B8%99%E0%B8%B2%E0%B8%97%E0%B9%89%E0%B8%AD%E0%B8%87%E0%B8%96%E0%B8%B4%E0%B9%88%E0%B8%99%20(%E0%B8%9E_%E0%B8%A8_2561%20-%202565).pdf',
     isActive: false,
   },
 ];

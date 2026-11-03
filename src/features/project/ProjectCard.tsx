@@ -5,7 +5,7 @@ import { type LocalPlanProject, getProjectFiscalYears } from '../../domain/types
 import { toArabic, formatCurrency } from '../../domain/thaiNumerals.ts';
 import { getVillageLabel } from '../../domain/villages.ts';
 import { generateOfficialCitation } from '../../domain/citation.ts';
-import { IconCopy, IconCheck, IconPrint, IconMapPin } from '../../components/icons/index.tsx';
+import { IconCopy, IconCheck, IconPrint, IconMapPin, IconFileText } from '../../components/icons/index.tsx';
 
 interface ProjectCardProps {
   project: LocalPlanProject;
@@ -56,10 +56,19 @@ export function ProjectCard({
   const cleanName = toArabic(project.name);
   const cleanTarget = toArabic(project.target);
   const cleanDocTitle = toArabic(project.documentTitle);
-  const cleanStrategyName = toArabic(project.strategyName);
 
   const fiscalYears = getProjectFiscalYears(project);
   const fundedYears = fiscalYears.filter((yr) => (project.budgets[yr] || 0) > 0);
+  const lineage = project.lineage;
+
+  const statusBadgeStyle =
+    lineage?.status === 'edited'
+      ? 'bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800'
+      : lineage?.status === 'changed'
+      ? 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800'
+      : lineage?.status === 'added'
+      ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800'
+      : 'bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 border-sky-200 dark:border-sky-800';
 
   const handleCopyCitation = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -88,20 +97,25 @@ export function ProjectCard({
               ลำดับที่ {displaySeq}
             </span>
             <span className="text-xs text-slate-500 dark:text-slate-400">
-              หน้า {displayPage}
+              หน้า {displayPage} (PDF หน้า {project.pdfPage})
             </span>
           </div>
-          <div className="flex items-center gap-1.5">
-            <span className="inline-flex items-center px-2 py-0.5 rounded-md text-2xs font-bold bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
-              {cleanDocTitle
-                .replace('แผนพัฒนาท้องถิ่น', '')
-                .replace('องค์การบริหารส่วนตำบลสงยาง', '')
-                .trim() || 'แผนหลัก'}
-            </span>
-            <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300">
-              ด้านที่ {project.strategyNo}
-            </span>
+          <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300">
+            ด้านที่ {project.strategyNo}
+          </span>
+        </div>
+
+        {/* Lineage / Volume Status Banner */}
+        <div className={`px-2.5 py-1.5 rounded-xl border text-xs space-y-0.5 ${statusBadgeStyle}`}>
+          <div className="font-bold flex items-center justify-between gap-1">
+            <span>{lineage?.statusLabel || cleanDocTitle}</span>
+            <span>ล่าสุด: {lineage?.latestPageRef || `หน้า ${displayPage}`}</span>
           </div>
+          {lineage?.originReference && (
+            <div className="text-2xs opacity-90 truncate">
+              ต้นทาง: {lineage.originReference}
+            </div>
+          )}
         </div>
 
         {/* Project Title */}
@@ -168,11 +182,12 @@ export function ProjectCard({
           <button
             type="button"
             onClick={() => onPrintDirect(project)}
-            className="p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-sky-600 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
-            title="พิมพ์หน้านี้เป็นเอกสารราชการ แบบ ผ.02"
-            aria-label="พิมพ์เอกสาร"
+            className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-sky-50 dark:bg-sky-950/70 text-sky-700 dark:text-sky-300 hover:bg-sky-100 dark:hover:bg-sky-900 border border-sky-200 dark:border-sky-800 text-xs font-semibold transition-colors"
+            title="สั่งพิมพ์หน้าเอกสารสแกนจริงจาก PDF ต้นฉบับ"
+            aria-label="พิมพ์หน้าเอกสารจริง"
           >
-            <IconPrint className="w-4 h-4" />
+            <IconPrint className="w-3.5 h-3.5" />
+            <span>ปริ้นหน้าจริง</span>
           </button>
         </div>
       </div>

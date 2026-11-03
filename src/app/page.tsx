@@ -9,11 +9,11 @@ import { PLAN_2571_2575_OFFICIAL_SUMMARY } from '../domain/documents.ts';
 import { SearchBar } from '../features/search/SearchBar.tsx';
 import { FilterPanel } from '../features/search/FilterPanel.tsx';
 import { ProjectCard } from '../features/project/ProjectCard.tsx';
-import { ProjectDetailModal } from '../features/project/ProjectDetailModal.tsx';
+import { ProjectDetailModal, type PrintPackMode } from '../features/project/ProjectDetailModal.tsx';
 import { PrintOfficialSheet } from '../features/project/PrintOfficialSheet.tsx';
 import { safeGetJson, safeSetJson } from '../lib/safeBrowserStorage.ts';
 import { formatBuildStamp } from '../lib/build-version.js';
-import { IconLayers, IconPrint, IconFileText } from '../components/icons/index.tsx';
+import { IconLayers, IconFileText } from '../components/icons/index.tsx';
 
 interface PersistedFilterPrefs {
   documentId: string | null;
@@ -52,6 +52,7 @@ export default function PlanHomePage() {
 
   const [activeProject, setActiveProject] = useState<LocalPlanProject | null>(null);
   const [printProject, setPrintProject] = useState<LocalPlanProject | null>(null);
+  const [printMode, setPrintMode] = useState<PrintPackMode>('table_only');
 
   // Hydrate filter state from Self-Healing Cache on mount
   useEffect(() => {
@@ -144,9 +145,17 @@ export default function PlanHomePage() {
         if (!amount || amount <= 0) return false;
       }
 
-      // Query Search (matches project name, target, objective, seq, village names, document title, agency)
+      // Query Search (matches project name, target, objective, seq, village names, document title, lineage origin, agency)
       if (q) {
         const villageText = p.villages.map((no) => getVillageLabel(no)).join(' ').toLowerCase();
+        const lineageText = p.lineage
+          ? [
+              p.lineage.statusLabel,
+              p.lineage.originReference || '',
+              p.lineage.previousDetails || '',
+              p.lineage.revisionReason || '',
+            ].join(' ')
+          : '';
         const searchable = [
           toArabic(p.name),
           toArabic(p.target),
@@ -155,6 +164,7 @@ export default function PlanHomePage() {
           toArabic(p.documentTitle),
           toArabic(p.strategyName),
           villageText,
+          toArabic(lineageText),
         ]
           .join(' ')
           .toLowerCase();
@@ -201,18 +211,30 @@ export default function PlanHomePage() {
     setSelectedYear(null);
   };
 
-  const handlePrint = (p: LocalPlanProject) => {
+  const handlePrint = (p: LocalPlanProject, mode: PrintPackMode = 'table_only') => {
     setPrintProject(p);
-    setTimeout(() => {
-      window.print();
-    }, 150);
-  };
+    setPrintMode(mode);
 
-  const handlePrintAllFiltered = () => {
-    setPrintProject(null);
-    setTimeout(() => {
-      window.print();
-    }, 150);
+    // Preload scan images before triggering window.print()
+    const allPages = p.lineage?.officialScanPages || [];
+    const tablePages = allPages.filter((pg) => pg.role === 'table_old' || pg.role === 'table_current');
+    const pagesToLoad = mode === 'full_official_pack' ? allPages : tablePages.length > 0 ? tablePages : allPages;
+
+    Promise.all(
+      pagesToLoad.map(
+        (pg) =>
+          new Promise<void>((resolve) => {
+            const img = new Image();
+            img.onload = () => resolve();
+            img.onerror = () => resolve();
+            img.src = pg.imageUrl;
+          })
+      )
+    ).finally(() => {
+      setTimeout(() => {
+        window.print();
+      }, 120);
+    });
   };
 
   return (
@@ -228,10 +250,10 @@ export default function PlanHomePage() {
               </div>
               <div>
                 <h1 className="text-base sm:text-lg font-bold text-slate-900 dark:text-slate-100 leading-tight">
-                  ระบบสืบค้นแผนพัฒนาท้องถิ่น อบต.สงยาง
+                  ระบบสืบค้นและพิมพ์แผนพัฒนาท้องถิ่น อบต.สงยาง
                 </h1>
                 <p className="text-2xs sm:text-xs text-slate-500 dark:text-slate-400">
-                  อบต.สงยาง อ.มหาชนะชัย จ.ยโสธร • สารบบแผนพัฒนาท้องถิ่น (พ.ศ. 2561 - 2575)
+                  อบต.สงยาง อ.มหาชนะชัย จ.ยโสธร • ตรวจสอบเล่มแผน ประวัติการแก้ไข และสั่งปริ้นหน้าสแกนต้นฉบับจริง
                 </p>
               </div>
             </div>
@@ -249,16 +271,6 @@ export default function PlanHomePage() {
                 <IconFileText className="w-4 h-4" />
                 <span className="hidden sm:inline">ตารางสรุปยอดแผน (แบบ ผ.01)</span>
                 <span className="sm:hidden">ผ.01</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={handlePrintAllFiltered}
-                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-semibold transition-colors"
-                title="พิมพ์รายการที่กรองทั้งหมดเป็นแบบ ผ.02"
-              >
-                <IconPrint className="w-4 h-4 text-sky-600" />
-                <span className="hidden sm:inline">พิมพ์ตารางที่กรอง (แบบ ผ.02)</span>
               </button>
             </div>
           </div>
@@ -403,7 +415,7 @@ export default function PlanHomePage() {
                     key={p.id}
                     project={p}
                     onSelect={setActiveProject}
-                    onPrintDirect={handlePrint}
+                    onPrintDirect={(proj) => handlePrint(proj, 'table_only')}
                   />
                 ))}
               </div>
@@ -425,10 +437,10 @@ export default function PlanHomePage() {
         onPrint={handlePrint}
       />
 
-      {/* Official Print Sheet (Rendered only on print / paper) */}
+      {/* Official Scanned Document Print Sheet (Rendered only on print / paper) */}
       <PrintOfficialSheet
-        project={printProject}
-        projects={printProject ? undefined : filteredProjects}
+        project={printProject || activeProject}
+        printMode={printMode}
       />
     </>
   );

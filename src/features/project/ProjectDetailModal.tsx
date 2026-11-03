@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { type LocalPlanProject, getProjectFiscalYears } from '../../domain/types.ts';
+import { getDocument } from '../../domain/documents.ts';
 import { toArabic, formatCurrency } from '../../domain/thaiNumerals.ts';
 import { getVillageLabel } from '../../domain/villages.ts';
 import { generateOfficialCitation } from '../../domain/citation.ts';
@@ -14,10 +15,12 @@ import {
   IconCalendar,
 } from '../../components/icons/index.tsx';
 
+export type PrintPackMode = 'table_only' | 'full_official_pack';
+
 interface ProjectDetailModalProps {
   project: LocalPlanProject | null;
   onClose: () => void;
-  onPrint: (p: LocalPlanProject) => void;
+  onPrint: (p: LocalPlanProject, mode: PrintPackMode) => void;
 }
 
 export function ProjectDetailModal({
@@ -26,6 +29,7 @@ export function ProjectDetailModal({
   onPrint,
 }: ProjectDetailModalProps) {
   const [copied, setCopied] = useState(false);
+  const [printMode, setPrintMode] = useState<PrintPackMode>('table_only');
 
   useEffect(() => {
     if (!project) return;
@@ -58,6 +62,15 @@ export function ProjectDetailModal({
   const cleanDocTitle = toArabic(project.documentTitle);
   const cleanStrategyName = toArabic(project.strategyName);
 
+  const docMeta = getDocument(project.documentId);
+  const lineage = project.lineage;
+  const allScanPages = lineage?.officialScanPages || [];
+  const tableScanPages = allScanPages.filter(
+    (pg) => pg.role === 'table_old' || pg.role === 'table_current'
+  );
+  const activePreviewPages =
+    printMode === 'full_official_pack' ? allScanPages : tableScanPages.length > 0 ? tableScanPages : allScanPages;
+
   const officialCitation = generateOfficialCitation({
     planTitle: cleanDocTitle,
     strategyNo: project.strategyNo,
@@ -86,18 +99,21 @@ export function ProjectDetailModal({
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md animate-fade-in no-print"
     >
       <div
-        className="relative w-full max-w-2xl max-h-[90vh] flex flex-col rounded-3xl bg-white/95 dark:bg-[#0c1222]/95 [backdrop-filter:blur(28px)_saturate(190%)] [-webkit-backdrop-filter:blur(28px)_saturate(190%)] border border-black/[0.08] dark:border-white/[0.12] shadow-2xl overflow-hidden"
+        className="relative w-full max-w-4xl max-h-[92vh] flex flex-col rounded-3xl bg-white/95 dark:bg-[#0c1222]/95 [backdrop-filter:blur(28px)_saturate(190%)] [-webkit-backdrop-filter:blur(28px)_saturate(190%)] border border-black/[0.08] dark:border-white/[0.12] shadow-2xl overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
         <div className="p-5 sm:p-6 border-b border-slate-200 dark:border-slate-800 flex items-start justify-between gap-4">
-          <div className="space-y-1">
+          <div className="space-y-1.5">
             <div className="flex flex-wrap items-center gap-2">
+              <span className="px-2.5 py-0.5 rounded-md text-xs font-bold bg-sky-600 text-white">
+                {lineage?.statusLabel || cleanDocTitle}
+              </span>
               <span className="px-2.5 py-0.5 rounded-md text-xs font-semibold bg-sky-100 dark:bg-sky-950 text-sky-800 dark:text-sky-300">
                 ลำดับที่ {displaySeq}
               </span>
-              <span className="text-xs text-slate-500 dark:text-slate-400">
-                เอกสารหน้า {displayPrintedPage} (PDF หน้า {displayPdfPage})
+              <span className="text-xs font-semibold text-slate-600 dark:text-slate-300">
+                เอกสารหน้า {displayPrintedPage} (ไฟล์ PDF หน้า {displayPdfPage})
               </span>
             </div>
             <h2 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-slate-100 leading-snug">
@@ -120,11 +136,157 @@ export function ProjectDetailModal({
 
         {/* Body Scroll */}
         <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-6">
+          {/* SECTION 1: Project Lineage & Revision History (อยู่เล่มไหน / ผ่านการแก้ไขหรือไม่ / ล่าสุดอยู่เล่มไหน) */}
+          {lineage && (
+            <div className="rounded-2xl border-2 border-sky-200 dark:border-sky-800/80 bg-sky-50/50 dark:bg-sky-950/30 p-4 space-y-3">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div>
+                  <span className="text-2xs uppercase tracking-wider font-bold text-sky-700 dark:text-sky-300 block">
+                    สถานะและประวัติการปรับปรุงแผนพัฒนาท้องถิ่น (Project Lineage)
+                  </span>
+                  <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100">
+                    เล่มที่ใช้อ้างอิงล่าสุด: {lineage.latestDocumentTitle} ({lineage.latestPageRef})
+                  </h3>
+                </div>
+                <span
+                  className={`px-2.5 py-1 rounded-lg text-xs font-bold ${
+                    lineage.hasBeenModified
+                      ? 'bg-amber-100 dark:bg-amber-900/70 text-amber-800 dark:text-amber-200'
+                      : 'bg-emerald-100 dark:bg-emerald-900/70 text-emerald-800 dark:text-emerald-200'
+                  }`}
+                >
+                  {lineage.hasBeenModified
+                    ? 'ผ่านการแก้ไข / เปลี่ยนแปลง / เพิ่มเติม'
+                    : 'โครงการตามแผนหลัก (ไม่มีการแก้ไขข้อความ)'}
+                </span>
+              </div>
+
+              {/* Timeline Steps */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {lineage.steps.map((step) => (
+                  <div
+                    key={step.stepNo}
+                    className={`p-3 rounded-xl border text-xs space-y-1 ${
+                      step.isCurrentDocument
+                        ? 'bg-white dark:bg-slate-800 border-sky-500 shadow-xs'
+                        : 'bg-white/70 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="font-bold text-sky-700 dark:text-sky-300">
+                        ขั้นที่ {step.stepNo}: {step.actionLabel}
+                      </span>
+                      <span className="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-700 font-semibold text-slate-700 dark:text-slate-200">
+                        {step.pageRef}
+                      </span>
+                    </div>
+                    <div className="font-semibold text-slate-800 dark:text-slate-100">
+                      {step.documentTitle}
+                    </div>
+                    <p className="text-slate-600 dark:text-slate-300 leading-relaxed">
+                      {step.summary}
+                    </p>
+                    {step.reason && (
+                      <p className="text-amber-700 dark:text-amber-300 font-medium pt-0.5">
+                        เหตุผล: {step.reason}
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* SECTION 2: Real Scanned Document Preview & Print Selector */}
+          <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 p-4 space-y-3">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <h4 className="text-sm font-bold text-slate-900 dark:text-slate-100 flex items-center gap-1.5">
+                  <IconPrint className="w-4 h-4 text-sky-600" />
+                  <span>เอกสารสแกนต้นฉบับจริงสำหรับสั่งพิมพ์ (Original PDF Scan)</span>
+                </h4>
+                <p className="text-xs text-slate-500 dark:text-slate-400">
+                  พิมพ์ภาพหน้าสแกนจริงจากเล่มแผนของ อบต.สงยาง ลงกระดาษ A4 ได้ทันทีโดยไม่เพี้ยนจากต้นฉบับ
+                </p>
+              </div>
+
+              {docMeta?.officialPdfUrl && (
+                <a
+                  href={docMeta.officialPdfUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 transition-colors"
+                >
+                  <IconFileText className="w-3.5 h-3.5 text-sky-600" />
+                  <span>เปิดไฟล์ PDF เล่มเต็ม ({docMeta.pageCount} หน้า)</span>
+                </a>
+              )}
+            </div>
+
+            {/* Print Pack Mode Selector */}
+            <div className="flex flex-wrap items-center gap-2 pt-1">
+              <button
+                type="button"
+                onClick={() => setPrintMode('table_only')}
+                className={`px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all ${
+                  printMode === 'table_only'
+                    ? 'bg-sky-600 text-white border-sky-600 shadow-xs'
+                    : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700'
+                }`}
+              >
+                1. พิมพ์เฉพาะหน้าตารางโครงการจริง ({tableScanPages.length || 1} แผ่น)
+              </button>
+              <button
+                type="button"
+                onClick={() => setPrintMode('full_official_pack')}
+                className={`px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all ${
+                  printMode === 'full_official_pack'
+                    ? 'bg-sky-600 text-white border-sky-600 shadow-xs'
+                    : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700'
+                }`}
+              >
+                2. พิมพ์ชุดแนบฎีกาครบชุด: หน้าปก + ประกาศนายก อบต. + หน้าโครงการ ({allScanPages.length} แผ่น)
+              </button>
+            </div>
+
+            {/* Scanned Page Image Previews */}
+            <div className="grid grid-cols-1 gap-3 pt-1">
+              {activePreviewPages.map((pg) => (
+                <div
+                  key={`${pg.role}-${pg.pageNumber}`}
+                  className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-3 space-y-2"
+                >
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="font-bold text-slate-800 dark:text-slate-200">
+                      {pg.label}
+                    </span>
+                    <a
+                      href={pg.imageUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sky-600 dark:text-sky-400 hover:underline font-semibold"
+                    >
+                      เปิดภาพขนาดเต็มในแท็บใหม่
+                    </a>
+                  </div>
+                  <div className="overflow-hidden rounded-lg border border-slate-200 dark:border-slate-800 bg-white flex justify-center">
+                    <img
+                      src={pg.imageUrl}
+                      alt={pg.label}
+                      loading="lazy"
+                      className="max-h-[420px] w-auto object-contain"
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
           {/* Official Citation Box */}
           <div className="bg-sky-50/80 dark:bg-sky-950/40 border border-sky-200 dark:border-sky-800/80 rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <div className="space-y-0.5">
               <span className="text-2xs uppercase tracking-wider font-bold text-sky-700 dark:text-sky-300">
-                คำอ้างอิงราชการ (Official Citation)
+                คำอ้างอิงราชการสำหรับใส่บันทึกข้อความ (Official Citation)
               </span>
               <p className="text-xs sm:text-sm text-slate-800 dark:text-slate-200 font-medium">
                 {officialCitation}
@@ -150,7 +312,7 @@ export function ProjectDetailModal({
           </div>
 
           {/* วัตถุประสงค์ & เป้าหมาย */}
-          <div className="grid grid-cols-1 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="bg-slate-50 dark:bg-slate-800/60 rounded-2xl p-4 border border-slate-100 dark:border-slate-800">
               <h4 className="text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-1.5">
                 <IconFileText className="w-4 h-4 text-sky-600" />
@@ -240,9 +402,9 @@ export function ProjectDetailModal({
         </div>
 
         {/* Footer Actions */}
-        <div className="p-4 sm:p-5 border-t border-slate-200 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-900/80 flex items-center justify-between gap-3">
+        <div className="p-4 sm:p-5 border-t border-slate-200 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-900/80 flex flex-wrap items-center justify-between gap-3">
           <div className="text-xs text-slate-500 dark:text-slate-400">
-            {cleanDocTitle}
+            เล่มปัจจุบัน: <strong className="text-slate-800 dark:text-slate-200">{cleanDocTitle}</strong>
           </div>
 
           <div className="flex items-center gap-2">
@@ -255,11 +417,15 @@ export function ProjectDetailModal({
             </button>
             <button
               type="button"
-              onClick={() => onPrint(project)}
+              onClick={() => onPrint(project, printMode)}
               className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs sm:text-sm font-semibold shadow-xs hover:shadow-md transition-all"
             >
               <IconPrint className="w-4 h-4" />
-              <span>พิมพ์หน้านี้ (แบบ ผ.02)</span>
+              <span>
+                {printMode === 'full_official_pack'
+                  ? `สั่งปริ้นชุดแนบฎีกาครบชุด (${allScanPages.length} แผ่น)`
+                  : `สั่งปริ้นหน้าเอกสารจริง (${tableScanPages.length || 1} แผ่น)`}
+              </span>
             </button>
           </div>
         </div>

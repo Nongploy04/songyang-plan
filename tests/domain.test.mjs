@@ -1,5 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
 
 import { toArabic, toThai, parseThaiNumber, formatCurrency } from '../src/domain/thaiNumerals.ts';
 import { generateOfficialCitation } from '../src/domain/citation.ts';
@@ -81,8 +83,9 @@ test('getProjectFiscalYears resolves multi-period years accurately', () => {
   );
 });
 
-test('INITIAL_PLAN_PROJECTS has zero Thai numerals and valid budget sums', () => {
-  assert.ok(INITIAL_PLAN_PROJECTS.length > 0);
+test('INITIAL_PLAN_PROJECTS has zero Thai numerals, valid budget sums, and existing official scan pages', () => {
+  assert.ok(INITIAL_PLAN_PROJECTS.length >= 515);
+  const publicDir = path.resolve(process.cwd(), 'public');
   for (const p of INITIAL_PLAN_PROJECTS) {
     assert.equal(
       /[๐-๙]/.test(JSON.stringify(p)),
@@ -95,6 +98,16 @@ test('INITIAL_PLAN_PROJECTS has zero Thai numerals and valid budget sums', () =>
         p.totalBudget,
         sumAnnual,
         `Budget sum mismatch on ${p.id}: totalBudget=${p.totalBudget} vs sumAnnual=${sumAnnual}`
+      );
+    }
+    assert.ok(p.lineage, `Missing lineage on ${p.id}`);
+    assert.ok(p.lineage.officialScanPages.length >= 3, `Expected >= 3 scan pages on ${p.id}`);
+    for (const pg of p.lineage.officialScanPages) {
+      const diskPath = path.join(publicDir, pg.imageUrl.replace(/^\//, ''));
+      assert.equal(
+        fs.existsSync(diskPath),
+        true,
+        `Missing official scan image on disk for ${p.id}: ${diskPath}`
       );
     }
   }

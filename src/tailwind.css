@@ -179,6 +179,25 @@
       display: block !important;
     }
 
+    .print-scan-page {
+      width: 100% !important;
+      height: 190mm !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      overflow: hidden !important;
+    }
+
+    .print-scan-page img {
+      max-width: 100% !important;
+      max-height: 188mm !important;
+      width: auto !important;
+      height: auto !important;
+      object-fit: contain !important;
+    }
+
     .print-sheet {
       width: 100% !important;
       max-width: 100% !important;
