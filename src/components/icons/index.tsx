@@ -134,3 +134,11 @@ export function IconLayers({ className = 'ic' }: { className?: string }) {
     </svg>
   );
 }
+
+export function IconArrowLeft({ className = 'ic' }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor">
+      <polyline points="15 18 9 12 15 6" />
+    </svg>
+  );
+}

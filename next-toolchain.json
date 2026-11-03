@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "1.0.0",
+  "name": "songyang-plan",
+  "allowedNextMajor": 16,
+  "canonicalVercelUrl": "https://songyang-plan.vercel.app",
+  "node": "24.x",
+  "npm": "11.19.0",
+  "coupledStack": {
+    "next": "16.3.8",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.4",
+    "eslint": "9.39.5",
+    "eslint-config-next": "16.3.8"
+  },
+  "typescript": {
+    "manifest": "6.0.3",
+    "resolved": "6.0.3",
+    "tsconfig": "tsconfig.next.json"
+  },
+  "vercelCli": "59.1.4"
+}

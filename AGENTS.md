@@ -1,3 +1,11 @@
+<!-- BEGIN:songyang-production-topology -->
+### Production topology
+- Primary UI: Next.js App Router on Vercel at `https://songyang-plan.vercel.app`.
+- Vercel-only: one canonical production app; historical snapshots are test fixtures, never deployment targets.
+- Vercel Hobby releases use the exact pushed SHA from a git-free stage per workspace-root `AGENTS.md`.
+- Production search policy: `noindex,nofollow`; `/robots.txt` disallows all crawlers per ADR 0006.
+<!-- END:songyang-production-topology -->
+
 # Workspace Rules & Directives for Songyang Projects
 
 All autonomous agents and pair-programming assistants working in this repository MUST strictly comply with these 9 mandatory directives:
@@ -47,15 +55,10 @@ All autonomous agents and pair-programming assistants working in this repository
 - **การแนะนำระบบแคชที่ดีกว่าเชิงรุก (Proactive Recommendations)**:
   - หากผู้ช่วย AI หรือผู้พัฒนาพบเทคโนโลยีหรือสถาปัตยกรรมแคชที่มีประสิทธิภาพสูงกว่า (เช่น IndexedDB Sharding, OPFS, CRDTs, หรือ Web Locks API) **สามารถและควรแนะนำผู้ใช้งานเชิงรุก** เพื่อวางแผนอัปเกรดและปรับปรุงประสิทธิภาพระบบแคชให้ดียิ่งขึ้นได้เสมอ
 
-## 10. มาตรฐานปฏิทินสภาพอากาศและระบบสภาพอากาศกลาง (Shared Centralized Weather Calendar Standard)
-- **ความสอดคล้องของหน้าตาและฟังก์ชัน 100% (Cross-Repo Parity)**:
-  1. `songyang-report` และ `songyang-docs` ต้องมีโครงสร้างหน้าตา, ปุ่มควบคุม (เปลี่ยนเดือน, ช่วงเวลาอ้างอิง, ปุ่มรีเฟรชดาวเทียม, รีเซ็ตดาวเทียม), สเตตัส และฟังก์ชันการทำงานตรงกัน 100% โดยอนุญาตให้ต่างกันได้เฉพาะชุดสี Accent Theme ตามเอกลักษณ์ของแต่ละเว็บ
-  2. หากมีการปรับปรุงโครงสร้าง UI, ตรรกะ หรือฟังก์ชันของ Weather Calendar ใน Repository ใด ต้องปรับปรุงอีก Repository หนึ่งให้ตรงกันเสมอ
-- **กล่องปฏิทินต้องเป็น Centered Floating Modal เสมอ**:
-  1. กล่องปฏิทินสภาพอากาศต้องแสดงผลเป็น Floating Modal ลอยเด่นอยู่กึ่งกลางหน้าจอเสมอ (`fixed inset-0 z-[2000] flex items-center justify-center` เรนเดอร์ติดกับ `document.body` ผ่าน Portal) ห้ามเกาะติดด้านบนหรือหลุดขอบหน้าจอ
-  2. ควบคุมความสูงไม่ให้เกินหน้าจอ (`max-h-[min(92vh,780px)]`) พร้อมพื้นที่เลื่อนเนื้อหาภายในตัว เพื่อให้ผู้ใช้ไม่ต้องเลื่อนหน้าเว็บหา
-- **ฐานข้อมูลสภาพอากาศกลาง (Central Authoritative Source)**:
-  1. ข้อมูลสภาพอากาศทุกจุดต้องอ่านและบันทึกลงตาราง `core_weather` ใน Supabase เป็นศูนย์กลางความจริงเดียว เพื่อให้รายงานประจำวันและรายงานประจำสัปดาห์แสดงผลสภาพอากาศตรงกันทุกวัน
+## 10. ข้อกำหนดโครงสร้างระบบและสถาปัตยกรรมการเผยแพร่ (Production Topology & Toolchain Integrity)
+- **Modern Stack**: Next.js 16.3.8, React 19.2.8, Turbopack, Node 24.x, TypeScript 6.0.3
+- **Canonical Production URL**: https://songyang-plan.vercel.app
+- **Local Development Port**: 3014
 
 <!-- BEGIN:nextjs-agent-rules -->
 

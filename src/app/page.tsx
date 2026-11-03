@@ -11,9 +11,9 @@ import { FilterPanel } from '../features/search/FilterPanel.tsx';
 import { ProjectCard } from '../features/project/ProjectCard.tsx';
 import { ProjectDetailModal, type PrintPackMode } from '../features/project/ProjectDetailModal.tsx';
 import { PrintOfficialSheet } from '../features/project/PrintOfficialSheet.tsx';
-import { safeGetJson, safeSetJson } from '../lib/safeBrowserStorage.ts';
+import { safeGetJson, safeSetJson, safeGetText, safeSetText } from '../lib/safeBrowserStorage.ts';
 import { formatBuildStamp } from '../lib/build-version.js';
-import { IconLayers, IconFileText } from '../components/icons/index.tsx';
+import { IconLayers, IconFileText, IconSun, IconMoon, IconArrowLeft } from '../components/icons/index.tsx';
 
 interface PersistedFilterPrefs {
   documentId: string | null;
@@ -48,13 +48,15 @@ export default function PlanHomePage() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedYear, setSelectedYear] = useState<number | null>(null);
   const [showSummaryTable, setShowSummaryTable] = useState<boolean>(false);
+  const [darkMode, setDarkMode] = useState<boolean>(false);
+  const [portalUrl, setPortalUrl] = useState<string>('https://songyang-portal.vercel.app');
   const [hydrated, setHydrated] = useState(false);
 
   const [activeProject, setActiveProject] = useState<LocalPlanProject | null>(null);
   const [printProject, setPrintProject] = useState<LocalPlanProject | null>(null);
   const [printMode, setPrintMode] = useState<PrintPackMode>('table_only');
 
-  // Hydrate filter state from Self-Healing Cache on mount
+  // Hydrate filter state & theme from Self-Healing Cache on mount
   useEffect(() => {
     const cached = safeGetJson<PersistedFilterPrefs>(
       FILTER_CACHE_KEY,
@@ -72,8 +74,30 @@ export default function PlanHomePage() {
     setSelectedStrategy(cached.strategyNo);
     setSelectedCategory(cached.workCategory);
     setSelectedYear(cached.fiscalYear);
+
+    const savedTheme = safeGetText('so_plan_theme', 'light');
+    const isDark = savedTheme === 'dark';
+    setDarkMode(isDark);
+    document.documentElement.classList.toggle('dark', isDark);
+
+    if (typeof window !== 'undefined') {
+      const host = window.location.hostname;
+      if (host === 'localhost' || host === '127.0.0.1') {
+        setPortalUrl('http://localhost:3001');
+      }
+    }
+
     setHydrated(true);
   }, []);
+
+  const toggleDarkMode = () => {
+    setDarkMode((prev) => {
+      const next = !prev;
+      document.documentElement.classList.toggle('dark', next);
+      safeSetText('so_plan_theme', next ? 'dark' : 'light');
+      return next;
+    });
+  };
 
   // Save filter state to Self-Healing Cache on change
   useEffect(() => {
@@ -244,33 +268,51 @@ export default function PlanHomePage() {
         {/* Top Header */}
         <header className="sticky top-0 z-30 bg-white/95 dark:bg-[#0c1222]/95 [backdrop-filter:blur(28px)_saturate(190%)] [-webkit-backdrop-filter:blur(28px)_saturate(190%)] border-b border-black/[0.08] dark:border-white/[0.12]">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-2">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-sky-600 flex items-center justify-center text-white shadow-xs">
+            <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+              <a
+                href={portalUrl}
+                title="กลับหน้าหลัก Songyang Portal"
+                className="inline-flex items-center gap-1 px-2.5 py-2 rounded-xl text-xs font-semibold border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors shrink-0"
+              >
+                <IconArrowLeft className="w-4 h-4" />
+                <span className="hidden md:inline">Portal</span>
+              </a>
+              <div className="w-10 h-10 rounded-xl bg-sky-600 flex items-center justify-center text-white shadow-xs shrink-0">
                 <IconLayers className="w-5 h-5 text-white" />
               </div>
-              <div>
-                <h1 className="text-base sm:text-lg font-bold text-slate-900 dark:text-slate-100 leading-tight">
+              <div className="min-w-0">
+                <h1 className="text-sm sm:text-lg font-bold text-slate-900 dark:text-slate-100 leading-tight truncate">
                   ระบบสืบค้นและพิมพ์แผนพัฒนาท้องถิ่น อบต.สงยาง
                 </h1>
-                <p className="text-2xs sm:text-xs text-slate-500 dark:text-slate-400">
+                <p className="text-2xs sm:text-xs text-slate-500 dark:text-slate-400 truncate">
                   อบต.สงยาง อ.มหาชนะชัย จ.ยโสธร • ตรวจสอบเล่มแผน ประวัติการแก้ไข และสั่งปริ้นหน้าสแกนต้นฉบับจริง
                 </p>
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 shrink-0">
               <button
                 type="button"
                 onClick={() => setShowSummaryTable((prev) => !prev)}
-                className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold border transition-colors ${
+                className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold border transition-colors cursor-pointer ${
                   showSummaryTable
                     ? 'bg-sky-600 text-white border-sky-600'
-                    : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50'
+                    : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700'
                 }`}
               >
                 <IconFileText className="w-4 h-4" />
                 <span className="hidden sm:inline">ตารางสรุปยอดแผน (แบบ ผ.01)</span>
                 <span className="sm:hidden">ผ.01</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={toggleDarkMode}
+                aria-label={darkMode ? 'สลับเป็นโหมดสว่าง' : 'สลับเป็นโหมดมืด'}
+                title={darkMode ? 'สลับเป็นโหมดสว่าง' : 'สลับเป็นโหมดมืด'}
+                className="inline-flex items-center justify-center w-9 h-9 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-amber-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors cursor-pointer"
+              >
+                {darkMode ? <IconSun className="w-4 h-4" /> : <IconMoon className="w-4 h-4" />}
               </button>
             </div>
           </div>

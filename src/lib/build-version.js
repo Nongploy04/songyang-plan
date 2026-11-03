@@ -2,7 +2,7 @@
 // MANDATORY AI RULE: bump BUILD_VERSION on EVERY code change before build/push.
 // Format: 'YYYY-MM-DD HH:mm (v1.0.X)' Asia/Bangkok (UTC+7), HH:mm.
 // =========================================================================
-export const BUILD_VERSION = '2026-11-03 10:25 (v1.0.6)';
+export const BUILD_VERSION = '2026-11-03 10:42 (v1.0.7)';
 
 import { safeGetText, safeSetText } from './safeBrowserStorage';
 
