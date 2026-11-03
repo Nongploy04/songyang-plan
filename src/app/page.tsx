@@ -15,6 +15,7 @@ import { IconLayers, IconPrint } from '../components/icons/index.tsx';
 export default function PlanHomePage() {
   const [projects] = useState<LocalPlanProject[]>(INITIAL_PLAN_PROJECTS);
   const [query, setQuery] = useState('');
+  const [selectedDocumentId, setSelectedDocumentId] = useState<string | null>(null);
   const [selectedVillage, setSelectedVillage] = useState<number | null>(null);
   const [selectedStrategy, setSelectedStrategy] = useState<number | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -29,6 +30,11 @@ export default function PlanHomePage() {
     const q = toArabic(query).toLowerCase().trim();
 
     return projects.filter((p) => {
+      // Document Filter
+      if (selectedDocumentId !== null && p.documentId !== selectedDocumentId) {
+        return false;
+      }
+
       // Village Filter
       if (selectedVillage !== null && !p.villages.includes(selectedVillage)) {
         return false;
@@ -81,6 +87,7 @@ export default function PlanHomePage() {
 
   const hasActiveFilters =
     Boolean(query) ||
+    selectedDocumentId !== null ||
     selectedVillage !== null ||
     selectedStrategy !== null ||
     selectedCategory !== null ||
@@ -88,6 +95,7 @@ export default function PlanHomePage() {
 
   const handleResetFilters = () => {
     setQuery('');
+    setSelectedDocumentId(null);
     setSelectedVillage(null);
     setSelectedStrategy(null);
     setSelectedCategory(null);
@@ -159,6 +167,8 @@ export default function PlanHomePage() {
 
           {/* Filter Panel */}
           <FilterPanel
+            selectedDocumentId={selectedDocumentId}
+            onSelectDocumentId={setSelectedDocumentId}
             selectedVillage={selectedVillage}
             onSelectVillage={setSelectedVillage}
             selectedStrategy={selectedStrategy}

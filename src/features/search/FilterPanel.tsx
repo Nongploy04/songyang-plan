@@ -4,9 +4,12 @@ import React from 'react';
 import { SONGYANG_VILLAGES } from '../../domain/villages.ts';
 import { SONGYANG_STRATEGIES } from '../../domain/strategies.ts';
 import { WORK_CATEGORIES } from '../../domain/workCategories.ts';
+import { PLAN_DOCUMENTS } from '../../domain/documents.ts';
 import { toThai } from '../../domain/thaiNumerals.ts';
 
 interface FilterPanelProps {
+  selectedDocumentId: string | null;
+  onSelectDocumentId: (id: string | null) => void;
   selectedVillage: number | null;
   onSelectVillage: (village: number | null) => void;
   selectedStrategy: number | null;
@@ -21,6 +24,8 @@ interface FilterPanelProps {
 }
 
 export function FilterPanel({
+  selectedDocumentId,
+  onSelectDocumentId,
   selectedVillage,
   onSelectVillage,
   selectedStrategy,
@@ -50,6 +55,44 @@ export function FilterPanel({
             ล้างตัวกรองทั้งหมด
           </button>
         )}
+      </div>
+
+      {/* เลือกเล่มแผนพัฒนา */}
+      <div>
+        <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">
+          เล่มแผนพัฒนาท้องถิ่น (สารบบ ๒๐ ฉบับ อบต.สงยาง)
+        </label>
+        <div className="flex flex-wrap gap-1.5">
+          <button
+            type="button"
+            onClick={() => onSelectDocumentId(null)}
+            className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all ${
+              selectedDocumentId === null
+                ? 'bg-slate-900 text-white dark:bg-sky-600'
+                : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
+            }`}
+          >
+            ทุกฉบับ ({PLAN_DOCUMENTS.length})
+          </button>
+          {PLAN_DOCUMENTS.map((doc) => {
+            const isSelected = selectedDocumentId === doc.id || selectedDocumentId === doc.slug;
+            return (
+              <button
+                key={doc.id}
+                type="button"
+                onClick={() => onSelectDocumentId(isSelected ? null : doc.id)}
+                className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all ${
+                  isSelected
+                    ? 'bg-sky-600 text-white shadow-xs'
+                    : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200'
+                }`}
+                title={doc.title}
+              >
+                {doc.shortTitle}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* หมู่บ้าน */}

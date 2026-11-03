@@ -9,3 +9,5 @@ test-results/
 scratch/
 pipeline/out/
 pipeline/*.tmp
+pipeline/source_pdfs/*.pdf
+pipeline/source_pdfs/**/*.pdf

@@ -5,6 +5,7 @@ import { toArabic, toThai, parseThaiNumber, formatCurrency } from '../src/domain
 import { generateOfficialCitation } from '../src/domain/citation.ts';
 import { SONGYANG_VILLAGES, getVillageLabel } from '../src/domain/villages.ts';
 import { SONGYANG_STRATEGIES, getStrategy } from '../src/domain/strategies.ts';
+import { PLAN_DOCUMENTS, getDocument } from '../src/domain/documents.ts';
 
 test('toArabic converts thai digits to arabic', () => {
   assert.equal(toArabic('๑๒๓๔๕๖๗๘๙๐'), '1234567890');
@@ -50,3 +51,13 @@ test('strategies master data has 7 strategies', () => {
   assert.equal(SONGYANG_STRATEGIES.length, 7);
   assert.equal(getStrategy(1)?.shortName, 'โครงสร้างพื้นฐาน');
 });
+
+test('documents catalog has 20 official documents', () => {
+  assert.equal(PLAN_DOCUMENTS.length, 20);
+  const doc71 = getDocument('plan_2571_2575_main');
+  assert.equal(doc71?.period, '2571-2575');
+  assert.equal(doc71?.pageCount, 252);
+  const activeDocs = PLAN_DOCUMENTS.filter((d) => d.isActive);
+  assert.ok(activeDocs.length > 5);
+});
+

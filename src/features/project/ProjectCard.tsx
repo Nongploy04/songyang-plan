@@ -48,7 +48,7 @@ export function ProjectCard({
       <div className="space-y-3">
         {/* Top Badges */}
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
             <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold bg-sky-100 dark:bg-sky-900/60 text-sky-800 dark:text-sky-200">
               ลำดับที่ {displaySeq}
             </span>
@@ -56,11 +56,16 @@ export function ProjectCard({
               หน้า {displayPage}
             </span>
           </div>
-          <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300">
-            {project.strategyName.length > 28
-              ? project.strategyName.slice(0, 28) + '...'
-              : project.strategyName}
-          </span>
+          <div className="flex items-center gap-1.5">
+            <span className="inline-flex items-center px-2 py-0.5 rounded-md text-2xs font-bold bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
+              {project.documentTitle.replace('แผนพัฒนาท้องถิ่น', '').replace('องค์การบริหารส่วนตำบลสงยาง', '').trim() || 'แผนหลัก'}
+            </span>
+            <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300">
+              {project.strategyName.length > 20
+                ? project.strategyName.slice(0, 20) + '...'
+                : project.strategyName}
+            </span>
+          </div>
         </div>
 
         {/* Project Title */}
