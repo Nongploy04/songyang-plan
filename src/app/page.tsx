@@ -334,7 +334,7 @@ export default function PlanHomePage() {
       <div className="no-print min-h-screen flex flex-col">
         {/* Top Sticky Header — Clean & Icon-Only Actions */}
         <header className="sticky top-0 z-30 bg-white/95 dark:bg-[#0c1222]/95 [backdrop-filter:blur(28px)_saturate(190%)] [-webkit-backdrop-filter:blur(28px)_saturate(190%)] border-b border-black/[0.08] dark:border-white/[0.12] shadow-sm">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-2">
+          <div className="max-w-[1720px] w-full mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-2">
             {/* Left: Icon-Only Portal Back Button + Logo & Title */}
             <div className="flex items-center gap-2.5 min-w-0">
               <a
@@ -395,7 +395,7 @@ export default function PlanHomePage() {
         </header>
 
         {/* Main Content */}
-        <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-5 space-y-4">
+        <main className="flex-1 max-w-[1720px] w-full mx-auto px-4 sm:px-6 py-5 space-y-4">
           {/* Collapsible Official Summary Table (แบบ ผ.01) */}
           {showSummaryTable && (
             <section className="rounded-2xl bg-white/95 dark:bg-[#0c1222]/95 [backdrop-filter:blur(28px)_saturate(190%)] [-webkit-backdrop-filter:blur(28px)_saturate(190%)] p-4 sm:p-5 border border-sky-200 dark:border-sky-900/60 shadow-lg space-y-3">
@@ -590,7 +590,7 @@ export default function PlanHomePage() {
                 </button>
               </div>
             ) : viewMode === 'card' ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4 gap-4">
                 {filteredProjects.map((p) => (
                   <ProjectCard
                     key={p.id}

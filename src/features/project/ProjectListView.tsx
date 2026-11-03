@@ -6,6 +6,7 @@ import { toArabic, formatCurrency } from '../../domain/thaiNumerals.ts';
 import { getVillageLabel } from '../../domain/villages.ts';
 import { generateOfficialCitation } from '../../domain/citation.ts';
 import { getCompactDocBadge } from './ProjectCard.tsx';
+import { LiquidTooltip } from '../../components/LiquidTooltip.tsx';
 import {
   IconPrint,
   IconCopy,
@@ -52,25 +53,26 @@ export function ProjectListView({
   };
 
   return (
-    <div className="rounded-2xl bg-white/95 dark:bg-[#0c1222]/95 [backdrop-filter:blur(28px)_saturate(190%)] [-webkit-backdrop-filter:blur(28px)_saturate(190%)] border border-black/[0.08] dark:border-white/[0.12] shadow-sm overflow-hidden">
+    <div className="rounded-2xl bg-white/95 dark:bg-[#0c1222]/95 [backdrop-filter:blur(28px)_saturate(190%)] [-webkit-backdrop-filter:blur(28px)_saturate(190%)] border border-black/[0.08] dark:border-white/[0.12] shadow-sm">
       {/* Desktop Table Header */}
-      <div className="hidden md:grid md:grid-cols-12 gap-3 px-4 py-3 bg-slate-100/80 dark:bg-slate-800/80 border-b border-slate-200/80 dark:border-slate-800 text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+      <div className="hidden md:grid md:grid-cols-12 gap-3 px-4 py-3 bg-slate-100/80 dark:bg-slate-800/80 rounded-t-2xl border-b border-slate-200/80 dark:border-slate-800 text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
         <div className="col-span-1">ลำดับ</div>
-        <div className="col-span-6">ชื่อโครงการ / สถานที่ดำเนินการ</div>
+        <div className="col-span-6 lg:col-span-7">ชื่อโครงการ / สถานที่ดำเนินการ</div>
         <div className="col-span-2">เล่มแผน • หน้า</div>
-        <div className="col-span-2 text-right">งบประมาณรวม</div>
+        <div className="col-span-2 lg:col-span-1 text-right">งบรวม</div>
         <div className="col-span-1 text-right">จัดการ</div>
       </div>
 
       {/* Rows */}
       <div className="divide-y divide-slate-100 dark:divide-slate-800/80">
-        {projects.map((project) => {
+        {projects.map((project, idx) => {
           const displaySeq = toArabic(project.seq);
           const displayPrintedPage = toArabic(project.printedPage);
           const displayTotal = formatCurrency(project.totalBudget, false);
           const cleanName = toArabic(project.name);
           const docBadge = getCompactDocBadge(project);
           const isCopied = copiedId === project.id;
+          const isLastRow = idx === projects.length - 1;
 
           const villageLabels =
             project.villages.length >= 8
@@ -81,7 +83,9 @@ export function ProjectListView({
             <div
               key={project.id}
               onClick={() => onSelect(project)}
-              className="group grid grid-cols-1 md:grid-cols-12 gap-2 md:gap-3 px-4 py-3.5 items-center hover:bg-sky-50/50 dark:hover:bg-sky-950/30 transition-colors cursor-pointer"
+              className={`group grid grid-cols-1 md:grid-cols-12 gap-2 md:gap-3 px-4 py-3.5 items-center hover:bg-sky-50/50 dark:hover:bg-sky-950/30 transition-colors cursor-pointer ${
+                isLastRow ? 'rounded-b-2xl' : ''
+              }`}
             >
               {/* Col 1: Sequence Badge */}
               <div className="md:col-span-1 flex items-center justify-between md:justify-start">
@@ -97,10 +101,22 @@ export function ProjectListView({
               </div>
 
               {/* Col 2: Project Name + Village + Strategy */}
-              <div className="md:col-span-6 min-w-0">
-                <div className="text-sm font-bold text-slate-900 dark:text-slate-100 group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors line-clamp-1">
-                  {cleanName}
-                </div>
+              <div className="md:col-span-6 lg:col-span-7 min-w-0">
+                <LiquidTooltip
+                  title={`#${displaySeq} ${cleanName}`}
+                  description={`${villageLabels} • ด้านที่ ${project.strategyNo} (${docBadge.label} หน้า ${displayPrintedPage})`}
+                  badge={`งบ ${displayTotal} ฿`}
+                  placement="bottom"
+                  align="left"
+                  className="w-full"
+                >
+                  <div
+                    className="text-sm font-bold text-slate-900 dark:text-slate-100 group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors line-clamp-1 xl:line-clamp-2 cursor-help"
+                    title={cleanName}
+                  >
+                    {cleanName}
+                  </div>
+                </LiquidTooltip>
                 <div className="flex items-center gap-2 mt-0.5 text-xs text-slate-500 dark:text-slate-400 min-w-0">
                   <span className="inline-flex items-center gap-1 truncate">
                     <IconMapPin className="w-3 h-3 text-sky-500 shrink-0" />
@@ -131,7 +147,7 @@ export function ProjectListView({
               </div>
 
               {/* Col 4: Total Budget */}
-              <div className="md:col-span-2 md:text-right flex items-center justify-between md:block pt-1 md:pt-0">
+              <div className="md:col-span-2 lg:col-span-1 md:text-right flex items-center justify-between md:block pt-1 md:pt-0">
                 <span className="md:hidden text-xs text-slate-500 dark:text-slate-400">
                   งบรวม:
                 </span>

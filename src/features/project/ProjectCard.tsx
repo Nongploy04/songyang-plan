@@ -5,6 +5,7 @@ import { type LocalPlanProject } from '../../domain/types.ts';
 import { toArabic, formatCurrency } from '../../domain/thaiNumerals.ts';
 import { getVillageLabel } from '../../domain/villages.ts';
 import { generateOfficialCitation } from '../../domain/citation.ts';
+import { LiquidTooltip } from '../../components/LiquidTooltip.tsx';
 import {
   IconPrint,
   IconCopy,
@@ -162,9 +163,21 @@ export function ProjectCard({
         </div>
 
         {/* Project Name (High Readability, Generous Line Spacing) */}
-        <h3 className="text-[15.5px] sm:text-base font-bold text-slate-900 dark:text-slate-100 group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors leading-relaxed line-clamp-2">
-          {cleanName}
-        </h3>
+        <LiquidTooltip
+          title={`#${displaySeq} ${cleanName}`}
+          description={`${villageLabels} • ด้านที่ ${project.strategyNo} (${docBadge.label} หน้า ${displayPrintedPage})`}
+          badge={`งบ ${displayTotal} ฿`}
+          placement="bottom"
+          align="left"
+          className="w-full"
+        >
+          <h3
+            className="text-[15.5px] sm:text-base font-bold text-slate-900 dark:text-slate-100 group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors leading-relaxed line-clamp-2 cursor-help"
+            title={cleanName}
+          >
+            {cleanName}
+          </h3>
+        </LiquidTooltip>
 
         {/* Single-Line Village & Strategy Metadata */}
         <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 min-w-0">
