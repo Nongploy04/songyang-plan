@@ -1,5 +1,10 @@
 import type { LocalPlanProject } from './types.ts';
 import { formatCurrency } from './thaiNumerals.ts';
+import {
+  resolveProjectFiscalBudget,
+  getCurrentThaiFiscalYear,
+  type FiscalYearSelection,
+} from './fiscalYear.ts';
 
 export interface ProjectBudgetDisplay {
   text: string;
@@ -7,6 +12,7 @@ export interface ProjectBudgetDisplay {
   amount: number;
   isYearSpecific: boolean;
   isRange: boolean;
+  effectiveYear?: number | null;
   minAmount?: number;
   maxAmount?: number;
 }
@@ -37,60 +43,22 @@ export function getProjectBaseBudget(project: LocalPlanProject): number {
 /**
  * ดึงข้อมูลการแสดงผลงบประมาณสำหรับโครงการ
  * @param project โครงการ
- * @param selectedYear ปีงบประมาณที่ผู้ใช้เลือกกรอง (ถ้ามี)
+ * @param selectedYear ปีงบประมาณที่ผู้ใช้เลือก (ตัวเลขปี, 'current', 'all', หรือ null)
  */
 export function getProjectDisplayBudget(
   project: LocalPlanProject,
-  selectedYear?: number | null
+  selectedYear?: FiscalYearSelection
 ): ProjectBudgetDisplay {
-  // 1. กรณีผู้ใช้เลือกกรองปีเฉพาะเจาะจง
-  if (selectedYear && project.budgets && (project.budgets[selectedYear] || 0) > 0) {
-    const amount = project.budgets[selectedYear] || 0;
-    return {
-      text: formatCurrency(amount, false),
-      sublabel: `งบปี ${selectedYear}`,
-      amount,
-      isYearSpecific: true,
-      isRange: false,
-    };
-  }
-
-  // 2. กรณีดูภาพรวมทุกปี
-  const activeYears = getActiveFiscalYears(project);
-  if (activeYears.length === 0) {
-    return {
-      text: '0',
-      sublabel: 'ไม่ระบุงบประมาณ',
-      amount: 0,
-      isYearSpecific: false,
-      isRange: false,
-    };
-  }
-
-  const amounts = activeYears.map((yr) => project.budgets[yr] || 0);
-  const minAmount = Math.min(...amounts);
-  const maxAmount = Math.max(...amounts);
-
-  // ถ้างบทุกปีเท่ากัน หรือมีแค่ปีเดียว
-  if (minAmount === maxAmount) {
-    return {
-      text: formatCurrency(minAmount, false),
-      sublabel: 'งบประมาณโครงการ',
-      amount: minAmount,
-      isYearSpecific: false,
-      isRange: false,
-    };
-  }
-
-  // ถ้างบแต่ละปีปรับตามเงินเฟ้อ/ดัชนีราคา (เช่น 309,163 - 321,716 บาท)
+  const info = resolveProjectFiscalBudget(project, selectedYear);
   return {
-    text: `${formatCurrency(minAmount, false)} - ${formatCurrency(maxAmount, false)}`,
-    sublabel: 'กรอบงบประมาณ',
-    amount: minAmount, // ใช้วงเงินฐานในการคำนวณ
-    isYearSpecific: false,
-    isRange: true,
-    minAmount,
-    maxAmount,
+    text: info.displayText,
+    sublabel: info.sublabel,
+    amount: info.displayAmount,
+    isYearSpecific: info.isYearSpecific,
+    isRange: info.isRange,
+    effectiveYear: info.effectiveYear,
+    minAmount: info.minAmount,
+    maxAmount: info.maxAmount,
   };
 }
 
@@ -101,14 +69,21 @@ export function getProjectDisplayBudget(
  */
 export function calculateOverallBudget(
   projects: LocalPlanProject[],
-  selectedYear?: number | null
+  selectedYear?: FiscalYearSelection
 ): { total: number; formatted: string; label: string } {
-  if (selectedYear) {
-    const total = projects.reduce((sum, p) => sum + (p.budgets?.[selectedYear] || 0), 0);
+  const effectiveYear =
+    selectedYear === 'current'
+      ? getCurrentThaiFiscalYear()
+      : typeof selectedYear === 'number'
+      ? selectedYear
+      : null;
+
+  if (effectiveYear) {
+    const total = projects.reduce((sum, p) => sum + (p.budgets?.[effectiveYear] || 0), 0);
     return {
       total,
       formatted: formatCurrency(total, false),
-      label: `งบประมาณปี ${selectedYear}`,
+      label: `งบประมาณปี ${effectiveYear}`,
     };
   }
 

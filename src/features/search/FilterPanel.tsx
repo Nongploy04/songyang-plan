@@ -5,6 +5,7 @@ import { SONGYANG_VILLAGES } from '../../domain/villages.ts';
 import { SONGYANG_STRATEGIES } from '../../domain/strategies.ts';
 import { WORK_CATEGORIES } from '../../domain/workCategories.ts';
 import { PLAN_DOCUMENTS, type LocalPlanDocument } from '../../domain/documents.ts';
+import { getCurrentThaiFiscalYear, type FiscalYearSelection } from '../../domain/fiscalYear.ts';
 import { SongyangSelect, type SelectOption } from '../../components/SongyangSelect.tsx';
 import {
   IconSliders,
@@ -34,8 +35,8 @@ interface FilterPanelProps {
   onSelectStrategy: (strategy: number | null) => void;
   selectedCategory: string | null;
   onSelectCategory: (cat: string | null) => void;
-  selectedYear: number | null;
-  onSelectYear: (year: number | null) => void;
+  selectedYear: FiscalYearSelection;
+  onSelectYear: (year: FiscalYearSelection) => void;
   onReset: () => void;
   hasActiveFilters: boolean;
   projectCountsByDoc?: Record<string, number>;
@@ -43,8 +44,6 @@ interface FilterPanelProps {
   viewMode?: ProjectViewMode;
   onViewModeChange?: (mode: ProjectViewMode) => void;
 }
-
-const ALL_YEARS = [2566, 2567, 2568, 2569, 2570, 2571, 2572, 2573, 2574, 2575];
 
 const KIND_STYLES: Record<
   LocalPlanDocument['kind'],
@@ -102,8 +101,7 @@ export function FilterPanel({
 
   const activeAdvancedCount =
     (selectedStrategy !== null ? 1 : 0) +
-    (selectedCategory !== null ? 1 : 0) +
-    (selectedYear !== null ? 1 : 0);
+    (selectedCategory !== null ? 1 : 0);
 
   const categoryLabelMap = Object.fromEntries(
     WORK_CATEGORIES.map((c) => [c.key, c.label])
@@ -253,13 +251,61 @@ export function FilterPanel({
     })),
   ], [categoryCounts]);
 
-  const yearOptions: SelectOption<number | null>[] = useMemo(() => [
-    { value: null, label: 'ทุกปีงบประมาณ (2566 - 2575)' },
-    ...ALL_YEARS.map((yr) => ({
-      value: yr,
-      label: `ปีงบประมาณ พ.ศ. ${yr}`,
-    })),
-  ], []);
+  const currentFiscalYear = useMemo(() => getCurrentThaiFiscalYear(), []);
+
+  const fiscalYearOptions: SelectOption<FiscalYearSelection>[] = useMemo(
+    () => [
+      {
+        value: 'current',
+        label: `⚡ ปีงบประมาณปัจจุบัน (พ.ศ. ${currentFiscalYear})`,
+      },
+      {
+        value: 2571,
+        label: 'ปี 2571 (ปีแรกแผน 2571-2575)',
+      },
+      {
+        value: 2572,
+        label: 'ปี 2572',
+      },
+      {
+        value: 2573,
+        label: 'ปี 2573',
+      },
+      {
+        value: 2574,
+        label: 'ปี 2574',
+      },
+      {
+        value: 2575,
+        label: 'ปี 2575 (ปีสุดท้ายแผน 2571-2575)',
+      },
+      {
+        value: 2570,
+        label: 'ปี 2570 (แผน 2566-2570)',
+      },
+      {
+        value: 2569,
+        label: 'ปี 2569',
+      },
+      {
+        value: 2568,
+        label: 'ปี 2568',
+      },
+      {
+        value: 2567,
+        label: 'ปี 2567',
+      },
+      {
+        value: 2566,
+        label: 'ปี 2566',
+      },
+      {
+        value: 'all',
+        label: 'ทุกปีงบประมาณ (แสดงกรอบช่วงวงเงิน)',
+      },
+    ],
+    [currentFiscalYear]
+  );
 
   return (
     <div className="rounded-2xl bg-white/95 dark:bg-[#0c1222]/95 [backdrop-filter:blur(28px)_saturate(190%)] [-webkit-backdrop-filter:blur(28px)_saturate(190%)] border border-black/[0.08] dark:border-white/[0.12] shadow-sm p-3.5 sm:p-4 space-y-3.5">
@@ -298,7 +344,7 @@ export function FilterPanel({
           <button
             type="button"
             onClick={() => handleSelectPeriodCard(null)}
-            className={`text-left p-3 rounded-xl border transition-all cursor-pointer flex flex-col justify-between gap-1.5 ${
+            className={`card-calibrated btn-tactile text-left p-3 rounded-xl border cursor-pointer flex flex-col justify-between gap-1.5 ${
               selectedPeriod === null && selectedDocumentId === null
                 ? 'bg-sky-50/90 dark:bg-sky-950/60 border-sky-500 dark:border-sky-500 ring-1 ring-sky-500/30 shadow-xs'
                 : 'bg-slate-50/70 dark:bg-slate-900/50 border-slate-200/80 dark:border-slate-800 hover:border-sky-300 dark:hover:border-sky-800'
@@ -326,7 +372,7 @@ export function FilterPanel({
           <button
             type="button"
             onClick={() => handleSelectPeriodCard('2571-2575')}
-            className={`text-left p-3 rounded-xl border transition-all cursor-pointer flex flex-col justify-between gap-1.5 ${
+            className={`card-calibrated btn-tactile text-left p-3 rounded-xl border cursor-pointer flex flex-col justify-between gap-1.5 ${
               selectedPeriod === '2571-2575' ||
               selectedDocumentId === 'plan_2571_2575_main'
                 ? 'bg-sky-50/90 dark:bg-sky-950/60 border-sky-500 dark:border-sky-500 ring-1 ring-sky-500/30 shadow-xs'
@@ -355,7 +401,7 @@ export function FilterPanel({
           <button
             type="button"
             onClick={() => handleSelectPeriodCard('2566-2570')}
-            className={`text-left p-3 rounded-xl border transition-all cursor-pointer flex flex-col justify-between gap-1.5 ${
+            className={`card-calibrated btn-tactile text-left p-3 rounded-xl border cursor-pointer flex flex-col justify-between gap-1.5 ${
               selectedPeriod === '2566-2570'
                 ? 'bg-amber-50/90 dark:bg-amber-950/40 border-amber-500 dark:border-amber-500 ring-1 ring-amber-500/30 shadow-xs'
                 : 'bg-slate-50/70 dark:bg-slate-900/50 border-slate-200/80 dark:border-slate-800 hover:border-amber-300 dark:hover:border-amber-800'
@@ -435,7 +481,7 @@ export function FilterPanel({
                         type="button"
                         onClick={() => handleSelectDocButton(doc)}
                         title={doc.title}
-                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-bold border transition-all cursor-pointer ${
+                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-bold border pill-tactile cursor-pointer ${
                           isSelected ? style.activePill : style.pill
                         }`}
                       >
@@ -463,7 +509,7 @@ export function FilterPanel({
           COLLAPSIBLE HISTORICAL ARCHIVE PDF DRAWER (คลังไฟล์ PDF เล่มเก่า/ทบทวนย้อนหลัง 5 เล่ม)
       ===================================================================== */}
       {archiveOpen && (
-        <div className="rounded-xl bg-slate-100/90 dark:bg-slate-900/90 border border-slate-300/80 dark:border-slate-700 p-3 space-y-2.5">
+        <div className="rounded-xl bg-slate-100/90 dark:bg-slate-900/90 border border-slate-300/80 dark:border-slate-700 p-3 space-y-2.5 animate-in fade-in-50 duration-200">
           <div className="flex items-start justify-between gap-2">
             <div className="space-y-0.5">
               <div className="flex items-center gap-1.5 text-xs font-extrabold text-slate-800 dark:text-slate-200">
@@ -481,7 +527,7 @@ export function FilterPanel({
               onClick={() => setArchiveOpen(false)}
               title="ปิดคลังไฟล์ PDF เล่มเก่า"
               aria-label="ปิดคลังไฟล์ PDF เล่มเก่า"
-              className="w-7 h-7 rounded-lg flex items-center justify-center text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-800 cursor-pointer shrink-0"
+              className="w-7 h-7 rounded-lg flex items-center justify-center text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-800 btn-tactile cursor-pointer shrink-0"
             >
               <IconX className="w-4 h-4" />
             </button>
@@ -494,7 +540,7 @@ export function FilterPanel({
                 href={doc.officialPdfUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group flex items-center justify-between gap-2 p-2.5 rounded-xl bg-white dark:bg-slate-950/80 border border-slate-200/90 dark:border-slate-800 hover:border-sky-400 dark:hover:border-sky-600 transition-all"
+                className="group flex items-center justify-between gap-2 p-2.5 rounded-xl bg-white dark:bg-slate-950/80 border border-slate-200/90 dark:border-slate-800 hover:border-sky-400 dark:hover:border-sky-600 hover:-translate-y-0.5 transition-all duration-200"
               >
                 <div className="min-w-0">
                   <div className="flex items-center gap-1.5">
@@ -555,6 +601,17 @@ export function FilterPanel({
             icon={<IconFileText className="w-3.5 h-3.5" />}
           />
 
+          {/* Dynamic Thai Fiscal Year Custom Dropdown */}
+          <SongyangSelect<FiscalYearSelection>
+            value={selectedYear ?? 'current'}
+            onChange={onSelectYear}
+            options={fiscalYearOptions}
+            placeholder={`⚡ ปีปัจจุบัน (${currentFiscalYear})`}
+            ariaLabel="เลือกปีงบประมาณ"
+            className="max-w-[200px] sm:max-w-[245px]"
+            icon={<IconCalendar className="w-3.5 h-3.5" />}
+          />
+
           {/* Icon-Only Advanced Filter Drawer Toggle */}
           <button
             type="button"
@@ -562,7 +619,7 @@ export function FilterPanel({
             title="ตัวกรองขั้นสูง (ยุทธศาสตร์ / ประเภทงาน / ปีงบประมาณ)"
             aria-label="ตัวกรองขั้นสูง"
             aria-expanded={advancedOpen}
-            className={`relative h-9 px-2.5 rounded-xl inline-flex items-center justify-center gap-1.5 border transition-all cursor-pointer ${
+            className={`relative h-9 px-2.5 rounded-xl inline-flex items-center justify-center gap-1.5 border btn-tactile cursor-pointer ${
               advancedOpen || activeAdvancedCount > 0
                 ? 'bg-sky-600 text-white border-sky-600 shadow-xs'
                 : 'bg-slate-100/80 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 border-slate-200/80 dark:border-slate-700/80 hover:bg-sky-50 dark:hover:bg-sky-950/50 hover:text-sky-600'
@@ -583,7 +640,7 @@ export function FilterPanel({
               onClick={onReset}
               title="ล้างตัวกรองทั้งหมด"
               aria-label="ล้างตัวกรองทั้งหมด"
-              className="w-9 h-9 rounded-xl inline-flex items-center justify-center bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800/70 hover:bg-rose-600 hover:text-white transition-all cursor-pointer"
+              className="w-9 h-9 rounded-xl inline-flex items-center justify-center bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800/70 hover:bg-rose-600 hover:text-white btn-tactile cursor-pointer"
             >
               <IconRotateCcw className="w-4 h-4" />
             </button>
@@ -603,7 +660,7 @@ export function FilterPanel({
               title="มุมมองการ์ด (Card View)"
               aria-label="มุมมองการ์ด"
               aria-pressed={viewMode === 'card'}
-              className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all cursor-pointer ${
+              className={`w-8 h-8 rounded-lg flex items-center justify-center btn-tactile cursor-pointer ${
                 viewMode === 'card'
                   ? 'bg-white dark:bg-slate-900 text-sky-600 dark:text-sky-400 shadow-xs'
                   : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
@@ -618,7 +675,7 @@ export function FilterPanel({
               title="มุมมองรายการตาราง (List View)"
               aria-label="มุมมองรายการตาราง"
               aria-pressed={viewMode === 'list'}
-              className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all cursor-pointer ${
+              className={`w-8 h-8 rounded-lg flex items-center justify-center btn-tactile cursor-pointer ${
                 viewMode === 'list'
                   ? 'bg-white dark:bg-slate-900 text-sky-600 dark:text-sky-400 shadow-xs'
                   : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
@@ -638,7 +695,7 @@ export function FilterPanel({
         <button
           type="button"
           onClick={() => onSelectCategory(null)}
-          className={`px-2.5 py-1 rounded-lg text-xs font-semibold whitespace-nowrap transition-all shrink-0 cursor-pointer ${
+          className={`px-2.5 py-1 rounded-lg text-xs font-semibold whitespace-nowrap pill-tactile shrink-0 cursor-pointer ${
             selectedCategory === null
               ? 'bg-sky-600 text-white shadow-xs'
               : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
@@ -654,7 +711,7 @@ export function FilterPanel({
               key={cat.key}
               type="button"
               onClick={() => onSelectCategory(isSelected ? null : cat.key)}
-              className={`px-2.5 py-1 rounded-lg text-xs font-semibold whitespace-nowrap transition-all shrink-0 cursor-pointer ${
+              className={`px-2.5 py-1 rounded-lg text-xs font-semibold whitespace-nowrap pill-tactile shrink-0 cursor-pointer ${
                 isSelected
                   ? 'bg-sky-600 text-white shadow-xs'
                   : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
@@ -682,7 +739,7 @@ export function FilterPanel({
             <button
               type="button"
               onClick={() => onSelectStrategy(null)}
-              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-sky-50 dark:bg-sky-950/70 text-sky-700 dark:text-sky-300 border border-sky-200 dark:border-sky-800"
+              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-sky-50 dark:bg-sky-950/70 text-sky-700 dark:text-sky-300 border border-sky-200 dark:border-sky-800 pill-tactile cursor-pointer"
             >
               <span>ด้านที่ {selectedStrategy}</span>
               <IconX className="w-3 h-3" />
@@ -692,19 +749,19 @@ export function FilterPanel({
             <button
               type="button"
               onClick={() => onSelectCategory(null)}
-              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-sky-50 dark:bg-sky-950/70 text-sky-700 dark:text-sky-300 border border-sky-200 dark:border-sky-800"
+              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-sky-50 dark:bg-sky-950/70 text-sky-700 dark:text-sky-300 border border-sky-200 dark:border-sky-800 pill-tactile cursor-pointer"
             >
               <span>{categoryLabelMap[selectedCategory] || selectedCategory}</span>
               <IconX className="w-3 h-3" />
             </button>
           )}
-          {selectedYear !== null && (
+          {selectedYear !== null && selectedYear !== 'current' && (
             <button
               type="button"
-              onClick={() => onSelectYear(null)}
-              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-sky-50 dark:bg-sky-950/70 text-sky-700 dark:text-sky-300 border border-sky-200 dark:border-sky-800"
+              onClick={() => onSelectYear('current')}
+              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-sky-50 dark:bg-sky-950/70 text-sky-700 dark:text-sky-300 border border-sky-200 dark:border-sky-800 pill-tactile cursor-pointer"
             >
-              <span>ปี {selectedYear}</span>
+              <span>{selectedYear === 'all' ? 'ทุกปีงบประมาณ' : `ปี ${selectedYear}`}</span>
               <IconX className="w-3 h-3" />
             </button>
           )}
@@ -713,7 +770,7 @@ export function FilterPanel({
 
       {/* Collapsible Advanced Filter Drawer */}
       {advancedOpen && (
-        <div className="pt-3 border-t border-slate-100 dark:border-slate-800/80 grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+        <div className="pt-3 border-t border-slate-100 dark:border-slate-800/80 grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs animate-in fade-in-50 duration-200">
           {/* 1. Strategy Select */}
           <div>
             <label className="block text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-1">
@@ -743,22 +800,6 @@ export function FilterPanel({
               ariaLabel="ประเภทงาน / หมวดหมู่โครงการ"
               className="w-full"
               icon={<IconGrid className="w-3.5 h-3.5" />}
-            />
-          </div>
-
-          {/* 3. Fiscal Year Select */}
-          <div>
-            <label className="block text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-1">
-              ปีงบประมาณที่มีการตั้งงบ
-            </label>
-            <SongyangSelect<number | null>
-              value={selectedYear}
-              onChange={onSelectYear}
-              options={yearOptions}
-              placeholder="ทุกปีงบประมาณ (2566 - 2575)"
-              ariaLabel="ปีงบประมาณที่มีการตั้งงบ"
-              className="w-full"
-              icon={<IconCalendar className="w-3.5 h-3.5" />}
             />
           </div>
         </div>

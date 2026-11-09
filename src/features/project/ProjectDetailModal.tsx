@@ -6,6 +6,7 @@ import { getDocument } from '../../domain/documents.ts';
 import { WORK_CATEGORY_LABELS, type WorkCategoryKey } from '../../domain/workCategories.ts';
 import { toArabic, formatCurrency } from '../../domain/thaiNumerals.ts';
 import { getProjectDisplayBudget } from '../../domain/budgetUtils.ts';
+import { type FiscalYearSelection } from '../../domain/fiscalYear.ts';
 import { getVillageLabel } from '../../domain/villages.ts';
 import { generateOfficialCitation } from '../../domain/citation.ts';
 import {
@@ -22,7 +23,7 @@ export type PrintPackMode = 'table_only' | 'full_official_pack';
 
 interface ProjectDetailModalProps {
   project: LocalPlanProject | null;
-  selectedYear?: number | null;
+  selectedYear?: FiscalYearSelection;
   onClose: () => void;
   onPrint: (p: LocalPlanProject, mode: PrintPackMode) => void;
 }
@@ -128,10 +129,10 @@ export function ProjectDetailModal({
   return (
     <div
       onClick={onClose}
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/60 backdrop-blur-md animate-fade-in no-print"
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/60 backdrop-blur-md animate-in fade-in-0 duration-200 no-print"
     >
       <div
-        className="relative w-full max-w-4xl max-h-[92vh] flex flex-col rounded-3xl bg-white/95 dark:bg-[#0c1222]/95 [backdrop-filter:blur(28px)_saturate(190%)] [-webkit-backdrop-filter:blur(28px)_saturate(190%)] border border-black/[0.08] dark:border-white/[0.12] shadow-2xl overflow-hidden"
+        className="relative w-full max-w-4xl max-h-[92vh] flex flex-col rounded-3xl bg-white/95 dark:bg-[#0c1222]/95 [backdrop-filter:blur(28px)_saturate(190%)] [-webkit-backdrop-filter:blur(28px)_saturate(190%)] border border-black/[0.08] dark:border-white/[0.12] shadow-2xl overflow-hidden animate-in zoom-in-[0.98] duration-200 ease-out"
         onClick={(e) => e.stopPropagation()}
       >
         {/* =====================================================================
@@ -173,7 +174,7 @@ export function ProjectDetailModal({
               onClick={handleCopy}
               title={copied ? 'คัดลอกคำอ้างอิงแล้ว' : 'คัดลอกคำอ้างอิงราชการสำหรับใส่บันทึกข้อความ'}
               aria-label="คัดลอกคำอ้างอิงราชการ"
-              className={`px-3 py-1.5 rounded-xl border text-xs font-semibold flex items-center gap-1.5 transition-all shadow-xs cursor-pointer ${
+              className={`px-3 py-1.5 rounded-xl border text-xs font-semibold flex items-center gap-1.5 btn-tactile shadow-xs cursor-pointer ${
                 copied
                   ? 'bg-emerald-50 dark:bg-emerald-950/60 border-emerald-300 dark:border-emerald-700 text-emerald-700 dark:text-emerald-300'
                   : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:text-sky-600 hover:border-sky-300 dark:hover:border-sky-600'
@@ -181,7 +182,7 @@ export function ProjectDetailModal({
             >
               {copied ? (
                 <>
-                  <IconCheck className="w-3.5 h-3.5 text-emerald-600" />
+                  <IconCheck className="w-3.5 h-3.5 text-emerald-600 transition-transform duration-150 scale-110" />
                   <span>คัดลอกแล้ว</span>
                 </>
               ) : (
@@ -195,7 +196,7 @@ export function ProjectDetailModal({
             <button
               type="button"
               onClick={onClose}
-              className="p-2 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+              className="p-2 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 btn-tactile cursor-pointer"
               aria-label="ปิดหน้าต่าง"
             >
               <IconX className="w-5 h-5" />
@@ -296,13 +297,13 @@ export function ProjectDetailModal({
                     <thead className="bg-slate-100/80 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold border-b border-sky-200/80 dark:border-sky-800/80">
                       <tr>
                         {years.map((y) => {
-                          const isYearMatch = selectedYear === y;
+                          const isYearMatch = budgetDisplay.isYearSpecific && budgetDisplay.effectiveYear === y;
                           return (
                             <th
                               key={y}
-                              className={`p-2.5 ${
+                              className={`p-2.5 transition-colors ${
                                 isYearMatch
-                                  ? 'bg-sky-100 dark:bg-sky-900 text-sky-900 dark:text-sky-100'
+                                  ? 'bg-sky-600 text-white font-extrabold shadow-xs'
                                   : ''
                               }`}
                             >
@@ -316,13 +317,13 @@ export function ProjectDetailModal({
                       <tr>
                         {years.map((y) => {
                           const amount = project.budgets[y];
-                          const isYearMatch = selectedYear === y;
+                          const isYearMatch = budgetDisplay.isYearSpecific && budgetDisplay.effectiveYear === y;
                           return (
                             <td
                               key={y}
-                              className={`p-2.5 tabular-nums ${
+                              className={`p-2.5 tabular-nums transition-colors ${
                                 isYearMatch
-                                  ? 'bg-sky-50 dark:bg-sky-950/80 text-sky-700 dark:text-sky-300 font-extrabold'
+                                  ? 'bg-sky-100/90 dark:bg-sky-950/90 text-sky-800 dark:text-sky-200 font-black'
                                   : ''
                               }`}
                             >
@@ -553,7 +554,7 @@ export function ProjectDetailModal({
             type="button"
             onClick={() => setReportOpen((prev) => !prev)}
             title="แจ้งข้อมูลคลาดเคลื่อนสำหรับโครงการนี้"
-            className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border text-xs font-semibold transition-colors cursor-pointer ${
+            className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border text-xs font-semibold btn-tactile cursor-pointer ${
               reportOpen
                 ? 'bg-amber-100 text-amber-900 border-amber-400 dark:bg-amber-950 dark:text-amber-200'
                 : 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
@@ -567,7 +568,7 @@ export function ProjectDetailModal({
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+              className="px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 btn-tactile cursor-pointer"
             >
               ปิดหน้าต่าง
             </button>
@@ -576,7 +577,7 @@ export function ProjectDetailModal({
               <button
                 type="button"
                 onClick={() => setActiveTab('scan')}
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs sm:text-sm font-semibold shadow-xs hover:shadow-md transition-all cursor-pointer"
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs sm:text-sm font-semibold shadow-xs hover:shadow-md btn-tactile cursor-pointer"
               >
                 <IconPrint className="w-4 h-4" />
                 <span>สั่งพิมพ์ / ดูเอกสารสแกนจริง</span>
@@ -585,7 +586,7 @@ export function ProjectDetailModal({
               <button
                 type="button"
                 onClick={() => onPrint(project, printMode)}
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs sm:text-sm font-semibold shadow-xs hover:shadow-md transition-all cursor-pointer"
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs sm:text-sm font-semibold shadow-xs hover:shadow-md btn-tactile cursor-pointer"
               >
                 <IconPrint className="w-4 h-4" />
                 <span>

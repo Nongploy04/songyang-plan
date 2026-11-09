@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { type LocalPlanProject } from '../../domain/types.ts';
 import { toArabic } from '../../domain/thaiNumerals.ts';
 import { getProjectDisplayBudget } from '../../domain/budgetUtils.ts';
+import { type FiscalYearSelection } from '../../domain/fiscalYear.ts';
 import { getVillageLabel } from '../../domain/villages.ts';
 import { generateOfficialCitation } from '../../domain/citation.ts';
 import { LiquidTooltip } from '../../components/LiquidTooltip.tsx';
@@ -17,7 +18,7 @@ import {
 
 interface ProjectCardProps {
   project: LocalPlanProject;
-  selectedYear?: number | null;
+  selectedYear?: FiscalYearSelection;
   onSelect: (p: LocalPlanProject) => void;
   onPrintDirect: (p: LocalPlanProject) => void;
 }
@@ -99,7 +100,7 @@ export const ProjectCard = React.memo(function ProjectCard({
     <article
       onClick={() => onSelect(project)}
       style={{ contentVisibility: 'auto', containIntrinsicSize: '320px 220px' }}
-      className="group relative rounded-2xl bg-white/95 dark:bg-[#0c1222]/95 [backdrop-filter:blur(28px)_saturate(190%)] [-webkit-backdrop-filter:blur(28px)_saturate(190%)] border border-black/[0.08] dark:border-white/[0.12] hover:border-sky-500/60 dark:hover:border-sky-500/60 shadow-sm hover:shadow-xl transition-all duration-200 p-5 flex flex-col justify-between gap-4 cursor-pointer"
+      className="group relative rounded-2xl bg-white/95 dark:bg-[#0c1222]/95 [backdrop-filter:blur(28px)_saturate(190%)] [-webkit-backdrop-filter:blur(28px)_saturate(190%)] border border-black/[0.08] dark:border-white/[0.12] hover:border-sky-500/60 dark:hover:border-sky-500/60 shadow-xs hover:shadow-md card-calibrated p-5 flex flex-col justify-between gap-4 cursor-pointer"
     >
       <div className="space-y-3">
         {/* Top Row: Compact Badges + Icon-Only Action Buttons */}
@@ -141,14 +142,14 @@ export const ProjectCard = React.memo(function ProjectCard({
               onClick={handleCopyCitation}
               title={copied ? 'คัดลอกคำอ้างอิงแล้ว' : 'คัดลอกคำอ้างอิงราชการ'}
               aria-label="คัดลอกคำอ้างอิงราชการ"
-              className={`w-8 h-8 rounded-xl flex items-center justify-center border transition-all ${
+              className={`w-8 h-8 rounded-xl flex items-center justify-center border btn-tactile cursor-pointer ${
                 copied
                   ? 'bg-emerald-50 dark:bg-emerald-950/60 border-emerald-300 dark:border-emerald-700 text-emerald-600 dark:text-emerald-400'
                   : 'bg-transparent border-transparent text-slate-400 hover:text-sky-600 dark:hover:text-sky-400 hover:bg-sky-50 dark:hover:bg-sky-950/60 hover:border-sky-200 dark:hover:border-sky-800/60'
               }`}
             >
               {copied ? (
-                <IconCheck className="w-4 h-4" />
+                <IconCheck className="w-4 h-4 transition-transform duration-150 scale-110" />
               ) : (
                 <IconCopy className="w-4 h-4" />
               )}
@@ -159,7 +160,7 @@ export const ProjectCard = React.memo(function ProjectCard({
               onClick={handlePrintClick}
               title="ปริ้นหน้าเอกสารสแกนต้นฉบับจริง (A4)"
               aria-label="ปริ้นหน้าเอกสารสแกนต้นฉบับจริง"
-              className="w-8 h-8 rounded-xl flex items-center justify-center bg-sky-50 dark:bg-sky-950/60 text-sky-600 dark:text-sky-400 border border-sky-200/70 dark:border-sky-800/70 hover:bg-sky-600 hover:text-white dark:hover:bg-sky-500 dark:hover:text-white transition-all"
+              className="w-8 h-8 rounded-xl flex items-center justify-center bg-sky-50 dark:bg-sky-950/60 text-sky-600 dark:text-sky-400 border border-sky-200/70 dark:border-sky-800/70 hover:bg-sky-600 hover:text-white dark:hover:bg-sky-500 dark:hover:text-white btn-tactile cursor-pointer"
             >
               <IconPrint className="w-4 h-4" />
             </button>
@@ -214,7 +215,7 @@ export const ProjectCard = React.memo(function ProjectCard({
 
         <span className="inline-flex items-center gap-0.5 text-xs font-semibold text-slate-400 group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors shrink-0">
           <span>รายละเอียด</span>
-          <IconChevronRight className="w-3.5 h-3.5" />
+          <IconChevronRight className="w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-1" />
         </span>
       </div>
     </article>

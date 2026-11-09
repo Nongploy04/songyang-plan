@@ -4,6 +4,7 @@ import React, { useState, useCallback } from 'react';
 import { type LocalPlanProject } from '../../domain/types.ts';
 import { toArabic } from '../../domain/thaiNumerals.ts';
 import { getProjectDisplayBudget } from '../../domain/budgetUtils.ts';
+import { type FiscalYearSelection } from '../../domain/fiscalYear.ts';
 import { getVillageLabel } from '../../domain/villages.ts';
 import { generateOfficialCitation } from '../../domain/citation.ts';
 import { getCompactDocBadge } from './ProjectCard.tsx';
@@ -17,14 +18,14 @@ import {
 
 interface ProjectListViewProps {
   projects: LocalPlanProject[];
-  selectedYear?: number | null;
+  selectedYear?: FiscalYearSelection;
   onSelect: (p: LocalPlanProject) => void;
   onPrintDirect: (p: LocalPlanProject) => void;
 }
 
 interface ProjectListRowProps {
   project: LocalPlanProject;
-  selectedYear?: number | null;
+  selectedYear?: FiscalYearSelection;
   onSelect: (p: LocalPlanProject) => void;
   onPrintDirect: (p: LocalPlanProject) => void;
   isLastRow: boolean;
@@ -125,6 +126,9 @@ const ProjectListRow = React.memo(function ProjectListRow({
           {budgetDisplay.sublabel}:
         </span>
         <div title={budgetDisplay.sublabel}>
+          <span className="hidden lg:block text-[10px] text-slate-400 dark:text-slate-500 font-semibold truncate leading-none mb-0.5">
+            {budgetDisplay.sublabel}
+          </span>
           <span className="text-xs sm:text-sm font-extrabold text-sky-600 dark:text-sky-400 tabular-nums">
             {budgetDisplay.text}
           </span>
@@ -144,14 +148,14 @@ const ProjectListRow = React.memo(function ProjectListRow({
           onClick={(e) => onCopy(e, project)}
           title={isCopied ? 'คัดลอกคำอ้างอิงแล้ว' : 'คัดลอกคำอ้างอิงราชการ'}
           aria-label="คัดลอกคำอ้างอิงราชการ"
-          className={`w-8 h-8 rounded-xl flex items-center justify-center border transition-all ${
+          className={`w-8 h-8 rounded-xl flex items-center justify-center border btn-tactile cursor-pointer ${
             isCopied
               ? 'bg-emerald-50 dark:bg-emerald-950/60 border-emerald-300 dark:border-emerald-700 text-emerald-600 dark:text-emerald-400'
               : 'bg-transparent border-transparent text-slate-400 hover:text-sky-600 dark:hover:text-sky-400 hover:bg-sky-50 dark:hover:bg-sky-950/60 hover:border-sky-200 dark:hover:border-sky-800/60'
           }`}
         >
           {isCopied ? (
-            <IconCheck className="w-4 h-4" />
+            <IconCheck className="w-4 h-4 transition-transform duration-150 scale-110" />
           ) : (
             <IconCopy className="w-4 h-4" />
           )}
@@ -165,7 +169,7 @@ const ProjectListRow = React.memo(function ProjectListRow({
           }}
           title="ปริ้นหน้าเอกสารสแกนต้นฉบับจริง (A4)"
           aria-label="ปริ้นหน้าเอกสารสแกนต้นฉบับจริง"
-          className="w-8 h-8 rounded-xl flex items-center justify-center bg-sky-50 dark:bg-sky-950/60 text-sky-600 dark:text-sky-400 border border-sky-200/70 dark:border-sky-800/70 hover:bg-sky-600 hover:text-white dark:hover:bg-sky-500 dark:hover:text-white transition-all"
+          className="w-8 h-8 rounded-xl flex items-center justify-center bg-sky-50 dark:bg-sky-950/60 text-sky-600 dark:text-sky-400 border border-sky-200/70 dark:border-sky-800/70 hover:bg-sky-600 hover:text-white dark:hover:bg-sky-500 dark:hover:text-white btn-tactile cursor-pointer"
         >
           <IconPrint className="w-4 h-4" />
         </button>

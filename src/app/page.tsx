@@ -13,6 +13,7 @@ import { INITIAL_PLAN_PROJECTS } from '../data/initialProjects.ts';
 import type { LocalPlanProject } from '../domain/types.ts';
 import { toArabic, formatCurrency } from '../domain/thaiNumerals.ts';
 import { calculateOverallBudget } from '../domain/budgetUtils.ts';
+import { type FiscalYearSelection } from '../domain/fiscalYear.ts';
 import { getVillageLabel } from '../domain/villages.ts';
 import { PLAN_2571_2575_OFFICIAL_SUMMARY } from '../domain/documents.ts';
 import { SearchBar } from '../features/search/SearchBar.tsx';
@@ -53,7 +54,7 @@ interface PersistedFilterPrefs {
   villageNo: number | null;
   strategyNo: number | null;
   workCategory: string | null;
-  fiscalYear: number | null;
+  fiscalYear: FiscalYearSelection;
 }
 
 interface IndexedPlanProject extends LocalPlanProject {
@@ -109,6 +110,12 @@ function isValidFilterPrefs(val: unknown): val is PersistedFilterPrefs {
   const isStrOrNull = (x: unknown) => x === null || typeof x === 'string';
   const isNumOrNull = (x: unknown) =>
     x === null || (typeof x === 'number' && Number.isFinite(x));
+  const isValidFiscalYear = (x: unknown) =>
+    x === null ||
+    x === undefined ||
+    x === 'current' ||
+    x === 'all' ||
+    (typeof x === 'number' && Number.isFinite(x));
   const isValidPeriod =
     v.period === undefined ||
     v.period === null ||
@@ -120,7 +127,7 @@ function isValidFilterPrefs(val: unknown): val is PersistedFilterPrefs {
     isNumOrNull(v.villageNo) &&
     isNumOrNull(v.strategyNo) &&
     isStrOrNull(v.workCategory) &&
-    isNumOrNull(v.fiscalYear)
+    isValidFiscalYear(v.fiscalYear)
   );
 }
 
@@ -134,7 +141,7 @@ export default function PlanHomePage() {
   const [selectedVillage, setSelectedVillage] = useState<number | null>(null);
   const [selectedStrategy, setSelectedStrategy] = useState<number | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [selectedYear, setSelectedYear] = useState<number | null>(null);
+  const [selectedYear, setSelectedYear] = useState<FiscalYearSelection>('current');
   const [viewMode, setViewMode] = useState<ProjectViewMode>('card');
   const [showSummaryTable, setShowSummaryTable] = useState<boolean>(false);
   const [darkMode, setDarkMode] = useState<boolean>(false);
@@ -171,7 +178,7 @@ export default function PlanHomePage() {
         villageNo: null,
         strategyNo: null,
         workCategory: null,
-        fiscalYear: null,
+        fiscalYear: 'current',
       }
     );
     startTransition(() => {
@@ -180,7 +187,7 @@ export default function PlanHomePage() {
       setSelectedVillage(cached.villageNo);
       setSelectedStrategy(cached.strategyNo);
       setSelectedCategory(cached.workCategory);
-      setSelectedYear(cached.fiscalYear);
+      setSelectedYear(cached.fiscalYear ?? 'current');
 
       const savedView = safeGetText(VIEW_MODE_CACHE_KEY, 'card');
       if (savedView === 'card' || savedView === 'list') {
@@ -300,8 +307,8 @@ export default function PlanHomePage() {
         }
       }
 
-      if (selectedYear !== null) {
-        const amount = p.budgets[selectedYear];
+      if (typeof selectedYear === 'number') {
+        const amount = p.budgets?.[selectedYear];
         if (!amount || amount <= 0) return false;
       }
 
@@ -360,7 +367,7 @@ export default function PlanHomePage() {
     selectedVillage !== null ||
     selectedStrategy !== null ||
     selectedCategory !== null ||
-    selectedYear !== null;
+    (selectedYear !== null && selectedYear !== 'current');
 
   const handleResetFilters = useCallback(() => {
     setQuery('');
@@ -369,7 +376,7 @@ export default function PlanHomePage() {
     setSelectedVillage(null);
     setSelectedStrategy(null);
     setSelectedCategory(null);
-    setSelectedYear(null);
+    setSelectedYear('current');
   }, []);
 
   const handleSelectProject = useCallback((p: LocalPlanProject) => {
@@ -429,7 +436,7 @@ export default function PlanHomePage() {
                 href={portalUrl}
                 title="กลับหน้าหลัก Songyang Portal"
                 aria-label="กลับหน้าหลัก Songyang Portal"
-                className="w-9 h-9 rounded-xl flex items-center justify-center border border-slate-200/80 dark:border-slate-700/80 bg-slate-100/90 dark:bg-slate-800/90 text-slate-700 dark:text-slate-200 hover:bg-sky-50 dark:hover:bg-sky-950/70 hover:text-sky-600 dark:hover:text-sky-400 transition-colors shrink-0"
+                className="w-9 h-9 rounded-xl flex items-center justify-center border border-slate-200/80 dark:border-slate-700/80 bg-slate-100/90 dark:bg-slate-800/90 text-slate-700 dark:text-slate-200 hover:bg-sky-50 dark:hover:bg-sky-950/70 hover:text-sky-600 dark:hover:text-sky-400 btn-tactile shrink-0"
               >
                 <IconArrowLeft className="w-4 h-4" />
               </a>
@@ -456,7 +463,7 @@ export default function PlanHomePage() {
                 title="ตารางสรุปยอดแผนพัฒนาท้องถิ่น (แบบ ผ.01)"
                 aria-label="ตารางสรุปยอดแผนพัฒนาท้องถิ่น (แบบ ผ.01)"
                 aria-pressed={showSummaryTable}
-                className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center border transition-all cursor-pointer ${
+                className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center border btn-tactile cursor-pointer ${
                   showSummaryTable
                     ? 'bg-sky-600 text-white border-sky-600 shadow-xs'
                     : 'bg-slate-100/90 dark:bg-slate-800/90 border-slate-200/80 dark:border-slate-700/80 text-slate-700 dark:text-slate-200 hover:bg-sky-50 dark:hover:bg-sky-950/70 hover:text-sky-600 dark:hover:text-sky-400'
@@ -470,7 +477,7 @@ export default function PlanHomePage() {
                 onClick={toggleDarkMode}
                 aria-label={darkMode ? 'สลับเป็นโหมดสว่าง' : 'สลับเป็นโหมดมืด'}
                 title={darkMode ? 'สลับเป็นโหมดสว่าง' : 'สลับเป็นโหมดมืด'}
-                className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center border border-slate-200/80 dark:border-slate-700/80 bg-slate-100/90 dark:bg-slate-800/90 text-slate-700 dark:text-amber-300 hover:bg-sky-50 dark:hover:bg-sky-950/70 hover:text-sky-600 transition-all cursor-pointer"
+                className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center border border-slate-200/80 dark:border-slate-700/80 bg-slate-100/90 dark:bg-slate-800/90 text-slate-700 dark:text-amber-300 hover:bg-sky-50 dark:hover:bg-sky-950/70 hover:text-sky-600 btn-tactile cursor-pointer"
               >
                 {darkMode ? (
                   <IconSun className="w-4 h-4" />
@@ -486,7 +493,7 @@ export default function PlanHomePage() {
         <main className="flex-1 max-w-[1720px] w-full mx-auto px-4 sm:px-6 py-5 space-y-4">
           {/* Collapsible Official Summary Table (แบบ ผ.01) */}
           {showSummaryTable && (
-            <section className="rounded-2xl bg-white/95 dark:bg-[#0c1222]/95 [backdrop-filter:blur(28px)_saturate(190%)] [-webkit-backdrop-filter:blur(28px)_saturate(190%)] p-4 sm:p-5 border border-sky-200 dark:border-sky-900/60 shadow-lg space-y-3">
+            <section className="rounded-2xl bg-white/95 dark:bg-[#0c1222]/95 [backdrop-filter:blur(28px)_saturate(190%)] [-webkit-backdrop-filter:blur(28px)_saturate(190%)] p-4 sm:p-5 border border-sky-200 dark:border-sky-900/60 shadow-lg space-y-3 animate-in fade-in-50 duration-200">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div>
                   <h2 className="text-sm sm:text-base font-bold text-slate-900 dark:text-slate-100">
@@ -505,7 +512,7 @@ export default function PlanHomePage() {
                     onClick={() => setShowSummaryTable(false)}
                     title="ปิดตารางสรุป"
                     aria-label="ปิดตารางสรุป"
-                    className="w-8 h-8 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
+                    className="w-8 h-8 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 btn-tactile cursor-pointer"
                   >
                     <IconX className="w-4 h-4" />
                   </button>
@@ -715,7 +722,7 @@ export default function PlanHomePage() {
                     <button
                       type="button"
                       onClick={handleLoadMore}
-                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold bg-white/95 dark:bg-[#0c1222]/95 [backdrop-filter:blur(28px)_saturate(190%)] [-webkit-backdrop-filter:blur(28px)_saturate(190%)] border border-slate-200 dark:border-slate-800 hover:border-sky-500 text-slate-700 dark:text-slate-200 hover:text-sky-600 dark:hover:text-sky-400 shadow-sm hover:shadow-md transition-all cursor-pointer"
+                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold bg-white/95 dark:bg-[#0c1222]/95 [backdrop-filter:blur(28px)_saturate(190%)] [-webkit-backdrop-filter:blur(28px)_saturate(190%)] border border-slate-200 dark:border-slate-800 hover:border-sky-500 text-slate-700 dark:text-slate-200 hover:text-sky-600 dark:hover:text-sky-400 shadow-xs hover:shadow-md btn-tactile cursor-pointer"
                     >
                       <IconLayers className="w-4 h-4 text-sky-500" />
                       <span>
