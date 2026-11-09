@@ -40,12 +40,6 @@ export function ProjectDetailModal({
   const [reportNote, setReportNote] = useState('');
   const [reportCopied, setReportCopied] = useState(false);
 
-  // Reset tab to 'details' whenever active project changes
-  useEffect(() => {
-    setActiveTab('details');
-    setReportOpen(false);
-    setReportNote('');
-  }, [project?.id]);
 
   useEffect(() => {
     if (!project) return;

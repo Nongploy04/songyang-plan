@@ -1,6 +1,14 @@
 'use client';
 
-import React, { useState, useMemo, useEffect, startTransition } from 'react';
+import React, {
+  useState,
+  useMemo,
+  useEffect,
+  useCallback,
+  useDeferredValue,
+  useRef,
+  startTransition,
+} from 'react';
 import { INITIAL_PLAN_PROJECTS } from '../data/initialProjects.ts';
 import type { LocalPlanProject } from '../domain/types.ts';
 import { toArabic, formatCurrency } from '../domain/thaiNumerals.ts';
@@ -48,8 +56,52 @@ interface PersistedFilterPrefs {
   fiscalYear: number | null;
 }
 
+interface IndexedPlanProject extends LocalPlanProject {
+  _searchIndex: string;
+  _seqString: string;
+}
+
 const FILTER_CACHE_KEY = 'songyang_plan_filters_v2';
 const VIEW_MODE_CACHE_KEY = 'songyang_plan_view_mode_v1';
+const INITIAL_BATCH_SIZE = 24;
+const BATCH_INCREMENT = 24;
+
+// Precompute search index once at module load time for blazing-fast lookups
+const INDEXED_PLAN_PROJECTS: IndexedPlanProject[] = INITIAL_PLAN_PROJECTS.map((p) => {
+  const villageText = p.villages
+    .map((no) => getVillageLabel(no))
+    .join(' ')
+    .toLowerCase();
+  const lineageText = p.lineage
+    ? [
+        p.lineage.statusLabel,
+        p.lineage.originReference || '',
+        p.lineage.previousDetails || '',
+        p.lineage.revisionReason || '',
+      ].join(' ')
+    : '';
+  const seqNormalized = toArabic(p.seqRaw || String(p.seq));
+  const searchable = [
+    toArabic(p.name),
+    toArabic(p.target),
+    toArabic(p.objective),
+    toArabic(p.agency),
+    toArabic(p.documentTitle),
+    toArabic(p.strategyName),
+    `หน้า ${toArabic(p.printedPage)}`,
+    villageText,
+    toArabic(lineageText),
+    seqNormalized,
+  ]
+    .join(' ')
+    .toLowerCase();
+
+  return {
+    ...p,
+    _searchIndex: searchable,
+    _seqString: seqNormalized,
+  };
+});
 
 function isValidFilterPrefs(val: unknown): val is PersistedFilterPrefs {
   if (!val || typeof val !== 'object') return false;
@@ -73,8 +125,10 @@ function isValidFilterPrefs(val: unknown): val is PersistedFilterPrefs {
 }
 
 export default function PlanHomePage() {
-  const [projects] = useState<LocalPlanProject[]>(INITIAL_PLAN_PROJECTS);
+  const [projects] = useState<IndexedPlanProject[]>(INDEXED_PLAN_PROJECTS);
   const [query, setQuery] = useState('');
+  const deferredQuery = useDeferredValue(query);
+
   const [selectedPeriod, setSelectedPeriod] = useState<PlanPeriodFilter>(null);
   const [selectedDocumentId, setSelectedDocumentId] = useState<string | null>(null);
   const [selectedVillage, setSelectedVillage] = useState<number | null>(null);
@@ -93,6 +147,17 @@ export default function PlanHomePage() {
   const [printProject, setPrintProject] = useState<LocalPlanProject | null>(null);
   const [printMode, setPrintMode] = useState<PrintPackMode>('table_only');
   const [pendingUpdate, setPendingUpdate] = useState<BuildUpdateChoice | null>(null);
+
+  // Progressive batching to avoid DOM flooding and keep frame rate at 60-120 FPS
+  const filterSignature = `${deferredQuery}|${selectedPeriod}|${selectedDocumentId}|${selectedVillage}|${selectedStrategy}|${selectedCategory}|${selectedYear}`;
+  const [prevFilterSignature, setPrevFilterSignature] = useState(filterSignature);
+  const [visibleCount, setVisibleCount] = useState<number>(INITIAL_BATCH_SIZE);
+  const loadMoreRef = useRef<HTMLDivElement>(null);
+
+  if (prevFilterSignature !== filterSignature) {
+    setPrevFilterSignature(filterSignature);
+    setVisibleCount(INITIAL_BATCH_SIZE);
+  }
 
   // Hydrate filter state, view mode & theme from Self-Healing Cache on mount
   useEffect(() => {
@@ -138,19 +203,19 @@ export default function PlanHomePage() {
     });
   }, []);
 
-  const toggleDarkMode = () => {
+  const toggleDarkMode = useCallback(() => {
     setDarkMode((prev) => {
       const next = !prev;
       document.documentElement.classList.toggle('dark', next);
       safeSetText('so_plan_theme', next ? 'dark' : 'light');
       return next;
     });
-  };
+  }, []);
 
-  const handleViewModeChange = (mode: ProjectViewMode) => {
+  const handleViewModeChange = useCallback((mode: ProjectViewMode) => {
     setViewMode(mode);
     safeSetText(VIEW_MODE_CACHE_KEY, mode);
-  };
+  }, []);
 
   // Save filter state to Self-Healing Cache on change
   useEffect(() => {
@@ -203,9 +268,9 @@ export default function PlanHomePage() {
     return map;
   }, [projects]);
 
-  // Filter & Search Logic
+  // Filter & Search Logic with Pre-indexed search string
   const filteredProjects = useMemo(() => {
-    const q = toArabic(query).toLowerCase().trim();
+    const q = toArabic(deferredQuery).toLowerCase().trim();
 
     return projects.filter((p) => {
       if (selectedDocumentId !== null) {
@@ -241,35 +306,7 @@ export default function PlanHomePage() {
       }
 
       if (q) {
-        const villageText = p.villages
-          .map((no) => getVillageLabel(no))
-          .join(' ')
-          .toLowerCase();
-        const lineageText = p.lineage
-          ? [
-              p.lineage.statusLabel,
-              p.lineage.originReference || '',
-              p.lineage.previousDetails || '',
-              p.lineage.revisionReason || '',
-            ].join(' ')
-          : '';
-        const searchable = [
-          toArabic(p.name),
-          toArabic(p.target),
-          toArabic(p.objective),
-          toArabic(p.agency),
-          toArabic(p.documentTitle),
-          toArabic(p.strategyName),
-           `หน้า ${toArabic(p.printedPage)}`,
-          villageText,
-          toArabic(lineageText),
-        ]
-          .join(' ')
-          .toLowerCase();
-
-        const normalizedSeq = toArabic(p.seqRaw || String(p.seq));
-        const match = searchable.includes(q) || normalizedSeq === q;
-
+        const match = p._searchIndex.includes(q) || p._seqString === q;
         if (!match) return false;
       }
 
@@ -277,7 +314,7 @@ export default function PlanHomePage() {
     });
   }, [
     projects,
-    query,
+    deferredQuery,
     selectedPeriod,
     selectedDocumentId,
     selectedVillage,
@@ -285,6 +322,32 @@ export default function PlanHomePage() {
     selectedCategory,
     selectedYear,
   ]);
+
+  // Sliced projects for DOM rendering
+  const displayedProjects = useMemo(() => {
+    return filteredProjects.slice(0, visibleCount);
+  }, [filteredProjects, visibleCount]);
+
+  const handleLoadMore = useCallback(() => {
+    setVisibleCount((prev) => Math.min(prev + BATCH_INCREMENT, filteredProjects.length));
+  }, [filteredProjects.length]);
+
+  // Intersection observer for auto-loading next batch when scrolling near bottom
+  useEffect(() => {
+    const el = loadMoreRef.current;
+    if (!el || visibleCount >= filteredProjects.length) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) {
+          handleLoadMore();
+        }
+      },
+      { rootMargin: '300px' }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [handleLoadMore, visibleCount, filteredProjects.length]);
 
   const budgetSummary = useMemo(() => {
     return calculateOverallBudget(filteredProjects, selectedYear);
@@ -299,7 +362,7 @@ export default function PlanHomePage() {
     selectedCategory !== null ||
     selectedYear !== null;
 
-  const handleResetFilters = () => {
+  const handleResetFilters = useCallback(() => {
     setQuery('');
     setSelectedPeriod(null);
     setSelectedDocumentId(null);
@@ -307,9 +370,17 @@ export default function PlanHomePage() {
     setSelectedStrategy(null);
     setSelectedCategory(null);
     setSelectedYear(null);
-  };
+  }, []);
 
-  const handlePrint = (p: LocalPlanProject, mode: PrintPackMode = 'table_only') => {
+  const handleSelectProject = useCallback((p: LocalPlanProject) => {
+    setActiveProject(p);
+  }, []);
+
+  const handleCloseModal = useCallback(() => {
+    setActiveProject(null);
+  }, []);
+
+  const handlePrint = useCallback((p: LocalPlanProject, mode: PrintPackMode = 'table_only') => {
     setPrintProject(p);
     setPrintMode(mode);
 
@@ -339,7 +410,11 @@ export default function PlanHomePage() {
         window.print();
       }, 120);
     });
-  };
+  }, []);
+
+  const handlePrintDirect = useCallback((proj: LocalPlanProject) => {
+    handlePrint(proj, 'table_only');
+  }, [handlePrint]);
 
   return (
     <>
@@ -606,23 +681,56 @@ export default function PlanHomePage() {
               </div>
             ) : viewMode === 'card' ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4 gap-4">
-                {filteredProjects.map((p) => (
+                {displayedProjects.map((p) => (
                   <ProjectCard
                     key={p.id}
                     project={p}
                     selectedYear={selectedYear}
-                    onSelect={setActiveProject}
-                    onPrintDirect={(proj) => handlePrint(proj, 'table_only')}
+                    onSelect={handleSelectProject}
+                    onPrintDirect={handlePrintDirect}
                   />
                 ))}
               </div>
             ) : (
               <ProjectListView
-                projects={filteredProjects}
+                projects={displayedProjects}
                 selectedYear={selectedYear}
-                onSelect={setActiveProject}
-                onPrintDirect={(proj) => handlePrint(proj, 'table_only')}
+                onSelect={handleSelectProject}
+                onPrintDirect={handlePrintDirect}
               />
+            )}
+
+            {/* Progressive Loading Sentinel & Manual Load Button */}
+            {filteredProjects.length > INITIAL_BATCH_SIZE && (
+              <div className="pt-2">
+                {visibleCount < filteredProjects.length ? (
+                  <div
+                    ref={loadMoreRef}
+                    className="pt-4 pb-6 flex flex-col items-center justify-center gap-2"
+                  >
+                    <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+                      กำลังแสดง {displayedProjects.length.toLocaleString('en-US')} จากทั้งหมด{' '}
+                      {filteredProjects.length.toLocaleString('en-US')} โครงการ
+                    </span>
+                    <button
+                      type="button"
+                      onClick={handleLoadMore}
+                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold bg-white/95 dark:bg-[#0c1222]/95 [backdrop-filter:blur(28px)_saturate(190%)] [-webkit-backdrop-filter:blur(28px)_saturate(190%)] border border-slate-200 dark:border-slate-800 hover:border-sky-500 text-slate-700 dark:text-slate-200 hover:text-sky-600 dark:hover:text-sky-400 shadow-sm hover:shadow-md transition-all cursor-pointer"
+                    >
+                      <IconLayers className="w-4 h-4 text-sky-500" />
+                      <span>
+                        แสดงโครงการเพิ่มเติม (+
+                        {Math.min(BATCH_INCREMENT, filteredProjects.length - displayedProjects.length)}{' '}
+                        รายการ)
+                      </span>
+                    </button>
+                  </div>
+                ) : (
+                  <div className="pt-4 pb-6 text-center text-xs text-slate-400 dark:text-slate-500 font-medium">
+                    แสดงครบทั้งหมด {filteredProjects.length.toLocaleString('en-US')} โครงการเรียบร้อยแล้ว
+                  </div>
+                )}
+              </div>
             )}
           </section>
         </main>
@@ -639,12 +747,15 @@ export default function PlanHomePage() {
       </div>
 
       {/* Project Detail Modal (Progressive Disclosure — Full 5-Year Budgets, Target, Lineage, Scan Preview) */}
-      <ProjectDetailModal
-        project={activeProject}
-        selectedYear={selectedYear}
-        onClose={() => setActiveProject(null)}
-        onPrint={handlePrint}
-      />
+      {activeProject && (
+        <ProjectDetailModal
+          key={activeProject.id}
+          project={activeProject}
+          selectedYear={selectedYear}
+          onClose={handleCloseModal}
+          onPrint={handlePrint}
+        />
+      )}
 
       {/* Official Scanned Document Print Sheet (Rendered only on print / paper) */}
       <PrintOfficialSheet

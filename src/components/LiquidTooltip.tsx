@@ -20,7 +20,7 @@ export interface LiquidTooltipProps {
  * - Rule 7: Reduce Motion support
  * - Rule 8: Frosted Glass Deep-Blur 28px & Calibrated Anti-Bleed Opacity 95%
  */
-export function LiquidTooltip({
+export const LiquidTooltip = React.memo(function LiquidTooltip({
   title,
   description,
   badge,
@@ -91,4 +91,4 @@ export function LiquidTooltip({
       )}
     </div>
   );
-}
+});

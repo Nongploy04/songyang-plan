@@ -55,7 +55,7 @@ export const WORK_CATEGORY_LABELS: Record<string, string> = {
  * 3. Prevents location landmarks (e.g. "ข้างประปา", "รอบสระหนองเลิง") from polluting primary category
  * 4. Categorizes solar-powered water systems (SmartPure) as water, not electric
  */
-export function classifySongyangProject(name: string, target: string = ''): WorkCategoryKey {
+export function classifySongyangProject(name: string, _target: string = ''): WorkCategoryKey {
   const n = name.trim();
 
   // 1. DRAINAGE & BRIDGES (Must check before roads because names contain คสล.)

@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { type LocalPlanProject } from '../../domain/types.ts';
-import { toArabic, formatCurrency } from '../../domain/thaiNumerals.ts';
+import { toArabic } from '../../domain/thaiNumerals.ts';
 import { getProjectDisplayBudget } from '../../domain/budgetUtils.ts';
 import { getVillageLabel } from '../../domain/villages.ts';
 import { generateOfficialCitation } from '../../domain/citation.ts';
@@ -48,7 +48,7 @@ export function getCompactDocBadge(project: LocalPlanProject): {
   };
 }
 
-export function ProjectCard({
+export const ProjectCard = React.memo(function ProjectCard({
   project,
   selectedYear,
   onSelect,
@@ -98,6 +98,7 @@ export function ProjectCard({
   return (
     <article
       onClick={() => onSelect(project)}
+      style={{ contentVisibility: 'auto', containIntrinsicSize: '320px 220px' }}
       className="group relative rounded-2xl bg-white/95 dark:bg-[#0c1222]/95 [backdrop-filter:blur(28px)_saturate(190%)] [-webkit-backdrop-filter:blur(28px)_saturate(190%)] border border-black/[0.08] dark:border-white/[0.12] hover:border-sky-500/60 dark:hover:border-sky-500/60 shadow-sm hover:shadow-xl transition-all duration-200 p-5 flex flex-col justify-between gap-4 cursor-pointer"
     >
       <div className="space-y-3">
@@ -218,4 +219,4 @@ export function ProjectCard({
       </div>
     </article>
   );
-}
+});
