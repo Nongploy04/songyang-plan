@@ -479,7 +479,7 @@ export function ProjectDetailModal({
                         src={pg.imageUrl}
                         alt={pg.label}
                         loading="lazy"
-                        className="max-h-[500px] w-auto object-contain"
+                        className="max-h-[500px] w-auto object-contain [image-rendering:-webkit-optimize-contrast]"
                       />
                     </div>
                   </div>
