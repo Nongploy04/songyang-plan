@@ -257,7 +257,7 @@ export function FilterPanel({
     () => [
       {
         value: 'current',
-        label: `⚡ ปีงบประมาณปัจจุบัน (พ.ศ. ${currentFiscalYear})`,
+        label: `ปีงบประมาณปัจจุบัน (พ.ศ. ${currentFiscalYear})`,
       },
       {
         value: 2571,
@@ -606,7 +606,7 @@ export function FilterPanel({
             value={selectedYear ?? 'current'}
             onChange={onSelectYear}
             options={fiscalYearOptions}
-            placeholder={`⚡ ปีปัจจุบัน (${currentFiscalYear})`}
+            placeholder={`ปีปัจจุบัน (${currentFiscalYear})`}
             ariaLabel="เลือกปีงบประมาณ"
             className="max-w-[200px] sm:max-w-[245px]"
             icon={<IconCalendar className="w-3.5 h-3.5" />}

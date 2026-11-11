@@ -12,7 +12,12 @@ import React, {
 import { INITIAL_PLAN_PROJECTS } from '../data/initialProjects.ts';
 import type { LocalPlanProject } from '../domain/types.ts';
 import { toArabic, formatCurrency } from '../domain/thaiNumerals.ts';
-import { calculateOverallBudget } from '../domain/budgetUtils.ts';
+import {
+  calculateOverallBudget,
+  sortProjects,
+  type ProjectSortField,
+  type ProjectSortDirection,
+} from '../domain/budgetUtils.ts';
 import { type FiscalYearSelection } from '../domain/fiscalYear.ts';
 import { getVillageLabel } from '../domain/villages.ts';
 import { PLAN_2571_2575_OFFICIAL_SUMMARY } from '../domain/documents.ts';
@@ -46,6 +51,9 @@ import {
   IconGrid,
   IconList,
   IconX,
+  IconArrowUpDown,
+  IconArrowUp,
+  IconArrowDown,
 } from '../components/icons/index.tsx';
 
 interface PersistedFilterPrefs {
@@ -143,6 +151,8 @@ export default function PlanHomePage() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedYear, setSelectedYear] = useState<FiscalYearSelection>('current');
   const [viewMode, setViewMode] = useState<ProjectViewMode>('card');
+  const [sortField, setSortField] = useState<ProjectSortField | null>(null);
+  const [sortDirection, setSortDirection] = useState<ProjectSortDirection>('desc');
   const [showSummaryTable, setShowSummaryTable] = useState<boolean>(false);
   const [darkMode, setDarkMode] = useState<boolean>(false);
   const [portalUrl, setPortalUrl] = useState<string>(
@@ -156,7 +166,7 @@ export default function PlanHomePage() {
   const [pendingUpdate, setPendingUpdate] = useState<BuildUpdateChoice | null>(null);
 
   // Progressive batching to avoid DOM flooding and keep frame rate at 60-120 FPS
-  const filterSignature = `${deferredQuery}|${selectedPeriod}|${selectedDocumentId}|${selectedVillage}|${selectedStrategy}|${selectedCategory}|${selectedYear}`;
+  const filterSignature = `${deferredQuery}|${selectedPeriod}|${selectedDocumentId}|${selectedVillage}|${selectedStrategy}|${selectedCategory}|${selectedYear}|${sortField}|${sortDirection}`;
   const [prevFilterSignature, setPrevFilterSignature] = useState(filterSignature);
   const [visibleCount, setVisibleCount] = useState<number>(INITIAL_BATCH_SIZE);
   const loadMoreRef = useRef<HTMLDivElement>(null);
@@ -330,19 +340,54 @@ export default function PlanHomePage() {
     selectedYear,
   ]);
 
+  const handleToggleSort = useCallback((field: ProjectSortField) => {
+    if (field === 'budget') {
+      if (sortField !== 'budget') {
+        setSortField('budget');
+        setSortDirection('desc');
+      } else if (sortDirection === 'desc') {
+        setSortDirection('asc');
+      } else {
+        setSortField(null);
+        setSortDirection('desc');
+      }
+    } else if (field === 'seq') {
+      if (sortField !== 'seq') {
+        setSortField('seq');
+        setSortDirection('asc');
+      } else if (sortDirection === 'asc') {
+        setSortDirection('desc');
+      } else {
+        setSortField(null);
+        setSortDirection('desc');
+      }
+    }
+  }, [sortField, sortDirection]);
+
+  const handleResetSort = useCallback(() => {
+    setSortField(null);
+    setSortDirection('desc');
+  }, []);
+
+  // Sorted projects based on sortField & sortDirection
+  const sortedProjects = useMemo(() => {
+    if (!sortField) return filteredProjects;
+    return sortProjects(filteredProjects, sortField, sortDirection, selectedYear);
+  }, [filteredProjects, sortField, sortDirection, selectedYear]);
+
   // Sliced projects for DOM rendering
   const displayedProjects = useMemo(() => {
-    return filteredProjects.slice(0, visibleCount);
-  }, [filteredProjects, visibleCount]);
+    return sortedProjects.slice(0, visibleCount);
+  }, [sortedProjects, visibleCount]);
 
   const handleLoadMore = useCallback(() => {
-    setVisibleCount((prev) => Math.min(prev + BATCH_INCREMENT, filteredProjects.length));
-  }, [filteredProjects.length]);
+    setVisibleCount((prev) => Math.min(prev + BATCH_INCREMENT, sortedProjects.length));
+  }, [sortedProjects.length]);
 
   // Intersection observer for auto-loading next batch when scrolling near bottom
   useEffect(() => {
     const el = loadMoreRef.current;
-    if (!el || visibleCount >= filteredProjects.length) return;
+    if (!el || visibleCount >= sortedProjects.length) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -354,7 +399,7 @@ export default function PlanHomePage() {
     );
     observer.observe(el);
     return () => observer.disconnect();
-  }, [handleLoadMore, visibleCount, filteredProjects.length]);
+  }, [handleLoadMore, visibleCount, sortedProjects.length]);
 
   const budgetSummary = useMemo(() => {
     return calculateOverallBudget(filteredProjects, selectedYear);
@@ -367,7 +412,8 @@ export default function PlanHomePage() {
     selectedVillage !== null ||
     selectedStrategy !== null ||
     selectedCategory !== null ||
-    (selectedYear !== null && selectedYear !== 'current');
+    (selectedYear !== null && selectedYear !== 'current') ||
+    sortField !== null;
 
   const handleResetFilters = useCallback(() => {
     setQuery('');
@@ -377,6 +423,8 @@ export default function PlanHomePage() {
     setSelectedStrategy(null);
     setSelectedCategory(null);
     setSelectedYear('current');
+    setSortField(null);
+    setSortDirection('desc');
   }, []);
 
   const handleSelectProject = useCallback((p: LocalPlanProject) => {
@@ -640,36 +688,90 @@ export default function PlanHomePage() {
           {/* 3. Projects Results Section */}
           <section className="space-y-3">
             <div className="flex flex-wrap items-center justify-between gap-2 px-1">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 <h2 className="text-sm font-bold text-slate-800 dark:text-slate-200">
                   รายการโครงการ ({filteredProjects.length.toLocaleString('en-US')} โครงการ)
                 </h2>
                 <span className="hidden sm:inline-block px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-sky-100/80 dark:bg-sky-950/80 text-sky-700 dark:text-sky-300">
                   คลิกที่โครงการเพื่อดูงบรายปีและรายละเอียดทั้งหมด
                 </span>
+
+                {sortField && (
+                  <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-sky-100/90 dark:bg-sky-950/90 text-sky-800 dark:text-sky-300 border border-sky-300/80 dark:border-sky-800 shadow-2xs">
+                    <span>
+                      เรียงตาม: {sortField === 'budget' ? 'งบประมาณ' : 'ลำดับ'} (
+                      {sortDirection === 'desc' ? 'มาก → น้อย' : 'น้อย → มาก'})
+                    </span>
+                    <button
+                      type="button"
+                      onClick={handleResetSort}
+                      title="ยกเลิกการเรียงลำดับ"
+                      aria-label="ยกเลิกการเรียงลำดับ"
+                      className="p-0.5 hover:bg-sky-200 dark:hover:bg-sky-900 rounded-full cursor-pointer text-sky-600 dark:text-sky-400"
+                    >
+                      <IconX className="w-3 h-3" />
+                    </button>
+                  </div>
+                )}
               </div>
 
-              <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
-                <span>มุมมอง:</span>
+              <div className="flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400">
+                {/* Quick Sort Toggle Button for Mobile & Card View */}
                 <button
                   type="button"
-                  onClick={() =>
-                    handleViewModeChange(viewMode === 'card' ? 'list' : 'card')
+                  onClick={() => handleToggleSort('budget')}
+                  className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                    sortField === 'budget'
+                      ? 'bg-sky-100 dark:bg-sky-950/80 text-sky-700 dark:text-sky-300 border border-sky-300/80 dark:border-sky-800 shadow-2xs'
+                      : 'bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:text-sky-600 dark:hover:text-sky-400'
+                  }`}
+                  title={
+                    sortField === 'budget'
+                      ? sortDirection === 'desc'
+                        ? 'กำลังเรียง: งบประมาณ มาก → น้อย (คลิกเพื่อสลับเป็น น้อย → มาก)'
+                        : 'กำลังเรียง: งบประมาณ น้อย → มาก (คลิกเพื่อกลับสู่ลำดับเดิม)'
+                      : 'คลิกเพื่อเรียงตามงบประมาณ (มากไปน้อย / น้อยไปมาก)'
                   }
-                  className="inline-flex items-center gap-1 font-semibold text-sky-600 dark:text-sky-400 hover:underline cursor-pointer"
+                  aria-label="คลิกเพื่อเรียงตามงบประมาณโครงการ"
                 >
-                  {viewMode === 'card' ? (
-                    <>
-                      <IconGrid className="w-3.5 h-3.5" />
-                      <span>การ์ด</span>
-                    </>
+                  {sortField === 'budget' ? (
+                    sortDirection === 'desc' ? (
+                      <IconArrowDown className="w-3.5 h-3.5 text-sky-600 dark:text-sky-400 shrink-0" />
+                    ) : (
+                      <IconArrowUp className="w-3.5 h-3.5 text-sky-600 dark:text-sky-400 shrink-0" />
+                    )
                   ) : (
-                    <>
-                      <IconList className="w-3.5 h-3.5" />
-                      <span>รายการตาราง</span>
-                    </>
+                    <IconArrowUpDown className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                   )}
+                  <span>
+                    {sortField === 'budget'
+                      ? `งบ: ${sortDirection === 'desc' ? 'มาก→น้อย' : 'น้อย→มาก'}`
+                      : 'เรียง: งบประมาณ'}
+                  </span>
                 </button>
+
+                <div className="flex items-center gap-1.5">
+                  <span>มุมมอง:</span>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      handleViewModeChange(viewMode === 'card' ? 'list' : 'card')
+                    }
+                    className="inline-flex items-center gap-1 font-semibold text-sky-600 dark:text-sky-400 hover:underline cursor-pointer"
+                  >
+                    {viewMode === 'card' ? (
+                      <>
+                        <IconGrid className="w-3.5 h-3.5" />
+                        <span>การ์ด</span>
+                      </>
+                    ) : (
+                      <>
+                        <IconList className="w-3.5 h-3.5" />
+                        <span>รายการตาราง</span>
+                      </>
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -704,6 +806,9 @@ export default function PlanHomePage() {
                 selectedYear={selectedYear}
                 onSelect={handleSelectProject}
                 onPrintDirect={handlePrintDirect}
+                sortField={sortField}
+                sortDirection={sortDirection}
+                onToggleSort={handleToggleSort}
               />
             )}
 

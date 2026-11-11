@@ -95,3 +95,45 @@ export function calculateOverallBudget(
     label: 'กรอบงบประมาณโครงการรวม',
   };
 }
+
+export type ProjectSortField = 'budget' | 'seq';
+export type ProjectSortDirection = 'asc' | 'desc';
+
+/**
+ * จัดเรียงรายการโครงการตามเงื่อนไข (งบประมาณ หรือ ลำดับเล่มแผน)
+ * - หากเรียงตามงบประมาณ (budget): ใช้ Schwartzian Transform คำนวณยอดเงินล่วงหน้าครั้งเดียว (O(N))
+ * - หากงบประมาณเท่ากัน หรือเรียงตามลำดับ (seq): ใช้ seq จากน้อยไปมากเสมอ
+ */
+export function sortProjects<T extends LocalPlanProject>(
+  projects: T[],
+  field: ProjectSortField,
+  direction: ProjectSortDirection,
+  selectedYear?: FiscalYearSelection
+): T[] {
+  if (field === 'seq') {
+    return [...projects].sort((a, b) =>
+      direction === 'desc' ? b.seq - a.seq : a.seq - b.seq
+    );
+  }
+
+  if (field === 'budget') {
+    // Schwartzian Transform: คำนวณงบประมาณล่วงหน้าครั้งเดียวต่อโครงการ (O(N))
+    const mapped = projects.map((p) => ({
+      project: p,
+      amount: getProjectDisplayBudget(p, selectedYear).amount,
+      seq: p.seq,
+    }));
+
+    mapped.sort((a, b) => {
+      if (a.amount !== b.amount) {
+        return direction === 'desc' ? b.amount - a.amount : a.amount - b.amount;
+      }
+      return a.seq - b.seq;
+    });
+
+    return mapped.map((m) => m.project);
+  }
+
+  return [...projects];
+}
+

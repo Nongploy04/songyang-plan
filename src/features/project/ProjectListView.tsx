@@ -3,7 +3,7 @@
 import React, { useState, useCallback } from 'react';
 import { type LocalPlanProject } from '../../domain/types.ts';
 import { toArabic } from '../../domain/thaiNumerals.ts';
-import { getProjectDisplayBudget } from '../../domain/budgetUtils.ts';
+import { getProjectDisplayBudget, type ProjectSortField, type ProjectSortDirection } from '../../domain/budgetUtils.ts';
 import { type FiscalYearSelection } from '../../domain/fiscalYear.ts';
 import { getVillageLabel } from '../../domain/villages.ts';
 import { generateOfficialCitation } from '../../domain/citation.ts';
@@ -14,6 +14,9 @@ import {
   IconCopy,
   IconCheck,
   IconMapPin,
+  IconArrowUpDown,
+  IconArrowUp,
+  IconArrowDown,
 } from '../../components/icons/index.tsx';
 
 interface ProjectListViewProps {
@@ -21,6 +24,9 @@ interface ProjectListViewProps {
   selectedYear?: FiscalYearSelection;
   onSelect: (p: LocalPlanProject) => void;
   onPrintDirect: (p: LocalPlanProject) => void;
+  sortField?: ProjectSortField | null;
+  sortDirection?: ProjectSortDirection;
+  onToggleSort?: (field: ProjectSortField) => void;
 }
 
 interface ProjectListRowProps {
@@ -183,6 +189,9 @@ export const ProjectListView = React.memo(function ProjectListView({
   selectedYear,
   onSelect,
   onPrintDirect,
+  sortField,
+  sortDirection = 'desc',
+  onToggleSort,
 }: ProjectListViewProps) {
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
@@ -214,11 +223,69 @@ export const ProjectListView = React.memo(function ProjectListView({
   return (
     <div className="rounded-2xl bg-white/95 dark:bg-[#0c1222]/95 [backdrop-filter:blur(28px)_saturate(190%)] [-webkit-backdrop-filter:blur(28px)_saturate(190%)] border border-black/[0.08] dark:border-white/[0.12] shadow-sm">
       {/* Desktop Table Header */}
-      <div className="hidden md:grid md:grid-cols-12 gap-3 px-4 py-3 bg-slate-100/80 dark:bg-slate-800/80 rounded-t-2xl border-b border-slate-200/80 dark:border-slate-800 text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-        <div className="col-span-1">ลำดับ</div>
+      <div className="hidden md:grid md:grid-cols-12 gap-3 px-4 py-3 bg-slate-100/80 dark:bg-slate-800/80 rounded-t-2xl border-b border-slate-200/80 dark:border-slate-800 text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 select-none">
+        <div className="col-span-1">
+          {onToggleSort ? (
+            <button
+              type="button"
+              onClick={() => onToggleSort('seq')}
+              className={`inline-flex items-center gap-1 -my-1 px-1.5 py-0.5 rounded-lg transition-colors cursor-pointer group ${
+                sortField === 'seq'
+                  ? 'text-sky-600 dark:text-sky-400 font-extrabold bg-sky-50 dark:bg-sky-950/60'
+                  : 'hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-200/60 dark:hover:bg-slate-700/60'
+              }`}
+              title="คลิกเพื่อเรียงตามลำดับเล่มแผน"
+              aria-label="คลิกเพื่อเรียงตามลำดับเล่มแผน"
+            >
+              <span>ลำดับ</span>
+              {sortField === 'seq' ? (
+                sortDirection === 'desc' ? (
+                  <IconArrowDown className="w-3.5 h-3.5 text-sky-600 dark:text-sky-400" />
+                ) : (
+                  <IconArrowUp className="w-3.5 h-3.5 text-sky-600 dark:text-sky-400" />
+                )
+              ) : null}
+            </button>
+          ) : (
+            'ลำดับ'
+          )}
+        </div>
         <div className="col-span-6 lg:col-span-7">ชื่อโครงการ / สถานที่ดำเนินการ</div>
         <div className="col-span-2">เล่มแผน • หน้า</div>
-        <div className="col-span-2 lg:col-span-1 text-right">งบประมาณ</div>
+        <div className="col-span-2 lg:col-span-1 text-right">
+          {onToggleSort ? (
+            <button
+              type="button"
+              onClick={() => onToggleSort('budget')}
+              className={`inline-flex items-center gap-1 -my-1 px-2 py-0.5 rounded-lg transition-all cursor-pointer group ${
+                sortField === 'budget'
+                  ? 'text-sky-600 dark:text-sky-400 font-extrabold bg-sky-100/80 dark:bg-sky-950/80 border border-sky-300 dark:border-sky-800 shadow-2xs'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-sky-600 dark:hover:text-sky-400 hover:bg-slate-200/60 dark:hover:bg-slate-700/60'
+              }`}
+              title={
+                sortField === 'budget'
+                  ? sortDirection === 'desc'
+                    ? 'กำลังเรียง: งบประมาณ มาก → น้อย (คลิกเพื่อสลับเป็น น้อย → มาก)'
+                    : 'กำลังเรียง: งบประมาณ น้อย → มาก (คลิกเพื่อกลับสู่ลำดับเดิม)'
+                  : 'คลิกเพื่อเรียงตามงบประมาณ (มากไปน้อย / น้อยไปมาก)'
+              }
+              aria-label="คลิกเพื่อเรียงตามงบประมาณโครงการ"
+            >
+              <span>งบประมาณ</span>
+              {sortField === 'budget' ? (
+                sortDirection === 'desc' ? (
+                  <IconArrowDown className="w-3.5 h-3.5 text-sky-600 dark:text-sky-400 shrink-0" />
+                ) : (
+                  <IconArrowUp className="w-3.5 h-3.5 text-sky-600 dark:text-sky-400 shrink-0" />
+                )
+              ) : (
+                <IconArrowUpDown className="w-3.5 h-3.5 text-slate-400 opacity-60 group-hover:opacity-100 shrink-0" />
+              )}
+            </button>
+          ) : (
+            'งบประมาณ'
+          )}
+        </div>
         <div className="col-span-1 text-right">จัดการ</div>
       </div>
 
