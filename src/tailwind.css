@@ -269,14 +269,14 @@
 
 /* Global LINE PC Overlay Scrollbar Tokens (Plan Sky-Slate Theme) */
 :root {
-  --sy-scroll-thumb-light: #334155;
-  --sy-scroll-thumb-active-light: #0f172a;
-  --sy-scroll-groove-light: rgba(224, 242, 254, 0.92);
-  --sy-scroll-groove-border-light: rgba(186, 230, 253, 0.95);
-  --sy-scroll-thumb-dark: #7dd3fc;
-  --sy-scroll-thumb-active-dark: #e0f2fe;
-  --sy-scroll-groove-dark: rgba(15, 23, 42, 0.94);
-  --sy-scroll-groove-border-dark: rgba(56, 189, 248, 0.45);
+  --sy-scroll-thumb-light: rgba(51, 65, 85, 0.34);
+  --sy-scroll-thumb-active-light: rgba(30, 41, 59, 0.56);
+  --sy-scroll-groove-light: transparent;
+  --sy-scroll-groove-border-light: transparent;
+  --sy-scroll-thumb-dark: rgba(255, 255, 255, 0.22);
+  --sy-scroll-thumb-active-dark: rgba(255, 255, 255, 0.38);
+  --sy-scroll-groove-dark: transparent;
+  --sy-scroll-groove-border-dark: transparent;
 }
 
 html[data-sy-scroll="ready"] {

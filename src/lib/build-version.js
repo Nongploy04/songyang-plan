@@ -7,7 +7,7 @@
 // Vercel is the only production host. For emergency local deployment,
 // follow the central DEPLOY.md and use a verified stage without .git metadata.
 // =========================================================================
-export const BUILD_VERSION = '2026-11-12 12:49 (v1.0.19)';
+export const BUILD_VERSION = '2026-11-12 16:34 (v1.0.20)';
 
 export const PWA_VERSION_KEY = 'so_plan_pwa_version';
 

@@ -50,17 +50,17 @@ interface AxisState {
 }
 
 const DEFAULT_LIGHT_PALETTE: ScrollPalette = {
-  thumb: '#334155',
-  thumbActive: '#0f172a',
-  groove: 'rgba(224, 242, 254, 0.92)',
-  grooveBorder: 'rgba(186, 230, 253, 0.95)',
+  thumb: 'rgba(51, 65, 85, 0.34)',
+  thumbActive: 'rgba(30, 41, 59, 0.56)',
+  groove: 'transparent',
+  grooveBorder: 'transparent',
 };
 
 const DEFAULT_DARK_PALETTE: ScrollPalette = {
-  thumb: '#7dd3fc',
-  thumbActive: '#e0f2fe',
-  groove: 'rgba(15, 23, 42, 0.94)',
-  grooveBorder: 'rgba(56, 189, 248, 0.45)',
+  thumb: 'rgba(255, 255, 255, 0.22)',
+  thumbActive: 'rgba(255, 255, 255, 0.38)',
+  groove: 'transparent',
+  grooveBorder: 'transparent',
 };
 
 function prefersReducedMotion(): boolean {
@@ -292,7 +292,7 @@ function isFullscreenScrim(node: Element): boolean {
 export function SyGlobalScrollRail({
   lightPalette = DEFAULT_LIGHT_PALETTE,
   darkPalette = DEFAULT_DARK_PALETTE,
-  autoHideDelay = 1600,
+  autoHideDelay = 2600,
 }: SyGlobalScrollRailProps) {
   const wrapperYRef = useRef<HTMLDivElement | null>(null);
   const grooveYRef = useRef<HTMLDivElement | null>(null);
@@ -317,21 +317,38 @@ export function SyGlobalScrollRail({
     const lastXPos = new WeakMap<Element, number>();
     let resizeObs: ResizeObserver | null = null;
 
+    const parkTimers: Record<'y' | 'x', number> = { y: 0, x: 0 };
+    const hoverIntentTimers: Record<'y' | 'x', number> = { y: 0, x: 0 };
+
     const parkRail = (axis: 'y' | 'x') => {
       const wrap = axis === 'y' ? wrapperYRef.current : wrapperXRef.current;
       const groove = axis === 'y' ? grooveYRef.current : grooveXRef.current;
       const thumb = axis === 'y' ? thumbYRef.current : thumbXRef.current;
       if (!wrap || !groove || !thumb) return;
       const reduce = prefersReducedMotion();
-      wrap.style.transition = reduce ? 'none' : 'opacity 180ms ease';
+      window.clearTimeout(parkTimers[axis]);
+      wrap.style.transition = reduce ? 'none' : 'opacity 420ms cubic-bezier(0.22, 1, 0.36, 1)';
       wrap.style.opacity = '0';
       wrap.style.pointerEvents = 'none';
-      wrap.style.width = '0px';
-      wrap.style.height = '0px';
-      wrap.style.top = '0px';
-      wrap.style.left = '0px';
       groove.style.opacity = '0';
+      if (axis === 'y') thumb.style.width = '5px';
+      else thumb.style.height = '5px';
       thumb.style.opacity = '0';
+      if (reduce) {
+        wrap.style.width = '0px';
+        wrap.style.height = '0px';
+        wrap.style.top = '0px';
+        wrap.style.left = '0px';
+      } else {
+        parkTimers[axis] = window.setTimeout(() => {
+          if (!axisState[axis].visible) {
+            wrap.style.width = '0px';
+            wrap.style.height = '0px';
+            wrap.style.top = '0px';
+            wrap.style.left = '0px';
+          }
+        }, 440);
+      }
     };
 
     const hideAxis = (axis: 'y' | 'x') => {
@@ -389,37 +406,50 @@ export function SyGlobalScrollRail({
 
         st.metrics = { railStart: topEdge, railLen, thumbLen, maxThumbPos, maxScroll };
 
-        wrap.style.transition = reduce ? 'none' : 'opacity 180ms ease';
+        window.clearTimeout(parkTimers.y);
+        const wasHidden = wrap.style.opacity === '0' || thumb.style.opacity === '0';
+        wrap.style.transition = reduce ? 'none' : 'opacity 180ms cubic-bezier(0.22, 1, 0.36, 1)';
         wrap.style.top = `${topEdge}px`;
-        wrap.style.left = `${Math.max(0, rect.right - 16)}px`;
-        wrap.style.width = '16px';
+        wrap.style.left = `${Math.max(0, rect.right - 14)}px`;
+        wrap.style.width = '14px';
         wrap.style.height = `${railLen}px`;
         wrap.style.opacity = '1';
         wrap.style.pointerEvents = st.active ? 'auto' : 'none';
 
-        groove.style.transition = reduce ? 'none' : 'opacity 180ms ease';
+        groove.style.transition = 'none';
         groove.style.top = '0px';
         groove.style.bottom = '0px';
         groove.style.right = '3px';
         groove.style.left = 'auto';
         groove.style.width = '10px';
         groove.style.height = 'auto';
-        groove.style.backgroundColor = palette.groove;
-        groove.style.border = `1px solid ${palette.grooveBorder}`;
-        groove.style.boxShadow = 'inset 0 1px 2px rgba(0, 0, 0, 0.08)';
-        groove.style.opacity = st.active ? '1' : '0';
+        groove.style.backgroundColor = 'transparent';
+        groove.style.border = 'none';
+        groove.style.boxShadow = 'none';
+        groove.style.opacity = '0';
+
+        if (!reduce && st.active && wasHidden) {
+          thumb.style.transition = 'none';
+          thumb.style.top = `${thumbPos}px`;
+          thumb.style.height = `${thumbLen}px`;
+          thumb.style.width = '5px';
+          thumb.style.right = '3px';
+          thumb.style.backgroundColor = palette.thumb;
+          thumb.style.opacity = '1';
+          void thumb.offsetWidth;
+        }
 
         thumb.style.transition = reduce
           ? 'none'
-          : 'width 150ms ease, background-color 150ms ease, opacity 180ms ease';
+          : 'width 220ms cubic-bezier(0.22, 1, 0.36, 1), background-color 200ms cubic-bezier(0.22, 1, 0.36, 1), opacity 220ms ease';
         thumb.style.top = `${thumbPos}px`;
         thumb.style.height = `${thumbLen}px`;
-        thumb.style.width = st.active ? '8px' : '6px';
-        thumb.style.right = st.active ? '4px' : '5px';
+        thumb.style.width = st.active ? '10px' : '5px';
+        thumb.style.right = '3px';
         thumb.style.left = 'auto';
         thumb.style.bottom = 'auto';
         thumb.style.backgroundColor = st.active ? palette.thumbActive : palette.thumb;
-        thumb.style.boxShadow = st.active ? '0 1px 2px rgba(0, 0, 0, 0.22)' : 'none';
+        thumb.style.boxShadow = 'none';
         thumb.style.opacity = '1';
       } else {
         const leftEdge = Math.max(2, rect.left) + insets.left;
@@ -435,49 +465,62 @@ export function SyGlobalScrollRail({
 
         st.metrics = { railStart: leftEdge, railLen, thumbLen, maxThumbPos, maxScroll };
 
-        wrap.style.transition = reduce ? 'none' : 'opacity 180ms ease';
+        window.clearTimeout(parkTimers.x);
+        const wasHidden = wrap.style.opacity === '0' || thumb.style.opacity === '0';
+        wrap.style.transition = reduce ? 'none' : 'opacity 180ms cubic-bezier(0.22, 1, 0.36, 1)';
         wrap.style.left = `${leftEdge}px`;
-        wrap.style.top = `${Math.max(0, rect.bottom - 16)}px`;
-        wrap.style.height = '16px';
+        wrap.style.top = `${Math.max(0, rect.bottom - 14)}px`;
+        wrap.style.height = '14px';
         wrap.style.width = `${railLen}px`;
         wrap.style.opacity = '1';
         wrap.style.pointerEvents = st.active ? 'auto' : 'none';
 
-        groove.style.transition = reduce ? 'none' : 'opacity 180ms ease';
+        groove.style.transition = 'none';
         groove.style.left = '0px';
         groove.style.right = '0px';
         groove.style.bottom = '3px';
         groove.style.top = 'auto';
         groove.style.height = '10px';
         groove.style.width = 'auto';
-        groove.style.backgroundColor = palette.groove;
-        groove.style.border = `1px solid ${palette.grooveBorder}`;
-        groove.style.boxShadow = 'inset 0 1px 2px rgba(0, 0, 0, 0.08)';
-        groove.style.opacity = st.active ? '1' : '0';
+        groove.style.backgroundColor = 'transparent';
+        groove.style.border = 'none';
+        groove.style.boxShadow = 'none';
+        groove.style.opacity = '0';
+
+        if (!reduce && st.active && wasHidden) {
+          thumb.style.transition = 'none';
+          thumb.style.left = `${thumbPos}px`;
+          thumb.style.width = `${thumbLen}px`;
+          thumb.style.height = '5px';
+          thumb.style.bottom = '3px';
+          thumb.style.backgroundColor = palette.thumb;
+          thumb.style.opacity = '1';
+          void thumb.offsetHeight;
+        }
 
         thumb.style.transition = reduce
           ? 'none'
-          : 'height 150ms ease, background-color 150ms ease, opacity 180ms ease';
+          : 'height 220ms cubic-bezier(0.22, 1, 0.36, 1), background-color 200ms cubic-bezier(0.22, 1, 0.36, 1), opacity 220ms ease';
         thumb.style.left = `${thumbPos}px`;
         thumb.style.width = `${thumbLen}px`;
-        thumb.style.height = st.active ? '8px' : '6px';
-        thumb.style.bottom = st.active ? '4px' : '5px';
+        thumb.style.height = st.active ? '10px' : '5px';
+        thumb.style.bottom = '3px';
         thumb.style.top = 'auto';
         thumb.style.right = 'auto';
         thumb.style.backgroundColor = st.active ? palette.thumbActive : palette.thumb;
-        thumb.style.boxShadow = st.active ? '0 1px 2px rgba(0, 0, 0, 0.22)' : 'none';
+        thumb.style.boxShadow = 'none';
         thumb.style.opacity = '1';
       }
     };
 
-    const scheduleHide = (axis: 'y' | 'x') => {
+    const scheduleHide = (axis: 'y' | 'x', customDelay?: number) => {
       const st = axisState[axis];
       window.clearTimeout(st.timerId);
       st.timerId = window.setTimeout(() => {
         if (!st.active && dragAxis !== axis) {
           hideAxis(axis);
         }
-      }, autoHideDelay);
+      }, customDelay ?? autoHideDelay);
     };
 
     const bindResizeTarget = () => {
@@ -569,7 +612,7 @@ export function SyGlobalScrollRail({
       if (axisState.y.active && axisState.y.el && canScrollY(axisState.y.el)) {
         const r = getContainerRect(axisState.y.el, docEl);
         if (
-          mx >= r.right - 18 &&
+          mx >= r.right - 14 &&
           mx <= r.right + 2 &&
           my >= Math.max(0, r.top) + 2 &&
           my <= Math.min(window.innerHeight, r.bottom) - 2
@@ -580,7 +623,7 @@ export function SyGlobalScrollRail({
       if (axisState.x.active && axisState.x.el && canScrollX(axisState.x.el)) {
         const r = getContainerRect(axisState.x.el, docEl);
         if (
-          my >= r.bottom - 18 &&
+          my >= r.bottom - 14 &&
           my <= r.bottom + 2 &&
           mx >= Math.max(0, r.left) + 2 &&
           mx <= Math.min(window.innerWidth, r.right) - 2
@@ -595,7 +638,7 @@ export function SyGlobalScrollRail({
           if (!foundY && canScrollY(node)) {
             const r = getContainerRect(node, docEl);
             if (
-              mx >= r.right - 18 &&
+              mx >= r.right - 14 &&
               mx <= r.right + 2 &&
               my >= Math.max(0, r.top) + 4 &&
               my <= Math.min(window.innerHeight, r.bottom) - 4
@@ -606,7 +649,7 @@ export function SyGlobalScrollRail({
           if (!foundX && canScrollX(node)) {
             const r = getContainerRect(node, docEl);
             if (
-              my >= r.bottom - 16 &&
+              my >= r.bottom - 14 &&
               my <= r.bottom + 2 &&
               mx >= Math.max(0, r.left) + 4 &&
               mx <= Math.min(window.innerWidth, r.right) - 4
@@ -622,25 +665,55 @@ export function SyGlobalScrollRail({
       if (foundY) {
         const st = axisState.y;
         window.clearTimeout(st.timerId);
-        st.el = foundY;
-        st.visible = true;
-        st.active = true;
-        paintAxis('y');
-        bindResizeTarget();
-      } else if (axisState.y.active) {
-        hideAxis('y');
+        if (st.visible && st.el === foundY) {
+          window.clearTimeout(hoverIntentTimers.y);
+          st.active = true;
+          paintAxis('y');
+          bindResizeTarget();
+        } else {
+          window.clearTimeout(hoverIntentTimers.y);
+          hoverIntentTimers.y = window.setTimeout(() => {
+            st.el = foundY;
+            st.visible = true;
+            st.active = true;
+            paintAxis('y');
+            bindResizeTarget();
+          }, 75);
+        }
+      } else {
+        window.clearTimeout(hoverIntentTimers.y);
+        if (axisState.y.active) {
+          axisState.y.active = false;
+          paintAxis('y');
+          scheduleHide('y', 1200);
+        }
       }
 
       if (foundX) {
         const st = axisState.x;
         window.clearTimeout(st.timerId);
-        st.el = foundX;
-        st.visible = true;
-        st.active = true;
-        paintAxis('x');
-        bindResizeTarget();
-      } else if (axisState.x.active) {
-        hideAxis('x');
+        if (st.visible && st.el === foundX) {
+          window.clearTimeout(hoverIntentTimers.x);
+          st.active = true;
+          paintAxis('x');
+          bindResizeTarget();
+        } else {
+          window.clearTimeout(hoverIntentTimers.x);
+          hoverIntentTimers.x = window.setTimeout(() => {
+            st.el = foundX;
+            st.visible = true;
+            st.active = true;
+            paintAxis('x');
+            bindResizeTarget();
+          }, 75);
+        }
+      } else {
+        window.clearTimeout(hoverIntentTimers.x);
+        if (axisState.x.active) {
+          axisState.x.active = false;
+          paintAxis('x');
+          scheduleHide('x', 1200);
+        }
       }
     };
 
@@ -769,6 +842,10 @@ export function SyGlobalScrollRail({
       if (resizeObs) resizeObs.disconnect();
       window.clearTimeout(axisState.y.timerId);
       window.clearTimeout(axisState.x.timerId);
+      window.clearTimeout(parkTimers.y);
+      window.clearTimeout(parkTimers.x);
+      window.clearTimeout(hoverIntentTimers.y);
+      window.clearTimeout(hoverIntentTimers.x);
       document.body.style.userSelect = '';
       html.removeAttribute('data-sy-scroll');
     };
