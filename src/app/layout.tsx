@@ -1,6 +1,7 @@
 import React from 'react';
 import type { Metadata } from 'next';
 import { RscRetryBoundary } from '../components/RscRetryBoundary.tsx';
+import { SyGlobalScrollRail } from '../components/SyScrollArea.tsx';
 import '../../fonts.css';
 import '../tailwind.css';
 
@@ -25,6 +26,7 @@ export default function RootLayout({
         <RscRetryBoundary title="ระบบแผนพัฒนาท้องถิ่นขัดข้อง">
           {children}
         </RscRetryBoundary>
+        <SyGlobalScrollRail />
       </body>
     </html>
   );

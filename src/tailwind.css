@@ -266,3 +266,39 @@
     }
   }
 }
+
+/* Global LINE PC Overlay Scrollbar Tokens (Plan Sky-Slate Theme) */
+:root {
+  --sy-scroll-thumb-light: #334155;
+  --sy-scroll-thumb-active-light: #0f172a;
+  --sy-scroll-groove-light: rgba(224, 242, 254, 0.92);
+  --sy-scroll-groove-border-light: rgba(186, 230, 253, 0.95);
+  --sy-scroll-thumb-dark: #7dd3fc;
+  --sy-scroll-thumb-active-dark: #e0f2fe;
+  --sy-scroll-groove-dark: rgba(15, 23, 42, 0.94);
+  --sy-scroll-groove-border-dark: rgba(56, 189, 248, 0.45);
+}
+
+html[data-sy-scroll="ready"] {
+  scrollbar-gutter: auto !important;
+}
+
+html[data-sy-scroll="ready"],
+html[data-sy-scroll="ready"] * {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+html[data-sy-scroll="ready"]::-webkit-scrollbar,
+html[data-sy-scroll="ready"] *::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+@media print {
+  [data-sy-global-rail],
+  [data-testid="sy-scroll-rail"] {
+    display: none !important;
+  }
+}
